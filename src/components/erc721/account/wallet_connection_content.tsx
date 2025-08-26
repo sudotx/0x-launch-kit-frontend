@@ -1,6 +1,5 @@
 import { BigNumber } from '@0x/utils';
 import React, { HTMLAttributes } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -21,6 +20,22 @@ const truncateAddress = (address: string) => {
 
 const connectToWallet = () => {
     alert('connect to another wallet');
+};
+
+const copyToClipboard = async (text: string) => {
+    try {
+        await navigator.clipboard.writeText(text);
+        // Optional: Show success feedback
+        // alert('Address copied to clipboard!');
+    } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
 };
 
 const WalletConnectionWrapper = styled(CardBase)`
@@ -73,7 +88,7 @@ const DropdownTextItemStyled = styled(DropdownTextItem)`
     border: none;
 `;
 
-interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
+interface OwnProps extends HTMLAttributes<HTMLSpanElement> { }
 
 interface StateProps {
     ethAccount: string;
@@ -109,9 +124,10 @@ class WalletConnectionContent extends React.Component<Props, State> {
                     onWethModalOpen={this._ethModalOpen}
                     onWethModalClose={this._ethModalClose}
                 />
-                <CopyToClipboard text={ethAccount ? ethAccount : ''}>
-                    <DropdownTextItemStyled text="Copy Address" />
-                </CopyToClipboard>
+                <DropdownTextItemStyled
+                    onClick={() => ethAccount && copyToClipboard(ethAccount)}
+                    text="Copy Address"
+                />
                 <DropdownTextItemStyled onClick={connectToWallet} text="Connect a different address" />
             </WalletConnectionWrapper>
         );

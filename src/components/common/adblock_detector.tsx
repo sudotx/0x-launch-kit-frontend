@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import Modal from 'react-modal';
 import styled, { withTheme } from 'styled-components';
 
-import { ReactComponent as RedExclamationSign } from '../../assets/icons/red_exclamation_sign.svg';
+import RedExclamationSign from '../../assets/icons/red_exclamation_sign.svg';
 import { LocalStorage } from '../../services/local_storage';
 import { Theme } from '../../themes/commons';
 
@@ -16,7 +16,7 @@ interface OwnProps {
     theme: Theme;
 }
 
-interface Props extends HTMLAttributes<HTMLDivElement>, OwnProps {}
+interface Props extends HTMLAttributes<HTMLDivElement>, OwnProps { }
 
 const ModalContent = styled.div`
     align-items: center;
@@ -97,7 +97,19 @@ class AdBlockDetectorContainer extends React.Component<Props, State> {
 
     public render = () => {
         return (
-            <Modal isOpen={this.state.isOpen} style={this.props.theme.modalTheme}>
+            <Modal
+                isOpen={this.state.isOpen}
+                style={{
+                    content: {
+                        ...this.props.theme.modalTheme?.content,
+                        flexDirection: this.props.theme.modalTheme?.content?.flexDirection as any,
+                        position: this.props.theme.modalTheme?.content?.position as any,
+                        display: this.props.theme.modalTheme?.content?.display as any,
+                        overflow: this.props.theme.modalTheme?.content?.overflow as any
+                    },
+                    overlay: this.props.theme.modalTheme?.overlay
+                }}
+            >
                 <CloseModalButton onClick={this.closeModal} />
                 <ModalContent>
                     <ModalTitle>Ad Blocker Detected</ModalTitle>

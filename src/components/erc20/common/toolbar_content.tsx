@@ -1,15 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import ReactSVG from 'react-svg';
 import styled, { withTheme } from 'styled-components';
 
-import { ReactComponent as LogoSvg } from '../../../assets/icons/erc20_logo.svg';
 import { Config } from '../../../common/config';
-import { UI_GENERAL_TITLE } from '../../../common/constants';
 import { Logo } from '../../../components/common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
 import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
-import { goToHome, goToWallet } from '../../../store/actions';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
@@ -45,12 +41,6 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
-const LogoSVGStyled = styled(LogoSvg)`
-    path {
-        fill: ${props => props.theme.componentsTheme.logoERC20Color};
-    }
-`;
-
 const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     align-items: center;
     display: flex;
@@ -75,15 +65,8 @@ const ToolbarContent = (props: Props) => {
         props.onGoToHome();
     };
     const generalConfig = Config.getConfig().general;
-    const logo = generalConfig && generalConfig.icon ? <ReactSVG src={generalConfig.icon} /> : <LogoSVGStyled />;
     const startContent = (
         <>
-            <LogoHeader
-                image={logo}
-                onClick={handleLogoClick}
-                text={(generalConfig && generalConfig.title) || UI_GENERAL_TITLE}
-                textColor={props.theme.componentsTheme.logoERC20TextColor}
-            />
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
         </>
     );
@@ -105,17 +88,9 @@ const ToolbarContent = (props: Props) => {
     return <ToolbarContainer startContent={startContent} endContent={endContent} />;
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        onGoToHome: () => dispatch(goToHome()),
-        onGoToWallet: () => dispatch(goToWallet()),
-    };
-};
-
 const ToolbarContentContainer = withTheme(
     connect(
         null,
-        mapDispatchToProps,
     )(ToolbarContent),
 );
 

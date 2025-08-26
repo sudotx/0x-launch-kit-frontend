@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactSVG from 'react-svg';
+import { ReactSVG } from 'react-svg';
 import styled, { withTheme } from 'styled-components';
 
 import { Theme } from '../../../themes/commons';

@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import styled from 'styled-components';
 
 import { InfoIcon } from './icons/info_icon';

@@ -2,8 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { ReactComponent as LogoSvg } from '../../../assets/icons/erc721_logo.svg';
-import { goToHome, goToMyCollectibles } from '../../../store/router/actions';
+// import { goToHome, goToMyCollectibles } from '../../../store/router/actions';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { Logo } from '../../common/logo';
 import { separatorTopbar, ToolbarContainer } from '../../common/toolbar';
@@ -41,10 +40,10 @@ const LogoHeader = styled(Logo)`
     ${separatorTopbar}
 `;
 
-const LogoSVGStyled = styled(LogoSvg)`
-    path {
-        fill: ${props => props.theme.componentsTheme.logoERC721Color};
-    }
+const LogoSVGStyled = styled.div`
+    font-size: 24px;
+    font-weight: bold;
+    color: ${props => props.theme.componentsTheme.logoERC721Color};
 `;
 
 const WalletDropdown = styled(WalletConnectionContentContainer)`
@@ -63,7 +62,7 @@ const ToolbarContent = (props: Props) => {
     };
     const startContent = (
         <LogoHeader
-            image={<LogoSVGStyled />}
+            image={<LogoSVGStyled>ERC721</LogoSVGStyled>}
             onClick={handleLogoClick}
             text="0x Collectibles"
             textColor={props.theme.componentsTheme.logoERC721TextColor}
@@ -88,17 +87,17 @@ const ToolbarContent = (props: Props) => {
     return <ToolbarContainer startContent={startContent} centerContent={centerContent} endContent={endContent} />;
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        onGoToHome: () => dispatch(goToHome()),
-        goToMyCollectibles: () => dispatch(goToMyCollectibles()),
-    };
-};
+// const mapDispatchToProps = (dispatch: any): DispatchProps => {
+//     return {
+//         onGoToHome: () => dispatch(goToHome()),
+//         goToMyCollectibles: () => dispatch(goToMyCollectibles()),
+//     };
+// };
 
 const ToolbarContentContainer = withTheme(
     connect(
         null,
-        mapDispatchToProps,
+        // mapDispatchToProps,
     )(ToolbarContent),
 );
 

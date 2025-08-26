@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import Modal from 'react-modal';
 import styled, { withTheme } from 'styled-components';
 
-import { ReactComponent as InstallMetamaskSvg } from '../../assets/icons/install_metamask.svg';
+import InstallMetamaskSvg from '../../assets/icons/install_metamask.svg';
 import { METAMASK_CHROME_EXTENSION_DOWNLOAD_URL } from '../../common/constants';
 import { Theme } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
