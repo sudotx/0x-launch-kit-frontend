@@ -20,7 +20,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onStartToggleTokenLockSteps: (token: Token, isUnlocked: boolean) => void;
+    onStartToggleTokenLockSteps: (args: { token: Token; isUnlocked: boolean }) => void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -131,16 +131,17 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const wethToken = wethTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
         const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
-        const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
+        const onTotalEthClick = () => onStartToggleTokenLockSteps({ token: wethTokenBalance.token, isUnlocked: wethTokenBalance.isUnlocked });
 
         const totalEthRow = (
             <TR>
                 <TokenTD>
-                    <TokenIconStyled
-                        symbol={wethToken.symbol}
-                        primaryColor={wethToken.primaryColor}
-                        icon={wethToken.icon}
-                    />
+                    {/* <TokenIconStyled
+                        // symbol={wethToken.symbol}
+                        // primaryColor={wethToken.primaryColor}
+                        // icon={wethToken.icon}
+						/> */}
+                    <TokenIconStyled />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>
                     <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
@@ -162,12 +163,13 @@ class WalletTokenBalances extends React.PureComponent<Props> {
             const { token, balance, isUnlocked } = tokenBalance;
             const { symbol } = token;
             const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
-            const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
+            const onClick = () => onStartToggleTokenLockSteps({ token, isUnlocked });
 
             return (
                 <TR key={symbol}>
                     <TokenTD>
-                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} />
+                        <TokenIconStyled />
+                        {/* <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} /> */}
                     </TokenTD>
                     <CustomTDTokenName styles={{ borderBottom: true }}>
                         <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
@@ -193,7 +195,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                     <THead>
                         <TR>
                             <THStyled>Token</THStyled>
-                            <THStyled>{}</THStyled>
+                            <THStyled>{ }</THStyled>
                             <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
                             <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
                             <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
