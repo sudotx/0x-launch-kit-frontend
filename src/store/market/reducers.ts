@@ -1,10 +1,8 @@
 import queryString from 'query-string';
-import { getType } from 'typesafe-actions';
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { availableMarkets } from '../../common/markets';
 import { MarketState } from '../../util/types';
-import * as actions from '../actions';
-import { RootAction } from '../reducers';
+import { BigNumber } from 'bignumber.js';
 
 const getMakerAddresses = () => {
     const makerAddressesString = queryString.parse(queryString.extract(window.location.hash)).makerAddresses as string;
@@ -28,21 +26,38 @@ const initialMarketState: MarketState = {
     makerAddresses: getMakerAddresses(),
 };
 
-export function market(state: MarketState = initialMarketState, action: RootAction): MarketState {
-    switch (action.type) {
-        case getType(actions.setMarketTokens):
-            return { ...state, baseToken: action.payload.baseToken, quoteToken: action.payload.quoteToken };
-        case getType(actions.setCurrencyPair):
-            return { ...state, currencyPair: action.payload };
-        case getType(actions.setMarkets):
-            return { ...state, markets: action.payload };
-        case getType(actions.fetchMarketPriceEtherUpdate):
-            return { ...state, ethInUsd: action.payload };
-        case getType(actions.fetchMarketPriceEtherStart):
-            return state;
-        case getType(actions.fetchMarketPriceEtherError):
-            return state;
-        default:
-            return state;
-    }
-}
+
+
+const marketSlice = createSlice({
+    name: 'market',
+    initialState: initialMarketState,
+    reducers: {
+        setMarketTokens(state, action: PayloadAction<{ baseToken: any; quoteToken: any }>) {
+            state.baseToken = action.payload.baseToken;
+            state.quoteToken = action.payload.quoteToken;
+        },
+        setCurrencyPair(state, action: PayloadAction<{ base: string; quote: string }>) {
+            state.currencyPair = action.payload;
+        },
+        setMarkets(state, action: PayloadAction<any>) {
+            state.markets = action.payload;
+        },
+        fetchMarketPriceEtherUpdate(state, action: PayloadAction<number | null>) {
+            state.ethInUsd = action.payload !== null ? new BigNumber(action.payload) : null;
+        },
+        // These two are no-ops, so we can still define them if other parts of the app dispatch them
+        fetchMarketPriceEtherStart(state) { },
+        fetchMarketPriceEtherError(state) { },
+    },
+});
+
+export const {
+    setMarketTokens,
+    setCurrencyPair,
+    setMarkets,
+    fetchMarketPriceEtherUpdate,
+    fetchMarketPriceEtherStart,
+    fetchMarketPriceEtherError,
+} = marketSlice.actions;
+
+export default marketSlice.reducer;

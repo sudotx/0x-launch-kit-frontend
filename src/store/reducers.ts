@@ -1,25 +1,16 @@
-import { connectRouter } from 'connected-react-router';
-import { History } from 'history';
-import { combineReducers } from 'redux';
-import { ActionType } from 'typesafe-actions';
+import { combineReducers } from '@reduxjs/toolkit';
+import blockchainReducer from './blockchain/reducers';
+import collectiblesReducer from './collectibles/reducers';
+import marketReducer from './market/reducers';
+import relayerReducer from './relayer/reducers';
+import uiReducer from './ui/reducers';
 
-import { StoreState } from '../util/types';
+export const rootReducer = combineReducers({
+    blockchain: blockchainReducer,
+    market: marketReducer,
+    relayer: relayerReducer,
+    ui: uiReducer,
+    collectibles: collectiblesReducer,
+});
 
-import * as actions from './actions';
-import { blockchain } from './blockchain/reducers';
-import { collectibles } from './collectibles/reducers';
-import { market } from './market/reducers';
-import { relayer } from './relayer/reducers';
-import { ui } from './ui/reducers';
-
-export type RootAction = ActionType<typeof actions>;
-
-export const createRootReducer = (history: History) =>
-    combineReducers<StoreState>({
-        router: connectRouter(history),
-        blockchain,
-        relayer,
-        ui,
-        market,
-        collectibles,
-    });
+export type RootState = ReturnType<typeof rootReducer>;

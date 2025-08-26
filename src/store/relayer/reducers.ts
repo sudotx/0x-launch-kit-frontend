@@ -1,23 +1,26 @@
-import { getType } from 'typesafe-actions';
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RelayerState } from '../../util/types';
-import * as actions from '../actions';
-import { RootAction } from '../reducers';
 
-const initialRelayerState: RelayerState = {
+const initialState: RelayerState = {
     orders: [],
     userOrders: [],
 };
 
-export function relayer(state: RelayerState = initialRelayerState, action: RootAction): RelayerState {
-    switch (action.type) {
-        case getType(actions.setOrders):
-            return { ...state, orders: action.payload };
-        case getType(actions.setUserOrders):
-            return { ...state, userOrders: action.payload };
-        case getType(actions.initializeRelayerData):
+const relayerSlice = createSlice({
+    name: 'relayer',
+    initialState,
+    reducers: {
+        setOrders(state, action: PayloadAction<any[]>) {
+            state.orders = action.payload;
+        },
+        setUserOrders(state, action: PayloadAction<any[]>) {
+            state.userOrders = action.payload;
+        },
+        initializeRelayerData(state, action: PayloadAction<RelayerState>) {
             return action.payload;
-        default:
-            return state;
-    }
-}
+        },
+    },
+});
+
+export const { setOrders, setUserOrders, initializeRelayerData } = relayerSlice.actions;
+export default relayerSlice.reducer;

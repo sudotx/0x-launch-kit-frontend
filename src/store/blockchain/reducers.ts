@@ -1,11 +1,8 @@
-import { getType } from 'typesafe-actions';
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE, ZERO } from '../../common/constants';
 import { BlockchainState, ConvertBalanceState, Web3State } from '../../util/types';
-import * as actions from '../actions';
-import { RootAction } from '../reducers';
 
-const initialBlockchainState: BlockchainState = {
+const initialState: BlockchainState = {
     ethAccount: '',
     web3State: Web3State.Loading,
     tokenBalances: [],
@@ -18,42 +15,61 @@ const initialBlockchainState: BlockchainState = {
     convertBalanceState: ConvertBalanceState.Success,
 };
 
-export function blockchain(state: BlockchainState = initialBlockchainState, action: RootAction): BlockchainState {
-    switch (action.type) {
-        case getType(actions.setEthAccount):
-            return { ...state, ethAccount: action.payload };
-        case getType(actions.setWeb3State):
-            return { ...state, web3State: action.payload };
-        case getType(actions.setTokenBalances):
-            return { ...state, tokenBalances: action.payload };
-        case getType(actions.setWethTokenBalance):
-            return { ...state, wethTokenBalance: action.payload };
-        case getType(actions.setGasInfo):
-            return { ...state, gasInfo: action.payload };
-        case getType(actions.setWethBalance):
-            return {
-                ...state,
-                wethTokenBalance: state.wethTokenBalance
-                    ? {
-                          ...state.wethTokenBalance,
-                          balance: action.payload,
-                      }
-                    : null,
-            };
-        case getType(actions.setEthBalance):
-            return { ...state, ethBalance: action.payload };
-        case getType(actions.convertBalanceStateAsync.request):
-            return { ...state, convertBalanceState: ConvertBalanceState.Request };
-        case getType(actions.convertBalanceStateAsync.failure):
-            return { ...state, convertBalanceState: ConvertBalanceState.Failure };
-        case getType(actions.convertBalanceStateAsync.success):
-            return { ...state, convertBalanceState: ConvertBalanceState.Success };
-        case getType(actions.initializeBlockchainData):
-            return {
-                ...state,
-                ...action.payload,
-            };
-        default:
-            return state;
-    }
-}
+export const blockchainSlice = createSlice({
+    name: 'blockchain',
+    initialState,
+    reducers: {
+        setEthAccount(state, action: PayloadAction<string>) {
+            state.ethAccount = action.payload;
+        },
+        setWeb3State(state, action: PayloadAction<Web3State>) {
+            state.web3State = action.payload;
+        },
+        setTokenBalances(state, action: PayloadAction<any[]>) { // replace any[] with proper type
+            state.tokenBalances = action.payload;
+        },
+        setWethTokenBalance(state, action: PayloadAction<any | null>) {
+            state.wethTokenBalance = action.payload;
+        },
+        setGasInfo(state, action: PayloadAction<{ gasPriceInWei: any; estimatedTimeMs: number }>) {
+            state.gasInfo = action.payload;
+        },
+        setWethBalance(state, action: PayloadAction<any>) {
+            if (state.wethTokenBalance) {
+                state.wethTokenBalance.balance = action.payload;
+            }
+        },
+        setEthBalance(state, action: PayloadAction<any>) {
+            state.ethBalance = action.payload;
+        },
+        // Async “states” become simple reducers:
+        convertBalanceRequest(state) {
+            state.convertBalanceState = ConvertBalanceState.Request;
+        },
+        convertBalanceFailure(state) {
+            state.convertBalanceState = ConvertBalanceState.Failure;
+        },
+        convertBalanceSuccess(state) {
+            state.convertBalanceState = ConvertBalanceState.Success;
+        },
+        initializeBlockchainData(state, action: PayloadAction<Partial<BlockchainState>>) {
+            return { ...state, ...action.payload };
+        },
+    },
+});
+
+export const {
+    setEthAccount,
+    setWeb3State,
+    setTokenBalances,
+    setWethTokenBalance,
+    setGasInfo,
+    setWethBalance,
+    setEthBalance,
+    convertBalanceRequest,
+    convertBalanceFailure,
+    convertBalanceSuccess,
+    initializeBlockchainData,
+} = blockchainSlice.actions;
+
+export default blockchainSlice.reducer;

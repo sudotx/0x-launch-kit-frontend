@@ -2,18 +2,17 @@ import { OrderStatus } from '@0x/types';
 import { BigNumber } from '@0x/utils';
 import { createSelector } from 'reselect';
 
-import { ERC20_APP_BASE_PATH, ZERO } from '../common/constants';
+import { ZERO } from '../common/constants';
 import { isWeth } from '../util/known_tokens';
 import {
     Collectible,
-    MARKETPLACES,
     OrderBook,
     OrderSide,
     SearchTokenBalanceObject,
     StoreState,
     Token,
     TokenBalance,
-    Web3State,
+    Web3State
 } from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
@@ -46,13 +45,13 @@ export const getAllCollectiblesFetchStatus = (state: StoreState) => state.collec
 export const getCollectibleById = (state: StoreState, props: { collectibleId: string }): Collectible | undefined =>
     state.collectibles.allCollectibles[props.collectibleId];
 export const getSelectedCollectible = (state: StoreState) => state.collectibles.collectibleSelected;
-export const getCurrentRoutePath = (state: StoreState) => state.router.location.pathname;
-export const getRouterLocationSearch = (state: StoreState) => state.router.location.search;
+// export const getCurrentRoutePath = (state: StoreState) => state.router.location.query;
+// export const getRouterLocationSearch = (state: StoreState) => state.router.location.query;
 
-export const getCurrentMarketPlace = createSelector(
-    getCurrentRoutePath,
-    (currentRoute: string) => (currentRoute.includes(ERC20_APP_BASE_PATH) ? MARKETPLACES.ERC20 : MARKETPLACES.ERC721),
-);
+// export const getCurrentMarketPlace = createSelector(
+//     getCurrentRoutePath,
+//     (currentRoute: string) => (currentRoute.includes(ERC20_APP_BASE_PATH) ? MARKETPLACES.ERC20 : MARKETPLACES.ERC721),
+// );
 
 const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {

@@ -1,31 +1,31 @@
-import { routerMiddleware } from 'connected-react-router';
-import { createHashHistory } from 'history';
-import { AnyAction, applyMiddleware, compose, createStore } from 'redux';
-import thunk, { ThunkMiddleware } from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
 
 import { getCollectiblesMetadataGateway } from '../services/collectibles_metadata_gateway';
 import { getContractWrappers } from '../services/contract_wrappers';
-import { getWeb3Wrapper, initializeWeb3Wrapper } from '../services/web3_wrapper';
-import { StoreState } from '../util/types';
 
 import { localStorageMiddleware } from './middlewares';
-import { createRootReducer } from './reducers';
-
-export const history = createHashHistory();
-const rootReducer = createRootReducer(history);
+import { rootReducer } from './reducers';
 
 const extraArgument = {
     getContractWrappers,
-    getWeb3Wrapper,
-    initializeWeb3Wrapper,
     getCollectiblesMetadataGateway,
 };
 export type ExtraArgument = typeof extraArgument;
 
-const thunkMiddleware = thunk.withExtraArgument(extraArgument) as ThunkMiddleware<StoreState, AnyAction>;
+const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            thunk: {
+                extraArgument,
+            },
+            serializableCheck: false, // optional: if your app uses non-serializable stuff like web3
+        }).concat(localStorageMiddleware),
+    devTools: process.env.NODE_ENV !== 'production',
+});
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-export const store = createStore(
-    rootReducer,
-    composeEnhancers(applyMiddleware(thunkMiddleware, localStorageMiddleware, routerMiddleware(history))),
-);
+// Types for TS
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+
+export { store };
