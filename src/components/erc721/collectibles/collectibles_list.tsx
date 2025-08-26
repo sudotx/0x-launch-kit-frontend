@@ -3,10 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
 
-import { setCollectiblesListFilterType, setCollectiblesListSortType } from '../../../store/actions';
 import {
     getAllCollectiblesFetchStatus,
-    getRouterLocationSearch,
     getUserCollectibles,
     getUsersCollectiblesAvailableToList,
 } from '../../../store/selectors';
@@ -27,13 +25,10 @@ interface OwnProps {
 
 interface StateProps {
     collectibles: { [key: string]: Collectible };
-    search: string;
     fetchStatus: AllCollectiblesFetchStatus;
 }
 
 interface DispatchProps {
-    setSortType: (sortType: CollectibleSortType | null) => any;
-    setFilterType: (filterType: CollectibleFilterType | null) => any;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -99,15 +94,10 @@ const Title = styled.h1`
 `;
 
 export class CollectiblesList extends React.Component<Props, {}> {
-    public componentWillUnmount = () => {
-        this.props.setSortType(null);
-        this.props.setFilterType(null);
-    };
-
     public render = () => {
-        const { title, search, fetchStatus } = this.props;
+        const { title, fetchStatus } = this.props;
         const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
-        const { sortType, filterType } = this._getSortTypeAndFilterTypeFromLocationSearch(search);
+        const { sortType, filterType } = this._getSortTypeAndFilterTypeFromLocationSearch();
         const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
         return (
@@ -129,15 +119,13 @@ export class CollectiblesList extends React.Component<Props, {}> {
     };
 
     private readonly _onChangeSortType = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.setSortType(evt.target.value as CollectibleSortType);
     };
 
     private readonly _onChangeFilterType = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.setFilterType(evt.target.value as CollectibleFilterType);
     };
 
-    private readonly _getSortTypeAndFilterTypeFromLocationSearch = (search: string) => {
-        const parsedSearch = queryString.parse(search);
+    private readonly _getSortTypeAndFilterTypeFromLocationSearch = () => {
+        const parsedSearch = queryString.parse(window.location.search);
         return {
             sortType: (parsedSearch.sort as CollectibleSortType) || CollectibleSortType.NewestAdded,
             filterType: (parsedSearch.filter as CollectibleFilterType) || CollectibleFilterType.ShowAll,
@@ -149,7 +137,6 @@ export class CollectiblesList extends React.Component<Props, {}> {
 const allMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getUsersCollectiblesAvailableToList(state),
-        search: getRouterLocationSearch(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
     };
 };
@@ -157,19 +144,12 @@ const allMapStateToProps = (state: StoreState): StateProps => {
 const myMapStateToProps = (state: StoreState): StateProps => {
     return {
         collectibles: getUserCollectibles(state),
-        search: getRouterLocationSearch(state),
         fetchStatus: getAllCollectiblesFetchStatus(state),
     };
 };
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        setSortType: (sortType: CollectibleSortType | null) => {
-            dispatch(setCollectiblesListSortType(sortType));
-        },
-        setFilterType: (filterType: CollectibleFilterType | null) => {
-            dispatch(setCollectiblesListFilterType(filterType));
-        },
     };
 };
 

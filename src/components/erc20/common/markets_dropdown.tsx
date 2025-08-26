@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import { marketFilters } from '../../../common/markets';
-import { changeMarket, goToHome } from '../../../store/actions';
+import { changeMarket } from '../../../store/actions';
 import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
@@ -17,11 +17,10 @@ import { MagnifierIcon } from '../../common/icons/magnifier_icon';
 import { TokenIcon } from '../../common/icons/token_icon';
 import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from '../../common/table';
 
-interface PropsDivElement extends HTMLAttributes<HTMLDivElement> {}
+interface PropsDivElement extends HTMLAttributes<HTMLDivElement> { }
 
 interface DispatchProps {
     changeMarket: (currencyPair: CurrencyPair) => any;
-    goToHome: () => any;
 }
 
 interface PropsToken {
@@ -168,7 +167,7 @@ const tableHeaderFontWeight = `
     font-weight: 700;
 `;
 
-const TRStyled = styled(TR)<MarketRowProps>`
+const TRStyled = styled(TR) <MarketRowProps>`
     background-color: ${props => (props.active ? props.theme.componentsTheme.rowActive : 'transparent')};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
 
@@ -242,11 +241,11 @@ class MarketsDropdown extends React.Component<Props, State> {
                 <MarketsDropdownHeaderText>
                     {baseToken ? (
                         <DropdownTokenIcon
-                            symbol={baseToken.symbol}
-                            primaryColor={baseToken.primaryColor}
-                            isInline={true}
-                            icon={baseToken.icon}
-                        />
+                        // symbol={baseToken.symbol}
+                        // primaryColor={baseToken.primaryColor}
+                        // isInline={true}
+                        // icon={baseToken.icon}
+                        /> as any
                     ) : null}
                     {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
                 </MarketsDropdownHeaderText>
@@ -361,10 +360,10 @@ class MarketsDropdown extends React.Component<Props, State> {
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
                                     <TokenIconAndLabel>
                                         <TokenIcon
-                                            symbol={token.symbol}
-                                            primaryColor={token.primaryColor}
-                                            icon={token.icon}
-                                        />
+                                        // symbol={token.symbol}
+                                        // primaryColor={token.primaryColor}
+                                        // icon={token.icon}
+                                        /> as any
                                         <TokenLabel>
                                             {baseSymbol} / {quoteSymbol}
                                         </TokenLabel>
@@ -383,7 +382,6 @@ class MarketsDropdown extends React.Component<Props, State> {
 
     private readonly _setSelectedMarket: any = (currencyPair: CurrencyPair) => {
         this.props.changeMarket(currencyPair);
-        this.props.goToHome();
         if (this._dropdown.current) {
             this._dropdown.current.closeDropdown();
         }
@@ -409,7 +407,6 @@ const mapStateToProps = (state: StoreState): PropsToken => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
         changeMarket: (currencyPair: CurrencyPair) => dispatch(changeMarket(currencyPair)),
-        goToHome: () => dispatch(goToHome()),
     };
 };
 

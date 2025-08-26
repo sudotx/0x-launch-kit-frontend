@@ -18,7 +18,7 @@ import {
     getUserOrders,
     getWeb3State,
 } from '../../../store/selectors';
-import { setOrderPriceSelected } from '../../../store/ui/actions';
+import { setOrderPriceSelected } from '../../../store/ui/reducers';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
@@ -217,7 +217,7 @@ class OrderToRow extends React.Component<OrderToRowProps> {
 
 const mapOrderToRowDispatchToProps = (dispatch: any): OrderToRowDispatchProps => {
     return {
-        onSetOrderPriceSelected: (orderPriceSelected: BigNumber) => dispatch(setOrderPriceSelected(orderPriceSelected)),
+        onSetOrderPriceSelected: (orderPriceSelected: BigNumber) => dispatch(setOrderPriceSelected(orderPriceSelected.toNumber())),
     };
 };
 
@@ -227,9 +227,9 @@ const OrderToRowContainer = connect(
 )(OrderToRow);
 
 class OrderBookTable extends React.Component<Props> {
-    private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement>;
-    private readonly _spreadRowFixed: React.RefObject<GridRowSpread>;
-    private readonly _itemsScroll: React.RefObject<HTMLDivElement>;
+    private readonly _spreadRowScrollable: React.RefObject<HTMLDivElement | null>;
+    private readonly _spreadRowFixed: React.RefObject<GridRowSpread | null>;
+    private readonly _itemsScroll: React.RefObject<HTMLDivElement | null>;
     private _hasScrolled = false;
 
     constructor(props: Props) {

@@ -16,11 +16,15 @@ import { ConvertBalanceMustNotBeEqualException } from '../../../exceptions/conve
 import { InsufficientEthDepositBalanceException } from '../../../exceptions/insufficient_eth_deposit_balance_exception';
 import { UserDeniedTransactionSignatureException } from '../../../exceptions/user_denied_transaction_exception';
 import {
-    convertBalanceStateAsync,
     stepsModalAdvanceStep,
     updateTokenBalances,
     updateWethBalance,
 } from '../../../store/actions';
+import {
+    convertBalanceRequest,
+    convertBalanceFailure,
+    convertBalanceSuccess
+} from '../../../store/blockchain/reducers';
 import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
@@ -41,7 +45,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateWeth: (newWethBalance: BigNumber) => Promise<any>;
-    updateTokenBalances: (txHash: string) => Promise<any>;
+    updateTokenBalances: () => Promise<any>;
     convertBalanceState: { request: () => void; success: () => void; failure: () => void };
     advanceStep: () => void;
 }
@@ -119,12 +123,12 @@ class WrapEthStep extends React.Component<Props, State> {
             const convertTxHash = await updateWeth(newWethBalance);
             onLoading();
             convertBalanceState.request();
-            await updateBalances(convertTxHash);
+            await updateBalances();
             convertBalanceState.success();
             onDone();
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
-        } catch (err) {
+        } catch (err: any) {
             let exception = err;
             let errorCaption = UNEXPECTED_ERROR;
             if (err.toString().includes(USER_DENIED_TRANSACTION_SIGNATURE_ERR)) {
@@ -167,12 +171,12 @@ const WrapEthStepContainer = connect(
     (dispatch: any) => {
         return {
             updateWeth: (newWethBalance: BigNumber) => dispatch(updateWethBalance(newWethBalance)),
-            updateTokenBalances: (txHash: string) => dispatch(updateTokenBalances(txHash)),
+            updateTokenBalances: () => dispatch(updateTokenBalances()),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
             convertBalanceState: {
-                request: () => dispatch(convertBalanceStateAsync.request()),
-                success: () => dispatch(convertBalanceStateAsync.success()),
-                failure: () => dispatch(convertBalanceStateAsync.failure()),
+                request: () => dispatch(convertBalanceRequest()),
+                success: () => dispatch(convertBalanceSuccess()),
+                failure: () => dispatch(convertBalanceFailure()),
             },
         };
     },

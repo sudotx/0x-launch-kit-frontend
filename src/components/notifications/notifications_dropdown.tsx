@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { setHasUnreadNotifications } from '../../store/actions';
+import { setHasUnreadNotifications } from '../../store/ui/reducers';
 import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
 import { themeDimensions } from '../../themes/commons';
 import { Notification, StoreState } from '../../util/types';
