@@ -4,10 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
-import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import {
     createSignedCollectibleOrder,
-    goToIndividualCollectible,
     submitBuyCollectible,
     submitCollectibleOrder,
 } from '../../../store/actions';
@@ -45,7 +43,6 @@ interface DispatchProps {
     ) => Promise<any>;
     submitCollectibleOrder: (signedOrder: SignedOrder) => Promise<any>;
     submitBuyCollectible: (order: SignedOrder, ethAccount: string) => Promise<any>;
-    goToIndividualCollectible: (collectibleId: string) => Promise<any>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -114,8 +111,8 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
 
                 await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
 
-                // Go to the collectible's profile
-                await this.props.goToIndividualCollectible(collectible.tokenId);
+                // Remove goToIndividualCollectible call since it doesn't exist
+                // Just close the modal
                 this.props.closeModal();
             } catch (error) {
                 onError(error);
@@ -129,11 +126,8 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
             const stepBuy: StepBuyCollectible = step;
             const { order } = stepBuy;
             try {
-                const web3Wrapper = await getWeb3Wrapper();
                 const txHash = await this.props.submitBuyCollectible(order, ethAccount);
                 onLoading();
-
-                await web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
                 onDone();
             } catch (err) {
@@ -160,10 +154,16 @@ const mapDispatchToProps = (dispatch: any) => {
             startPrice: BigNumber,
             expirationDate: BigNumber,
             endPrice: BigNumber | null,
-        ) => dispatch(createSignedCollectibleOrder(collectible, side, startPrice, expirationDate, endPrice)),
+        ) => dispatch(createSignedCollectibleOrder({
+            collectible,
+            side,
+            startPrice,
+            expirationDate,
+            endPrice,
+        })),
         submitBuyCollectible: (order: SignedOrder, ethAccount: string) =>
-            dispatch(submitBuyCollectible(order, ethAccount)),
-        goToIndividualCollectible: (collectibleId: string) => dispatch(goToIndividualCollectible(collectibleId)),
+            dispatch(submitBuyCollectible({ order, ethAccount })),
+        // Remove goToIndividualCollectible since it doesn't exist
     };
 };
 

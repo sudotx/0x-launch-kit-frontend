@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
-import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { lockToken, unlockToken } from '../../../store/blockchain/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
@@ -36,9 +35,8 @@ class ToggleTokenLockStep extends React.Component<Props> {
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 
         const title = context === 'order' ? 'Order setup' : isUnlocked ? 'Lock token' : 'Unlock token';
-        const confirmCaption = `Confirm on Metamask to ${
-            isUnlocked ? 'lock' : 'unlock'
-        } ${tokenSymbol} for trading on 0x.`;
+        const confirmCaption = `Confirm on Metamask to ${isUnlocked ? 'lock' : 'unlock'
+            } ${tokenSymbol} for trading on 0x.`;
         const loadingCaption = isUnlocked
             ? `Locking ${tokenSymbol}. You won't be able to use it for trading until you unlock it again`
             : `Unlocking ${tokenSymbol}. It will remain unlocked for future trades`;
@@ -73,11 +71,9 @@ class ToggleTokenLockStep extends React.Component<Props> {
         const toggleToken = step.isUnlocked ? onLockToken : onUnlockToken;
 
         try {
-            const web3Wrapper = await getWeb3Wrapper();
             const txHash = await toggleToken(step.token);
             onLoading();
 
-            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
             onDone();
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();

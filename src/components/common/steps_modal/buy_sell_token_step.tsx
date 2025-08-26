@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { ZERO } from '../../../common/constants';
-import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep } from '../../../store/selectors';
 import { addMarketBuySellNotification } from '../../../store/ui/actions';
@@ -82,12 +81,9 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const { step, onSubmitMarketOrder } = this.props;
         const { amount, side, token } = step;
         try {
-            const web3Wrapper = await getWeb3Wrapper();
             const { txHash, amountInReturn } = await onSubmitMarketOrder(amount, side);
             this.setState({ amountInReturn });
             onLoading();
-
-            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
 
             onDone();
             this.props.notifyBuySellMarket(txHash, amount, token, side, Promise.resolve());
@@ -121,9 +117,9 @@ const BuySellTokenStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => dispatch(submitMarketOrder(amount, side)),
+            onSubmitMarketOrder: (amount: BigNumber, side: OrderSide) => dispatch(submitMarketOrder({ amount, side })),
             notifyBuySellMarket: (id: string, amount: BigNumber, token: Token, side: OrderSide, tx: Promise<any>) =>
-                dispatch(addMarketBuySellNotification(id, amount, token, side, tx)),
+                dispatch(addMarketBuySellNotification({ id, amount, token, side, tx })),
             refreshOrders: () => dispatch(getOrderbookAndUserOrders()),
         };
     },

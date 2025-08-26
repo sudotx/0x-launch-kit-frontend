@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { STEP_MODAL_DONE_STATUS_VISIBILITY_TIME } from '../../../common/constants';
-import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { unlockCollectible } from '../../../store/blockchain/actions';
 import { getEstimatedTxTimeMs, getStepsModalCurrentStep } from '../../../store/selectors';
 import { stepsModalAdvanceStep } from '../../../store/ui/actions';
@@ -33,9 +32,8 @@ class UnlockCollectiblesStep extends React.Component<Props> {
         const { isUnlocked, collectible } = step;
         const collectibleName = collectible.name;
         const title = `Selling ${collectibleName}`;
-        const confirmCaption = `Confirm on Metamask to ${
-            isUnlocked ? 'lock' : 'unlock'
-        } ${collectibleName} for trading on 0x.`;
+        const confirmCaption = `Confirm on Metamask to ${isUnlocked ? 'lock' : 'unlock'
+            } ${collectibleName} for trading on 0x.`;
         const loadingCaption = isUnlocked
             ? `Locking ${collectibleName}. You won't be able to use it for trading until you unlock it again`
             : `Unlocking ${collectibleName}. It will remain unlocked for future trades`;
@@ -68,10 +66,9 @@ class UnlockCollectiblesStep extends React.Component<Props> {
         const { advanceStep, onUnlockCollectible, step } = this.props;
 
         try {
-            const web3Wrapper = await getWeb3Wrapper();
             const txHash = await onUnlockCollectible(step.collectible);
             onLoading();
-            await web3Wrapper.awaitTransactionSuccessAsync(txHash);
+
             onDone();
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
