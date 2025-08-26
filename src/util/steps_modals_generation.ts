@@ -44,7 +44,12 @@ export const createBuySellLimitSteps = (
     }
 
     if (orderFeeData.makerFee.isGreaterThan(0)) {
-        const { tokenAddress } = assetDataUtils.decodeERC20AssetData(orderFeeData.makerFeeAssetData);
+        // const { tokenAddress } = assetDataUtils.decodeERC20AssetData(orderFeeData.makerFeeAssetData);
+		const tokenAssetData = assetDataUtils.decodeAssetDataOrThrow(orderFeeData.takerFeeAssetData)
+		if(!assetDataUtils.isERC20TokenAssetData(tokenAssetData)){
+			throw new Error("Asset data is not ERC20 data")
+		}
+		const tokenAddress = tokenAssetData.tokenAddress
         if (!unlockTokenStep || unlockTokenStep.token.address !== tokenAddress) {
             const unlockFeeTokenStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, tokenAddress);
             if (unlockFeeTokenStep) {
@@ -175,7 +180,11 @@ export const createBuySellMarketSteps = (
 
     // unlock fees if the taker fee is positive
     if (orderFeeData.takerFee.isGreaterThan(0)) {
-        const { tokenAddress } = assetDataUtils.decodeERC20AssetData(orderFeeData.takerFeeAssetData);
+		const tokenAssetData = assetDataUtils.decodeAssetDataOrThrow(orderFeeData.takerFeeAssetData)
+		if(!assetDataUtils.isERC20TokenAssetData(tokenAssetData)){
+			throw new Error("Asset data is not ERC20 data")
+		}
+		const tokenAddress = tokenAssetData.tokenAddress
         if (!unlockTokenStep || (unlockTokenStep && unlockTokenStep.token.address !== tokenAddress)) {
             const unlockFeeStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, tokenAddress);
             if (unlockFeeStep) {

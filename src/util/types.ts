@@ -1,7 +1,7 @@
 import { SignedOrder } from '@0x/connect';
 import { OrderStatus } from '@0x/types';
 import { BigNumber } from '@0x/utils';
-import { RouterState } from 'connected-react-router';
+// import { RouterState } from 'connected-react-router';
 import { ActionCreator, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
@@ -10,7 +10,7 @@ import { ExtraArgument } from '../store/index';
 import { ThemeModalStyle, ThemeProperties } from '../themes/commons';
 
 export interface TabItem {
-    active: boolean;
+    // active: boolean;
     onClick: any;
     text: string;
 }
@@ -91,7 +91,7 @@ export interface MarketState {
 }
 
 export interface StoreState {
-    readonly router: RouterState;
+    // readonly router: RouterState;
     readonly blockchain: BlockchainState;
     readonly relayer: RelayerState;
     readonly ui: UIState;

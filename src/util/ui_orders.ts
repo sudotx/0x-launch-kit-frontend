@@ -64,11 +64,19 @@ const ordersToUIOrdersWithOrdersInfo = (
         const isSell = side === OrderSide.Sell;
         const size = isSell ? order.makerAssetAmount : order.takerAssetAmount;
 
-        const makerAssetAddress = assetDataUtils.decodeERC20AssetData(order.makerAssetData).tokenAddress;
+		const decodedMakerAssetData = assetDataUtils.decodeAssetDataOrThrow(order.takerAssetData);
+		if(!assetDataUtils.isERC20TokenAssetData(decodedMakerAssetData)){
+			throw new Error("Asset data is not ERC20 data")
+		}
+		const makerAssetAddress = decodedMakerAssetData.tokenAddress
         const makerAssetTokenDecimals = getKnownTokens().getTokenByAddress(makerAssetAddress).decimals;
         const makerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(order.makerAssetAmount, makerAssetTokenDecimals);
 
-        const takerAssetAddress = assetDataUtils.decodeERC20AssetData(order.takerAssetData).tokenAddress;
+		const decodedTakerAssetData = assetDataUtils.decodeAssetDataOrThrow(order.takerAssetData);
+		if(!assetDataUtils.isERC20TokenAssetData(decodedTakerAssetData)){
+			throw new Error("Asset data is not ERC20 data")
+		}
+		const takerAssetAddress = decodedTakerAssetData.tokenAddress
         const takerAssetTokenDecimals = getKnownTokens().getTokenByAddress(takerAssetAddress).decimals;
         const takerAssetAmountInUnits = tokenAmountInUnitsToBigNumber(order.takerAssetAmount, takerAssetTokenDecimals);
 

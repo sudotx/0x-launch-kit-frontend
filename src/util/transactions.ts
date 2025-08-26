@@ -2,7 +2,7 @@ import { BigNumber } from '@0x/utils';
 import retry from 'async-retry';
 
 import { TX_DEFAULTS } from '../common/constants';
-import { getWeb3Wrapper } from '../services/web3_wrapper';
+import { getProvider } from '../services/web3_wrapper';
 
 const GET_BLOCK_NUMBER_FROM_TRANSACTION_HASH_RETRIES = 10;
 
@@ -27,10 +27,10 @@ export const getBlockNumberFromTransactionHash = async (txHash: string | undefin
             throw new Error('Transaction hash was not provided');
         }
 
-        const web3Wrapper = await getWeb3Wrapper();
+        const provider = await getProvider();
         return retry(
             async () => {
-                const transaction = await web3Wrapper.getTransactionByHashAsync(txHash);
+                const transaction = await provider.getTransaction(txHash);
                 if (transaction.blockNumber === null) {
                     throw new Error('retry');
                 }

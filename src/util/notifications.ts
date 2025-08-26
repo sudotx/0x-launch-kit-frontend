@@ -14,9 +14,20 @@ export const buildOrderFilledNotification = (
     const side: OrderSide = getOrderSideFromFillEvent(knownTokens, log, markets);
     let exchangedTokenAddress: string;
     let exchangedToken: Token;
-    exchangedTokenAddress = OrderSide.Sell
-        ? assetDataUtils.decodeERC20AssetData(args.makerAssetData).tokenAddress
-        : assetDataUtils.decodeERC20AssetData(args.takerAssetData).tokenAddress;
+    
+    if (side === OrderSide.Sell) {
+        const decodedAssetData = assetDataUtils.decodeAssetDataOrThrow(args.makerAssetData);
+        if (!assetDataUtils.isERC20TokenAssetData(decodedAssetData)) {
+            throw new Error('Asset data is not ERC20 data');
+        }
+        exchangedTokenAddress = decodedAssetData.tokenAddress;
+    } else {
+        const decodedAssetData = assetDataUtils.decodeAssetDataOrThrow(args.takerAssetData);
+        if (!assetDataUtils.isERC20TokenAssetData(decodedAssetData)) {
+            throw new Error('Asset data is not ERC20 data');
+        }
+        exchangedTokenAddress = decodedAssetData.tokenAddress;
+    }
 
     exchangedToken = knownTokens.getTokenByAddress(exchangedTokenAddress);
     return {
@@ -39,8 +50,19 @@ export const getOrderSideFromFillEvent = (
     }
     const { makerAssetData, takerAssetData } = fillEvent.args;
     const wethToken = knownTokens.getWethToken();
-    const makerTokenAddress = assetDataUtils.decodeERC20AssetData(makerAssetData).tokenAddress;
-    const takerTokenAddress = assetDataUtils.decodeERC20AssetData(takerAssetData).tokenAddress;
+    
+    const makerAssetDecoded = assetDataUtils.decodeAssetDataOrThrow(makerAssetData);
+    if (!assetDataUtils.isERC20TokenAssetData(makerAssetDecoded)) {
+        throw new Error('Maker asset data is not ERC20 data');
+    }
+    const makerTokenAddress = makerAssetDecoded.tokenAddress;
+    
+    const takerAssetDecoded = assetDataUtils.decodeAssetDataOrThrow(takerAssetData);
+    if (!assetDataUtils.isERC20TokenAssetData(takerAssetDecoded)) {
+        throw new Error('Taker asset data is not ERC20 data');
+    }
+    const takerTokenAddress = takerAssetDecoded.tokenAddress;
+    
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethToken.address);
 
     let orderSide: OrderSide = OrderSide.Sell;

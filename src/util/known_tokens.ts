@@ -47,7 +47,11 @@ export class KnownTokens {
     };
 
     public getTokenByAssetData = (assetData: string): Token => {
-        const tokenAddress = assetDataUtils.decodeERC20AssetData(assetData).tokenAddress;
+        const decodedAssetData = assetDataUtils.decodeAssetDataOrThrow(assetData);
+        if (!assetDataUtils.isERC20TokenAssetData(decodedAssetData)) {
+            throw new Error('Asset data is not ERC20 token data');
+        }
+        const tokenAddress = decodedAssetData.tokenAddress;
         return this.getTokenByAddress(tokenAddress);
     };
 
@@ -73,8 +77,15 @@ export class KnownTokens {
             return false;
         }
 
-        const makerAssetAddress = assetDataUtils.decodeERC20AssetData(makerAssetData).tokenAddress;
-        const takerAssetAddress = assetDataUtils.decodeERC20AssetData(takerAssetData).tokenAddress;
+        const makerAssetDecoded = assetDataUtils.decodeAssetDataOrThrow(makerAssetData);
+        const takerAssetDecoded = assetDataUtils.decodeAssetDataOrThrow(takerAssetData);
+        
+        if (!assetDataUtils.isERC20TokenAssetData(makerAssetDecoded) || !assetDataUtils.isERC20TokenAssetData(takerAssetDecoded)) {
+            return false;
+        }
+
+        const makerAssetAddress = makerAssetDecoded.tokenAddress;
+        const takerAssetAddress = takerAssetDecoded.tokenAddress;
 
         if (!this.isKnownAddress(makerAssetAddress) || !this.isKnownAddress(takerAssetAddress)) {
             return false;
@@ -119,8 +130,8 @@ export const isWeth = (token: string): boolean => {
 
 export const isERC20AssetData = (assetData: string): boolean => {
     try {
-        assetDataUtils.decodeERC20AssetData(assetData);
-        return true;
+        const decodedAssetData = assetDataUtils.decodeAssetDataOrThrow(assetData);
+        return assetDataUtils.isERC20TokenAssetData(decodedAssetData);
     } catch (e) {
         return false;
     }
