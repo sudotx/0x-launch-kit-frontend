@@ -35,8 +35,11 @@ export class CollectiblesMetadataGateway {
         }
 
         const tokenIdToOrder = orders.reduce<{ [tokenId: string]: SignedOrder }>((acc, order) => {
-            const { tokenId } = assetDataUtils.decodeERC721AssetData(order.makerAssetData);
-            acc[tokenId.toString()] = order;
+            const decoded = assetDataUtils.decodeAssetDataOrThrow(order.makerAssetData);
+            if (assetDataUtils.isERC721TokenAssetData(decoded)) {
+                const tokenId = decoded.tokenId;
+                acc[tokenId.toString()] = order;
+            }
             return acc;
         }, {});
 

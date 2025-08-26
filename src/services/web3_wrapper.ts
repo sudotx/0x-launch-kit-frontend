@@ -1,55 +1,61 @@
-import { Web3Wrapper } from '@0x/web3-wrapper';
+import { ethers } from "ethers";
+import { sleep } from "../util/sleep";
 
-import { sleep } from '../util/sleep';
-
-let web3Wrapper: Web3Wrapper | null = null;
+let provider: ethers.providers.Web3Provider | null = null;
+let signer: ethers.Signer | null = null;
 
 export const isMetamaskInstalled = (): boolean => {
-    const { ethereum, web3 } = window;
-    return ethereum || web3;
+    const { ethereum } = window as any;
+    return Boolean(ethereum && ethereum.isMetaMask);
 };
 
-export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
-    const { ethereum, web3, location } = window;
+export const initializeProvider = async (): Promise<ethers.providers.Web3Provider | null> => {
+    const { ethereum, location } = window as any;
 
-    if (web3Wrapper) {
-        return web3Wrapper;
+    if (provider) {
+        return provider;
     }
 
     if (ethereum) {
         try {
-            web3Wrapper = new Web3Wrapper(ethereum);
-            // Request account access if needed
-            await ethereum.enable();
+            // Create ethers provider
+            provider = new ethers.providers.Web3Provider(ethereum);
 
-            // Subscriptions register
-            ethereum.on('accountsChanged', async (accounts: []) => {
-                // Reload to avoid MetaMask bug: "MetaMask - RPC Error: Internal JSON-RPC"
+            // Request account access
+            await provider.send("eth_requestAccounts", []);
+
+            // Get signer
+            signer = await provider.getSigner();
+
+            // Register listeners
+            ethereum.on("accountsChanged", () => {
                 location.reload();
             });
-            ethereum.on('networkChanged', async (network: number) => {
+            ethereum.on("chainChanged", () => {
                 location.reload();
             });
 
-            return web3Wrapper;
+            return provider;
         } catch (error) {
-            // The user denied account access
+            console.error("User denied account access or error:", error);
             return null;
         }
-    } else if (web3) {
-        web3Wrapper = new Web3Wrapper(web3.currentProvider);
-        return web3Wrapper;
     } else {
-        //  The user does not have metamask installed
+        // The user does not have MetaMask installed
         return null;
     }
 };
 
-export const getWeb3Wrapper = async (): Promise<Web3Wrapper> => {
-    while (!web3Wrapper) {
-        // if web3Wrapper is not set yet, wait and retry
+export const getProvider = async (): Promise<ethers.providers.Web3Provider> => {
+    while (!provider) {
         await sleep(100);
     }
+    return provider!;
+};
 
-    return web3Wrapper;
+export const getSigner = async (): Promise<ethers.Signer> => {
+    while (!signer) {
+        await sleep(100);
+    }
+    return signer!;
 };

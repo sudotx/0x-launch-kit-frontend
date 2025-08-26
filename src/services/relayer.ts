@@ -1,8 +1,9 @@
 import { HttpClient, OrderConfigRequest, OrderConfigResponse, SignedOrder } from '@0x/connect';
-import { assetDataUtils, AssetProxyId } from '@0x/order-utils';
+import { assetDataUtils } from '@0x/order-utils';
 import { Orderbook } from '@0x/orderbook';
 import { BigNumber } from '@0x/utils';
 import { RateLimit } from 'async-sema';
+import { AssetProxyId } from '@0x/types';
 
 import { RELAYER_RPS, RELAYER_URL, RELAYER_WS_URL } from '../common/constants';
 import { tokenAmountInUnitsToBigNumber } from '../util/tokens';
