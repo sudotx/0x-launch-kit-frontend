@@ -28,13 +28,16 @@ export const Erc721App = () => {
             <GeneralLayoutERC721 toolbar={toolbar}>
                 <AdBlockDetector />
                 <CollectibleSellModal />
-                <CheckMetamaskStateModalContainer />
+                <CheckMetamaskStateModalContainer
+                    onConnectWallet={() => { }}
+                    onGoToHome={() => { }}
+                />
                 <Routes>
-                    <Route path={`${ERC721_APP_BASE_PATH}/`} element={<AllCollectibles/>} />
-                    <Route path={`${ERC721_APP_BASE_PATH}/my-collectibles`} element={<MyCollectibles/>} />
+                    <Route path={`${ERC721_APP_BASE_PATH}/`} element={<AllCollectibles />} />
+                    <Route path={`${ERC721_APP_BASE_PATH}/my-collectibles`} element={<MyCollectibles />} />
                     <Route
                         path={`${ERC721_APP_BASE_PATH}/list-collectibles`}
-                        element={<ListCollectibles/>}
+                        element={<ListCollectibles />}
                     />
                     {/* <Route path={`${ERC721_APP_BASE_PATH}/collectible/:id`}>
                         {({ match }) => match && <IndividualCollectible collectibleId={match.params.id} />}

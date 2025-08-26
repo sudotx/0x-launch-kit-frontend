@@ -127,7 +127,7 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
     );
 
     return (
-        <Modal isOpen={isOpen} style={theme.modalTheme}>
+        <Modal isOpen={isOpen} >
             <CloseModalButton onClick={closeModal} />
             <ModalContent>
                 {noMetamaskType === ModalDisplay.EnablePermissions

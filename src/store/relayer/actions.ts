@@ -103,7 +103,7 @@ export const cancelOrder = createAsyncThunk<string, UIOrder, { state: RootState;
         dispatch(
             addNotifications([
                 {
-                    id: tx.transactionHash,
+                    id: tx,
                     kind: NotificationKind.CancelOrder,
                     amount: order.size,
                     token: baseToken,
@@ -114,7 +114,7 @@ export const cancelOrder = createAsyncThunk<string, UIOrder, { state: RootState;
         );
 
         await dispatch(getOrderbookAndUserOrders());
-        return tx.transactionHash;
+        return tx;
     },
 );
 

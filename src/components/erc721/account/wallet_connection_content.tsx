@@ -120,9 +120,8 @@ class WalletConnectionContent extends React.Component<Props, State> {
                     </WalletAddress>
                 </DropdownHeader>
                 <WalletWethBalanceContainerStyled
-                    inDropdown={true}
-                    onWethModalOpen={this._ethModalOpen}
-                    onWethModalClose={this._ethModalClose}
+                // onWethModalOpen={this._ethModalOpen}
+                // onWethModalClose={this._ethModalClose}
                 />
                 <DropdownTextItemStyled
                     onClick={() => ethAccount && copyToClipboard(ethAccount)}
