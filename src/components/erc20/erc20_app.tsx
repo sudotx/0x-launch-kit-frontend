@@ -1,5 +1,4 @@
-import React from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 
 import { ERC20_APP_BASE_PATH } from '../../common/constants';
@@ -21,10 +20,10 @@ export const Erc20App = () => {
         <ThemeProvider theme={themeColor}>
             <GeneralLayout toolbar={toolbar}>
                 <AdBlockDetector />
-                <Switch>
-                    <Route exact={true} path={`${ERC20_APP_BASE_PATH}/`} component={Marketplace} />
-                    <Route exact={true} path={`${ERC20_APP_BASE_PATH}/my-wallet`} component={MyWallet} />
-                </Switch>
+                <Routes>
+                    <Route path={`${ERC20_APP_BASE_PATH}/`} element={<Marketplace/>} />
+                    <Route path={`${ERC20_APP_BASE_PATH}/my-wallet`} element={<MyWallet/>} />
+                </Routes>
             </GeneralLayout>
         </ThemeProvider>
     );

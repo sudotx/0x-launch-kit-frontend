@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
 import { LocalStorage } from '../services/local_storage';
@@ -27,7 +27,15 @@ type Props = OwnProps & DispatchProps & StateProps;
 
 const localStorage = new LocalStorage(window.localStorage);
 
-class App extends React.Component<Props> {
+// Create a wrapper component to use hooks
+const AppWithRouter = (props: Props) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    return <App {...props} location={location} navigate={navigate} />;
+};
+
+class App extends React.Component<Props & { location: any; navigate: any }> {
     private _updateStoreInterval: number | undefined;
     private _updatePriceEtherInterval: number | undefined;
 
@@ -106,9 +114,9 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const AppContainer = withRouter(connect(
+const AppContainer = connect(
     mapStateToProps,
     mapDispatchToProps,
-)(App) as any);
+)(AppWithRouter);
 
 export { App, AppContainer };

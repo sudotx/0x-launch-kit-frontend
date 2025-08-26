@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { LocalStorage } from '../../services/local_storage';
-import { goToHome, initWallet } from '../../store/actions';
+// import { goToHome, initWallet } from '../../store/actions';
 import { getWeb3State } from '../../store/selectors';
 import { ModalDisplay, StoreState, Web3State } from '../../util/types';
 
@@ -90,16 +90,16 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onGoToHome: () => dispatch(goToHome()),
-        onConnectWallet: () => dispatch(initWallet()),
-    };
-};
+// const mapDispatchToProps = (dispatch: any) => {
+//     return {
+//         onGoToHome: () => dispatch(goToHome()),
+//         onConnectWallet: () => dispatch(initWallet()),
+//     };
+// };
 
 const CheckMetamaskStateModalContainer = connect(
     mapStateToProps,
-    mapDispatchToProps,
+    // mapDispatchToProps,
 )(CheckMetamaskStateModal);
 
 export { CheckMetamaskStateModal, CheckMetamaskStateModalContainer };

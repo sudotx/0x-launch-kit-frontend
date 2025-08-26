@@ -1,5 +1,4 @@
-import React from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Routes } from 'react-router';
 import styled, { ThemeProvider } from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../common/constants';
@@ -30,18 +29,17 @@ export const Erc721App = () => {
                 <AdBlockDetector />
                 <CollectibleSellModal />
                 <CheckMetamaskStateModalContainer />
-                <Switch>
-                    <Route exact={true} path={`${ERC721_APP_BASE_PATH}/`} component={AllCollectibles} />
-                    <Route exact={true} path={`${ERC721_APP_BASE_PATH}/my-collectibles`} component={MyCollectibles} />
+                <Routes>
+                    <Route path={`${ERC721_APP_BASE_PATH}/`} element={<AllCollectibles/>} />
+                    <Route path={`${ERC721_APP_BASE_PATH}/my-collectibles`} element={<MyCollectibles/>} />
                     <Route
-                        exact={true}
                         path={`${ERC721_APP_BASE_PATH}/list-collectibles`}
-                        component={ListCollectibles}
+                        element={<ListCollectibles/>}
                     />
-                    <Route path={`${ERC721_APP_BASE_PATH}/collectible/:id`}>
+                    {/* <Route path={`${ERC721_APP_BASE_PATH}/collectible/:id`}>
                         {({ match }) => match && <IndividualCollectible collectibleId={match.params.id} />}
-                    </Route>
-                </Switch>
+                    </Route> */}
+                </Routes>
             </GeneralLayoutERC721>
         </ThemeProvider>
     );
