@@ -1,14 +1,9 @@
-import React, { HTMLAttributes } from 'react';
+import React, { HTMLAttributes, useState, useImperativeHandle, forwardRef } from 'react';
 import styled from 'styled-components';
 
 import { CustomTD, CustomTDLast, CustomTDTitle } from '../../common/table';
 
 export type StickySpreadState = 'top' | 'bottom' | 'hidden';
-
-interface State {
-    stickySpreadState: StickySpreadState;
-    stickySpreadWidth: string;
-}
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     spreadAbsValue?: string;
@@ -51,35 +46,37 @@ export const customTDLastStyles = {
     textAlign: 'right',
 };
 
-export class GridRowSpread extends React.Component<Props> {
-    public state: State = {
-        stickySpreadState: 'hidden',
-        stickySpreadWidth: 'auto',
-    };
-
-    public render = () => {
-        const { spreadAbsValue, spreadPercentValue } = this.props;
-
-        return this.state.stickySpreadState === 'hidden' ? null : (
-            <GridRowSpreadContainer
-                stickySpreadState={this.state.stickySpreadState}
-                stickySpreadWidth={this.state.stickySpreadWidth}
-            >
-                <CustomTDTitle as="div" styles={customTDTitleStyles}>
-                    Spread
-                </CustomTDTitle>
-                <CustomTD as="div" styles={customTDStyles}>
-                    {spreadAbsValue}
-                </CustomTD>
-                <CustomTDLast as="div" styles={customTDLastStyles}>
-                    {spreadPercentValue}%
-                </CustomTDLast>
-            </GridRowSpreadContainer>
-        );
-    };
-
-    public updateStickSpreadState = (stickySpreadState: StickySpreadState, stickySpreadWidth: string) => {
-        this.setState({ stickySpreadState });
-        this.setState({ stickySpreadWidth });
-    };
+export interface GridRowSpreadRef {
+    updateStickSpreadState: (stickySpreadState: StickySpreadState, stickySpreadWidth: string) => void;
 }
+
+export const GridRowSpread = forwardRef<GridRowSpreadRef, Props>((props, ref) => {
+    const { spreadAbsValue, spreadPercentValue } = props;
+    const [stickySpreadState, setStickySpreadState] = useState<StickySpreadState>('hidden');
+    const [stickySpreadWidth, setStickySpreadWidth] = useState('auto');
+
+    useImperativeHandle(ref, () => ({
+        updateStickSpreadState: (newState, newWidth) => {
+            setStickySpreadState(newState);
+            setStickySpreadWidth(newWidth);
+        },
+    }));
+
+    if (stickySpreadState === 'hidden') {
+        return null;
+    }
+
+    return (
+        <GridRowSpreadContainer stickySpreadState={stickySpreadState} stickySpreadWidth={stickySpreadWidth}>
+            <CustomTDTitle as="div" styles={customTDTitleStyles}>
+                Spread
+            </CustomTDTitle>
+            <CustomTD as="div" styles={customTDStyles}>
+                {spreadAbsValue}
+            </CustomTD>
+            <CustomTDLast as="div" styles={customTDLastStyles}>
+                {spreadPercentValue}%
+            </CustomTDLast>
+        </GridRowSpreadContainer>
+    );
+});

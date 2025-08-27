@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import Modal from 'react-modal';
 import styled, { withTheme } from 'styled-components';
 
-import InstallMetamaskSvg from '../../assets/icons/install_metamask.svg';
+// import InstallMetamaskSvg from "../../assets/icons/install_metamask.svg";
 import { METAMASK_CHROME_EXTENSION_DOWNLOAD_URL } from '../../common/constants';
 import { Theme } from '../../themes/commons';
 import { errorsWallet } from '../../util/error_messages';
@@ -93,9 +93,9 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
     const metamaskNotInstalledContent = (
         <>
             <ModalTitle>Install Metamask</ModalTitle>
-            <IconContainer>
+            {/* <IconContainer>
                 <InstallMetamaskSvg />
-            </IconContainer>
+            </IconContainer> */}
             <ModalText>Please install the MetaMask wallet extension from the Chrome Store.</ModalText>
             <ModalText>
                 <ModalTextLink href="https://metamask.io/" target="_blank">
@@ -111,9 +111,9 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
     const metamaskNoPermissionsContent = (
         <>
             <ModalTitle>Connect Metamask</ModalTitle>
-            <IconContainer>
+            {/* <IconContainer>
                 <InstallMetamaskSvg />
-            </IconContainer>
+            </IconContainer> */}
             <ModalText>Please accept the MetaMask wallet permissions in order to access your wallet.</ModalText>
             <ModalText>
                 <ModalTextLink href="https://metamask.io/" target="_blank">

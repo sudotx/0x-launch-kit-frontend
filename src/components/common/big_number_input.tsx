@@ -1,5 +1,5 @@
 import { BigNumber } from '@0x/utils';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
@@ -17,10 +17,6 @@ interface Props {
     valueFixedDecimals?: number;
 }
 
-interface State {
-    currentValueStr: string;
-}
-
 const Input = styled.input`
     ::-webkit-inner-spin-button,
     ::-webkit-outer-spin-button {
@@ -30,68 +26,40 @@ const Input = styled.input`
     -moz-appearance: textfield;
 `;
 
-export class BigNumberInput extends React.Component<Props, State> {
-    public static defaultProps = {
-        placeholder: '0.00',
-    };
+export const BigNumberInput: React.FC<Props> = props => {
+    const {
+        autofocus,
+        className,
+        decimals,
+        placeholder = '0.00',
+        max,
+        min,
+        onChange,
+        step,
+        value,
+        valueFixedDecimals,
+    } = props;
 
-    public readonly state = {
-        currentValueStr: this.props.value
-            ? tokenAmountInUnits(this.props.value, this.props.decimals, this.props.valueFixedDecimals)
-            : '',
-    };
+    const [currentValueStr, setCurrentValueStr] = useState(
+        value ? tokenAmountInUnits(value, decimals, valueFixedDecimals) : '',
+    );
+    const textInput = useRef<HTMLInputElement>(null);
 
-    private _textInput: any;
-
-    public static getDerivedStateFromProps = (props: Props, state: State) => {
-        const { decimals, value, valueFixedDecimals } = props;
-        const { currentValueStr } = state;
-
+    useEffect(() => {
         if (!value) {
-            return {
-                currentValueStr: '',
-            };
+            setCurrentValueStr('');
         } else if (value && !unitsInTokenAmount(currentValueStr || '0', decimals).eq(value)) {
-            return {
-                currentValueStr: tokenAmountInUnits(value, decimals, valueFixedDecimals),
-            };
-        } else {
-            return null;
+            setCurrentValueStr(tokenAmountInUnits(value, decimals, valueFixedDecimals));
         }
-    };
+    }, [value, decimals, valueFixedDecimals, currentValueStr]);
 
-    public componentDidMount = () => {
-        const { autofocus } = this.props;
-
-        if (autofocus) {
-            this._textInput.focus();
+    useEffect(() => {
+        if (autofocus && textInput.current) {
+            textInput.current.focus();
         }
-    };
+    }, [autofocus]);
 
-    public render = () => {
-        const { currentValueStr } = this.state;
-        const { decimals, step, min, max, className, placeholder } = this.props;
-        const stepStr = step && tokenAmountInUnits(step, decimals);
-        const minStr = min && tokenAmountInUnits(min, decimals);
-        const maxStr = max && tokenAmountInUnits(max, decimals);
-
-        return (
-            <Input
-                className={className}
-                max={maxStr}
-                min={minStr}
-                onChange={this._updateValue}
-                ref={_ref => (this._textInput = _ref)}
-                step={stepStr}
-                type={'number'}
-                value={currentValueStr}
-                placeholder={placeholder}
-            />
-        );
-    };
-
-    private readonly _updateValue: React.ReactEventHandler<HTMLInputElement> = e => {
-        const { decimals, onChange, min, max } = this.props;
+    const _updateValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValueStr = e.currentTarget.value;
 
         const newValue = unitsInTokenAmount(newValueStr || '0', decimals);
@@ -101,9 +69,24 @@ export class BigNumberInput extends React.Component<Props, State> {
         }
 
         onChange(newValue);
-
-        this.setState({
-            currentValueStr: newValueStr,
-        });
+        setCurrentValueStr(newValueStr);
     };
-}
+
+    const stepStr = step && tokenAmountInUnits(step, decimals);
+    const minStr = min && tokenAmountInUnits(min, decimals);
+    const maxStr = max && tokenAmountInUnits(max, decimals);
+
+    return (
+        <Input
+            className={className}
+            max={maxStr}
+            min={minStr}
+            onChange={_updateValue}
+            ref={textInput}
+            step={stepStr}
+            type={'number'}
+            value={currentValueStr}
+            placeholder={placeholder}
+        />
+    );
+};

@@ -4,7 +4,7 @@ import styled, { withTheme } from 'styled-components';
 
 import { Theme } from '../../../themes/commons';
 
-interface Props {
+export interface TokenIconProps {
     symbol: string;
     primaryColor?: string;
     isInline?: boolean;
@@ -30,7 +30,7 @@ const Label = styled.label`
     margin: 0;
 `;
 
-const TokenIconContainer = (props: Props) => {
+const TokenIconContainer = (props: TokenIconProps) => {
     const { symbol, primaryColor, theme, icon, ...restProps } = props;
     const fallBack = <Label>{symbol && symbol.toUpperCase()}</Label>;
     const Icon =

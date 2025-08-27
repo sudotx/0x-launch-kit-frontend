@@ -1,16 +1,17 @@
 import { BigNumber, NULL_BYTES } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { ZERO } from '../../../common/constants';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
+import { AppDispatch } from '../../../store';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, OrderFeeData, OrderSide, OrderType, StoreState, UIOrder } from '../../../util/types';
+import { CurrencyPair, OrderFeeData, OrderSide, OrderType, UIOrder } from '../../../util/types';
 
 const Row = styled.div`
     align-items: center;
@@ -74,136 +75,80 @@ interface OwnProps {
     currencyPair: CurrencyPair;
 }
 
-interface StateProps {
-    openSellOrders: UIOrder[];
-    openBuyOrders: UIOrder[];
-}
+const OrderDetails: React.FC<OwnProps> = props => {
+    const {
+        orderType,
+        tokenAmount,
+        tokenPrice,
+        orderSide,
+        currencyPair
+    } = props;
 
-interface DispatchProps {
-    onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<OrderFeeData>;
-}
+    const [makerFeeAmount, setMakerFeeAmount] = useState(ZERO);
+    const [takerFeeAmount, setTakerFeeAmount] = useState(ZERO);
+    const [makerFeeAssetData, setMakerFeeAssetData] = useState<string | undefined>(NULL_BYTES);
+    const [takerFeeAssetData, setTakerFeeAssetData] = useState<string | undefined>(NULL_BYTES);
+    const [quoteTokenAmount, setQuoteTokenAmount] = useState(ZERO);
+    const [canOrderBeFilled, setCanOrderBeFilled] = useState(true);
 
-type Props = StateProps & OwnProps & DispatchProps;
+    const dispatch = useDispatch<AppDispatch>();
+    const openSellOrders = useSelector(getOpenSellOrders);
+    const openBuyOrders = useSelector(getOpenBuyOrders);
 
-interface State {
-    makerFeeAmount: BigNumber;
-    takerFeeAmount: BigNumber;
-    makerFeeAssetData?: string;
-    takerFeeAssetData?: string;
-    canOrderBeFilled?: boolean;
-    quoteTokenAmount: BigNumber;
-}
+    useEffect(() => {
+        const updateOrderDetailsState = async () => {
+            if (!currencyPair) {
+                return;
+            }
 
-class OrderDetails extends React.Component<Props, State> {
-    public state = {
-        makerFeeAmount: ZERO,
-        takerFeeAmount: ZERO,
-        makerFeeAssetData: NULL_BYTES,
-        takerFeeAssetData: NULL_BYTES,
-        quoteTokenAmount: ZERO,
-        canOrderBeFilled: true,
-    };
+            if (orderType === OrderType.Limit) {
+                const { quote, base } = currencyPair;
+                const quoteToken = getKnownTokens().getTokenBySymbol(quote);
+                const baseToken = getKnownTokens().getTokenBySymbol(base);
+                const priceInQuoteBaseUnits = Web3Wrapper.toBaseUnitAmount(tokenPrice, quoteToken.decimals);
+                const baseTokenAmountInUnits = Web3Wrapper.toUnitAmount(tokenAmount, baseToken.decimals);
+                const newQuoteTokenAmount = baseTokenAmountInUnits.multipliedBy(priceInQuoteBaseUnits);
 
-    public componentDidUpdate = async (prevProps: Readonly<Props>) => {
-        const newProps = this.props;
-        if (
-            newProps.tokenPrice !== prevProps.tokenPrice ||
-            newProps.orderType !== prevProps.orderType ||
-            newProps.tokenAmount !== prevProps.tokenAmount ||
-            newProps.currencyPair !== prevProps.currencyPair ||
-            newProps.orderSide !== prevProps.orderSide
-        ) {
-            await this._updateOrderDetailsState();
-        }
-    };
+                const feeData: OrderFeeData = await dispatch(
+                    fetchTakerAndMakerFee({ amount: tokenAmount, price: tokenPrice, side: orderSide }),
+                ).unwrap();
+                setMakerFeeAmount(feeData.makerFee);
+                setMakerFeeAssetData(feeData.makerFeeAssetData);
+                setTakerFeeAmount(feeData.takerFee);
+                setTakerFeeAssetData(feeData.takerFeeAssetData);
+                setQuoteTokenAmount(newQuoteTokenAmount);
+            } else {
+                const isSell = orderSide === OrderSide.Sell;
+                const [ordersToFill, amountToPayForEachOrder, canBeFilled] = buildMarketOrders(
+                    {
+                        amount: tokenAmount,
+                        orders: isSell ? openBuyOrders : openSellOrders,
+                    },
+                    orderSide,
+                );
 
-    public componentDidMount = async () => {
-        await this._updateOrderDetailsState();
-    };
+                const firstOrderWithFees = ordersToFill.find(o => o.takerFeeAssetData !== NULL_BYTES);
+                const newTakerFeeAssetData = firstOrderWithFees ? firstOrderWithFees.takerFeeAssetData : NULL_BYTES;
+                const newTakerFeeAmount = ordersToFill.reduce((sum, order) => sum.plus(order.takerFee), ZERO);
+                const newQuoteTokenAmount = sumTakerAssetFillableOrders(orderSide, ordersToFill, amountToPayForEachOrder);
 
-    public render = () => {
-        const fee = this._getFeeStringForRender();
-        const cost = this._getCostStringForRender();
-        const { orderSide } = this.props;
-        const costText = orderSide === OrderSide.Sell ? 'Total' : 'Cost';
-        return (
-            <>
-                <LabelContainer>
-                    <MainLabel>Order Details</MainLabel>
-                </LabelContainer>
-                <Row>
-                    <FeeLabel>Fee</FeeLabel>
-                    <Value>{fee}</Value>
-                </Row>
-                <Row>
-                    <CostLabel>{costText}</CostLabel>
-                    <CostValue>{cost}</CostValue>
-                </Row>
-            </>
-        );
-    };
+                setTakerFeeAmount(newTakerFeeAmount);
+                setTakerFeeAssetData(newTakerFeeAssetData);
+                setQuoteTokenAmount(newQuoteTokenAmount);
+                setCanOrderBeFilled(canBeFilled);
+            }
+        };
 
-    private readonly _updateOrderDetailsState = async () => {
-        const { currencyPair, orderType, orderSide } = this.props;
-        if (!currencyPair) {
-            return;
-        }
+        updateOrderDetailsState();
+    }, [tokenPrice, orderType, tokenAmount, currencyPair, orderSide, dispatch, openBuyOrders, openSellOrders]);
 
-        if (orderType === OrderType.Limit) {
-            const { tokenAmount, tokenPrice, onFetchTakerAndMakerFee } = this.props;
-            const { quote, base } = currencyPair;
-            const quoteToken = getKnownTokens().getTokenBySymbol(quote);
-            const baseToken = getKnownTokens().getTokenBySymbol(base);
-            const priceInQuoteBaseUnits = Web3Wrapper.toBaseUnitAmount(tokenPrice, quoteToken.decimals);
-            const baseTokenAmountInUnits = Web3Wrapper.toUnitAmount(tokenAmount, baseToken.decimals);
-            const quoteTokenAmount = baseTokenAmountInUnits.multipliedBy(priceInQuoteBaseUnits);
-            const { makerFee, makerFeeAssetData, takerFee, takerFeeAssetData } = await onFetchTakerAndMakerFee(
-                tokenAmount,
-                tokenPrice,
-                orderSide,
-            );
-            this.setState({
-                makerFeeAmount: makerFee,
-                makerFeeAssetData,
-                takerFeeAmount: takerFee,
-                takerFeeAssetData,
-                quoteTokenAmount,
-            });
-        } else {
-            const { tokenAmount, openSellOrders, openBuyOrders } = this.props;
-            const isSell = orderSide === OrderSide.Sell;
-            const [ordersToFill, amountToPayForEachOrder, canOrderBeFilled] = buildMarketOrders(
-                {
-                    amount: tokenAmount,
-                    orders: isSell ? openBuyOrders : openSellOrders,
-                },
-                orderSide,
-            );
-            // HACK(dekz): we assume takerFeeAssetData is either empty or is consistent through all orders
-            const firstOrderWithFees = ordersToFill.find(o => o.takerFeeAssetData !== NULL_BYTES);
-            const takerFeeAssetData = firstOrderWithFees ? firstOrderWithFees.takerFeeAssetData : NULL_BYTES;
-            const takerFeeAmount = ordersToFill.reduce((sum, order) => sum.plus(order.takerFee), ZERO);
-            const quoteTokenAmount = sumTakerAssetFillableOrders(orderSide, ordersToFill, amountToPayForEachOrder);
-
-            this.setState({
-                takerFeeAmount,
-                takerFeeAssetData,
-                quoteTokenAmount,
-                canOrderBeFilled,
-            });
-        }
-    };
-
-    private readonly _getFeeStringForRender = () => {
-        const { orderType } = this.props;
-        const { makerFeeAmount, makerFeeAssetData, takerFeeAmount, takerFeeAssetData } = this.state;
-        // If its a Limit order the user is paying a maker fee
+    const getFeeStringForRender = () => {
         const feeAssetData = orderType === OrderType.Limit ? makerFeeAssetData : takerFeeAssetData;
         const feeAmount = orderType === OrderType.Limit ? makerFeeAmount : takerFeeAmount;
         if (feeAssetData === NULL_BYTES) {
             return '0.00';
         }
-        const feeToken = getKnownTokens().getTokenByAssetData(feeAssetData);
+        const feeToken = getKnownTokens().getTokenByAssetData(feeAssetData as string);
 
         return `${tokenAmountInUnits(
             feeAmount,
@@ -212,38 +157,38 @@ class OrderDetails extends React.Component<Props, State> {
         )} ${tokenSymbolToDisplayString(feeToken.symbol)}`;
     };
 
-    private readonly _getCostStringForRender = () => {
-        const { canOrderBeFilled } = this.state;
-        const { orderType } = this.props;
+    const getCostStringForRender = () => {
         if (orderType === OrderType.Market && !canOrderBeFilled) {
             return `---`;
         }
 
-        const { quote } = this.props.currencyPair;
+        const { quote } = currencyPair;
         const quoteToken = getKnownTokens().getTokenBySymbol(quote);
-        const { quoteTokenAmount } = this.state;
         const costAmount = tokenAmountInUnits(quoteTokenAmount, quoteToken.decimals, quoteToken.displayDecimals);
         return `${costAmount} ${tokenSymbolToDisplayString(quote)}`;
     };
-}
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        openSellOrders: getOpenSellOrders(state),
-        openBuyOrders: getOpenBuyOrders(state),
-    };
+    const fee = getFeeStringForRender();
+    const cost = getCostStringForRender();
+    const costText = orderSide === OrderSide.Sell ? 'Total' : 'Cost';
+
+    return (
+        <>
+            <LabelContainer>
+                <MainLabel>Order Details</MainLabel>
+            </LabelContainer>
+            <Row>
+                <FeeLabel>Fee</FeeLabel>
+                <Value>{fee}</Value>
+            </Row>
+            <Row>
+                <CostLabel>{costText}</CostLabel>
+                <CostValue>{cost}</CostValue>
+            </Row>
+        </>
+    );
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
-            dispatch(fetchTakerAndMakerFee(amount, price, side, side)),
-    };
-};
-
-const OrderDetailsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(OrderDetails);
+const OrderDetailsContainer = React.memo(OrderDetails);
 
 export { CostValue, OrderDetails, OrderDetailsContainer, Value };

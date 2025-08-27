@@ -1,22 +1,11 @@
-import React, { HTMLAttributes } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import styled, { withTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
-import RedExclamationSign from '../../assets/icons/red_exclamation_sign.svg';
 import { LocalStorage } from '../../services/local_storage';
 import { Theme } from '../../themes/commons';
 
 import { CloseModalButton } from './icons/close_modal_button';
-
-interface State {
-    isOpen: boolean;
-}
-
-interface OwnProps {
-    theme: Theme;
-}
-
-interface Props extends HTMLAttributes<HTMLDivElement>, OwnProps { }
 
 const ModalContent = styled.div`
     align-items: center;
@@ -61,68 +50,67 @@ const IconContainer = styled.div`
 
 const localStorage = new LocalStorage(window.localStorage);
 
-class AdBlockDetectorContainer extends React.Component<Props, State> {
-    public readonly state: State = {
-        isOpen: false,
+const AdBlockDetector: React.FC = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const theme = useTheme() as Theme;
+
+    useEffect(() => {
+        const detectAdBlock = () => {
+            return new Promise<boolean>(resolve => {
+                const elem = document.createElement('div');
+                elem.className = 'adclass';
+                document.body.appendChild(elem);
+
+                window.setTimeout(() => {
+                    const isAdBlockDetected = !(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
+                    if (elem.parentNode) {
+                        elem.parentNode.removeChild(elem);
+                    }
+                    resolve(isAdBlockDetected);
+                }, 100);
+            });
+        };
+
+        const checkAdBlock = async () => {
+            const wasAdBlockMessageShown = localStorage.getAdBlockMessageShown();
+            if (!wasAdBlockMessageShown) {
+                const adBlockDetected = await detectAdBlock();
+                setIsOpen(adBlockDetected);
+                localStorage.saveAdBlockMessageShown(true);
+            }
+        };
+
+        checkAdBlock();
+    }, []);
+
+    const closeModal = () => {
+        setIsOpen(false);
     };
 
-    public componentDidMount = async () => {
-        const wasAdBlockMessageShown = localStorage.getAdBlockMessageShown();
-        if (!wasAdBlockMessageShown) {
-            this.setState({ isOpen: await this.detectAdBlock() });
-            localStorage.saveAdBlockMessageShown(true);
-        }
-    };
-
-    public detectAdBlock = () => {
-        return new Promise<boolean>((resolve, reject) => {
-            // Creates a bait for ad block
-            const elem = document.createElement('div');
-
-            elem.className = 'adclass';
-            document.body.appendChild(elem);
-
-            let isAdBlockDetected;
-
-            window.setTimeout(() => {
-                isAdBlockDetected = !(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
-                resolve(isAdBlockDetected);
-            }, 0);
-        });
-    };
-
-    public closeModal = () => {
-        this.setState({ isOpen: false });
-    };
-
-    public render = () => {
-        return (
-            <Modal
-                isOpen={this.state.isOpen}
-                style={{
-                    content: {
-                        ...this.props.theme.modalTheme?.content,
-                        flexDirection: this.props.theme.modalTheme?.content?.flexDirection as any,
-                        position: this.props.theme.modalTheme?.content?.position as any,
-                        display: this.props.theme.modalTheme?.content?.display as any,
-                        overflow: this.props.theme.modalTheme?.content?.overflow as any
-                    },
-                    overlay: this.props.theme.modalTheme?.overlay
-                }}
-            >
-                <CloseModalButton onClick={this.closeModal} />
-                <ModalContent>
-                    <ModalTitle>Ad Blocker Detected</ModalTitle>
-                    <IconContainer>
-                        <RedExclamationSign />
-                    </IconContainer>
-                    <ModalText>This dApp may not work correctly with your ad blocker enabled</ModalText>
-                </ModalContent>
-            </Modal>
-        );
-    };
-}
-
-const AdBlockDetector = withTheme(AdBlockDetectorContainer);
+    return (
+        <Modal
+            isOpen={isOpen}
+            style={{
+                content: {
+                    ...theme.modalTheme?.content,
+                    flexDirection: theme.modalTheme?.content?.flexDirection as any,
+                    position: theme.modalTheme?.content?.position as any,
+                    display: theme.modalTheme?.content?.display as any,
+                    overflow: theme.modalTheme?.content?.overflow as any,
+                },
+                overlay: theme.modalTheme?.overlay,
+            }}
+        >
+            <CloseModalButton onClick={closeModal} />
+            <ModalContent>
+                <ModalTitle>Ad Blocker Detected</ModalTitle>
+                {/* <IconContainer>
+                    <RedExclamationSign />
+                </IconContainer> */}
+                <ModalText>This dApp may not work correctly with your ad blocker enabled</ModalText>
+            </ModalContent>
+        </Modal>
+    );
+};
 
 export { AdBlockDetector };

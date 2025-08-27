@@ -1,6 +1,6 @@
 import { BigNumber } from '@0x/utils';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { METAMASK_EXTENSION_URL } from '../../../common/constants';
@@ -18,11 +18,12 @@ import {
 import { errorsWallet } from '../../../util/error_messages';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
+import { ButtonVariant, Web3State } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 import { IconType, Tooltip } from '../../common/tooltip';
+import { AppDispatch } from '../../../store';
 
 const LabelWrapper = styled.div`
     align-items: center;
@@ -87,7 +88,7 @@ interface ErrorCardStyledProps {
     cursor?: string;
 }
 
-const ErrorCardStyled = styled(ErrorCard)<ErrorCardStyledProps>`
+const ErrorCardStyled = styled(ErrorCard) <ErrorCardStyledProps>`
     cursor: ${props => props.cursor};
     position: absolute;
     top: 50%;
@@ -130,65 +131,29 @@ const ButtonStyled = styled(Button)`
     width: 100%;
 `;
 
-interface StateProps {
-    web3State: Web3State;
-    currencyPair: CurrencyPair;
-    baseToken: Token | null;
-    quoteToken: Token | null;
-    ethAccount: string;
-    baseTokenBalance: TokenBalance | null;
-    quoteTokenBalance: TokenBalance | null;
-    totalEthBalance: BigNumber;
-}
+const simplifiedTextBoxBig = () => (
+    <svg width="67" height="14" viewBox="0 0 67 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="67" height="14" rx="4" />
+    </svg>
+);
 
-interface DispatchProps {
-    onConnectWallet: () => any;
-}
+const simplifiedTextBoxSmall = () => (
+    <svg width="56" height="14" viewBox="0 0 56 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="56" height="14" rx="4" />
+    </svg>
+);
 
-type Props = StateProps & DispatchProps;
+const getWalletName = () => 'MetaMask';
 
-interface State {
-    quoteBalance: BigNumber;
-    baseBalance: BigNumber;
-}
-
-const simplifiedTextBoxBig = () => {
-    return (
-        <svg width="67" height="14" viewBox="0 0 67 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="67" height="14" rx="4" />
-        </svg>
-    );
-};
-
-const simplifiedTextBoxSmall = () => {
-    return (
-        <svg width="56" height="14" viewBox="0 0 56 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="56" height="14" rx="4" />
-        </svg>
-    );
-};
-
-const getWalletName = () => {
-    return 'MetaMask';
-};
-
-const getWallet = (web3State: Web3State) => {
-    return (
-        <WalletStatusContainer>
-            <WalletStatusBadge web3State={web3State} />
-            <WalletStatusTitle>{getWalletName()}</WalletStatusTitle>
-        </WalletStatusContainer>
-    );
-};
+const getWallet = (web3State: Web3State) => (
+    <WalletStatusContainer>
+        <WalletStatusBadge web3State={web3State} />
+        <WalletStatusTitle>{getWalletName()}</WalletStatusTitle>
+    </WalletStatusContainer>
+);
 
 const getWalletTitle = (web3State: Web3State) => {
-    let title = 'Wallet Balance';
-
-    if (web3State === Web3State.NotInstalled) {
-        title = 'No wallet found';
-    }
-
-    return title;
+    return web3State === Web3State.NotInstalled ? 'No wallet found' : 'Wallet Balance';
 };
 
 const openMetamaskExtensionUrl = () => {
@@ -198,29 +163,18 @@ const openMetamaskExtensionUrl = () => {
     }
 };
 
-class WalletBalance extends React.Component<Props, State> {
-    public render = () => {
-        const { web3State } = this.props;
-        const walletContent = this._getWalletContent();
-        return (
-            <Card title={getWalletTitle(web3State)} action={getWallet(web3State)} minHeightBody={'0px'}>
-                {walletContent}
-            </Card>
-        );
-    };
+const WalletBalance: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const web3State = useSelector(getWeb3State);
+    const currencyPair = useSelector(getCurrencyPair);
+    const quoteToken = useSelector(getQuoteToken);
+    const baseTokenBalance = useSelector(getBaseTokenBalance);
+    const quoteTokenBalance = useSelector(getQuoteTokenBalance);
+    const totalEthBalance = useSelector(getTotalEthBalance);
 
-    private readonly _getWalletContent = () => {
-        let content: any = null;
-        const {
-            web3State,
-            currencyPair,
-            onConnectWallet,
-            quoteToken,
-            quoteTokenBalance,
-            baseTokenBalance,
-            totalEthBalance,
-        } = this.props;
+    const onConnectWallet = () => dispatch(initWallet());
 
+    const getWalletContent = () => {
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
             const quoteTokenBalanceAmount = isWeth(quoteToken.symbol) ? totalEthBalance : quoteTokenBalance.balance;
             const quoteBalanceString = tokenAmountInUnits(
@@ -237,7 +191,7 @@ class WalletBalance extends React.Component<Props, State> {
                 <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />
             ) : null;
             const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ETH' : tokenSymbolToDisplayString(currencyPair.quote);
-            content = (
+            return (
                 <>
                     <LabelWrapper>
                         <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
@@ -255,7 +209,7 @@ class WalletBalance extends React.Component<Props, State> {
         }
 
         if (web3State === Web3State.Locked) {
-            content = (
+            return (
                 <WalletErrorContainer>
                     <ErrorCardStyled
                         fontSize={FontSize.Large}
@@ -264,24 +218,16 @@ class WalletBalance extends React.Component<Props, State> {
                         text={errorsWallet.mmConnect}
                         textAlign="center"
                     />
-                    <SimplifiedTextBox top="0" left="0">
-                        {simplifiedTextBoxBig()}
-                    </SimplifiedTextBox>
-                    <SimplifiedTextBox top="0" right="0">
-                        {simplifiedTextBoxBig()}
-                    </SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" left="0">
-                        {simplifiedTextBoxSmall()}
-                    </SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" right="0">
-                        {simplifiedTextBoxSmall()}
-                    </SimplifiedTextBox>
+                    <SimplifiedTextBox top="0" left="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
+                    <SimplifiedTextBox top="0" right="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" left="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" right="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
                 </WalletErrorContainer>
             );
         }
 
         if (web3State === Web3State.NotInstalled) {
-            content = (
+            return (
                 <>
                     <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
                     <ButtonStyled variant={ButtonVariant.Tertiary} onClick={openMetamaskExtensionUrl}>
@@ -292,15 +238,11 @@ class WalletBalance extends React.Component<Props, State> {
         }
 
         if (web3State === Web3State.Loading) {
-            content = (
-                <>
-                    <ButtonStyled variant={ButtonVariant.Tertiary}>{errorsWallet.mmLoading}</ButtonStyled>
-                </>
-            );
+            return <ButtonStyled variant={ButtonVariant.Tertiary}>{errorsWallet.mmLoading}</ButtonStyled>;
         }
 
         if (web3State === Web3State.Error) {
-            content = (
+            return (
                 <WalletErrorContainer>
                     <ErrorCardStyled
                         cursor={'default'}
@@ -309,48 +251,24 @@ class WalletBalance extends React.Component<Props, State> {
                         text={errorsWallet.mmWrongNetwork}
                         textAlign="center"
                     />
-                    <SimplifiedTextBox top="0" left="0">
-                        {simplifiedTextBoxBig()}
-                    </SimplifiedTextBox>
-                    <SimplifiedTextBox top="0" right="0">
-                        {simplifiedTextBoxBig()}
-                    </SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" left="0">
-                        {simplifiedTextBoxSmall()}
-                    </SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" right="0">
-                        {simplifiedTextBoxSmall()}
-                    </SimplifiedTextBox>
+                    <SimplifiedTextBox top="0" left="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
+                    <SimplifiedTextBox top="0" right="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" left="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
+                    <SimplifiedTextBox bottom="0" right="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
                 </WalletErrorContainer>
             );
         }
 
-        return content;
+        return null;
     };
-}
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        web3State: getWeb3State(state),
-        currencyPair: getCurrencyPair(state),
-        baseToken: getBaseToken(state),
-        quoteToken: getQuoteToken(state),
-        ethAccount: getEthAccount(state),
-        quoteTokenBalance: getQuoteTokenBalance(state),
-        baseTokenBalance: getBaseTokenBalance(state),
-        totalEthBalance: getTotalEthBalance(state),
-    };
+    return (
+        <Card title={getWalletTitle(web3State)} action={getWallet(web3State)} minHeightBody={'0px'}>
+            {getWalletContent()}
+        </Card>
+    );
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onConnectWallet: () => dispatch(initWallet()),
-    };
-};
-
-const WalletBalanceContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(WalletBalance);
+const WalletBalanceContainer = React.memo(WalletBalance);
 
 export { WalletBalance, WalletBalanceContainer };

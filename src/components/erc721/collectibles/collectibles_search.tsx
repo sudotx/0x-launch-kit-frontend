@@ -17,7 +17,7 @@ export const CollectiblesSearch: React.FC<Props> = props => {
     return (
         <>
             <InputSearch placeholder={'Search'} onClick={showModal} readOnly={true} focusOutline={false} />
-            <SearchModalContainer isOpen={isModalOpen} onClose={hideModal} theme={props.theme} />
+            {(SearchModalContainer as any)({ isOpen: isModalOpen, onClose: hideModal, theme: props.theme })}
         </>
     );
 };

@@ -1,21 +1,14 @@
 import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { getEthAccount } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
-import { StoreState } from '../../../util/types';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> { }
-
-interface StateProps {
-    ethAccount: string;
-}
-
-type Props = StateProps & OwnProps;
 
 const connectToWallet = () => {
     alert('connect to another wallet');
@@ -46,42 +39,31 @@ const DropdownItems = styled(CardBase)`
     min-width: 240px;
 `;
 
-class WalletConnectionContent extends React.PureComponent<Props> {
-    public render = () => {
-        const { ethAccount, ...restProps } = this.props;
-        const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
+const WalletConnectionContent: React.FC<OwnProps> = props => {
+    const ethAccount = useSelector(getEthAccount);
+    const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
 
-        const content = (
-            <DropdownItems>
-                <DropdownTextItem
-                    onClick={() => ethAccount && copyToClipboard(ethAccount)}
-                    text="Copy Address to Clipboard"
-                />
-                <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
-                <DropdownTextItem onClick={goToURL} text="Manage Account" />
-            </DropdownItems>
-        );
-
-        return (
-            <WalletConnectionStatusContainer
-                walletConnectionContent={content}
-                headerText={ethAccountText}
-                ethAccount={ethAccount}
-                {...restProps}
+    const content = (
+        <DropdownItems>
+            <DropdownTextItem
+                onClick={() => ethAccount && copyToClipboard(ethAccount)}
+                text="Copy Address to Clipboard"
             />
-        );
-    }
-}
+            <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
+            <DropdownTextItem onClick={goToURL} text="Manage Account" />
+        </DropdownItems>
+    );
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        ethAccount: getEthAccount(state),
-    };
+    return (
+        <WalletConnectionStatusContainer
+            walletConnectionContent={content}
+            headerText={ethAccountText}
+            ethAccount={ethAccount}
+            {...props}
+        />
+    );
 };
 
-const WalletConnectionContentContainer = connect(
-    mapStateToProps,
-    {},
-)(WalletConnectionContent);
+const WalletConnectionContentContainer = React.memo(WalletConnectionContent);
 
 export { WalletConnectionContent, WalletConnectionContentContainer };
