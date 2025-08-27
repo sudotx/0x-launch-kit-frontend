@@ -1,5 +1,5 @@
 import { BigNumber } from '@0x/utils';
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
@@ -28,11 +28,6 @@ interface Props extends React.ComponentProps<typeof Modal> {
     totalEth: BigNumber;
     wethBalance: BigNumber;
     ethInUsd: BigNumber | null;
-}
-
-interface State {
-    editing: Editing;
-    selectedWeth: BigNumber;
 }
 
 const sliderThumbDimensions = '16px';
@@ -69,17 +64,17 @@ const Slider = styled.input`
     &::-webkit-slider-runnable-track {
         ${sliderTrackProps}
         background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
-    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-moz-range-track {
         ${sliderTrackProps}
         background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
-    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-ms-track {
         ${sliderTrackProps}
         background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
-    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
@@ -158,15 +153,15 @@ const EthBox = styled.div<EthBoxProps>`
 
     &:focus-within {
         border-color: ${props =>
-            props.boxType === ETHBoxType.Weth
-                ? props.theme.componentsTheme.ethBoxActiveColor
-                : props.theme.componentsTheme.textDark};
+        props.boxType === ETHBoxType.Weth
+            ? props.theme.componentsTheme.ethBoxActiveColor
+            : props.theme.componentsTheme.textDark};
 
         h4 {
             color: ${props =>
-                props.boxType === ETHBoxType.Weth
-                    ? props.theme.componentsTheme.ethBoxActiveColor
-                    : props.theme.componentsTheme.textLight};
+        props.boxType === ETHBoxType.Weth
+            ? props.theme.componentsTheme.ethBoxActiveColor
+            : props.theme.componentsTheme.textLight};
         }
     }
 `;
@@ -250,173 +245,161 @@ const minEth = unitsInTokenAmount('0.05', ETH_DECIMALS);
 const minSlidervalue = '0.00';
 const PLACEHOLDER = '0.000';
 
-class WethModal extends React.Component<Props, State> {
-    public state = {
-        selectedWeth: this.props.wethBalance,
-        editing: Editing.None,
-    };
+export const WethModal: React.FC<Props> = props => {
+    const { isSubmitting, totalEth, wethBalance, ethInUsd, onSubmit, onRequestClose, ...restProps } = props;
+    const [selectedWeth, setSelectedWeth] = useState(wethBalance);
+    const [editing, setEditing] = useState(Editing.None);
 
-    public render = () => {
-        const { isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
-        const { editing, selectedWeth } = this.state;
-
-        const selectedEth = totalEth.minus(selectedWeth);
-        const selectedWethStr = tokenAmountInUnits(selectedWeth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
-        const selectedEthStr = tokenAmountInUnits(selectedEth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
-        const totalEthStr = tokenAmountInUnits(totalEth, ETH_DECIMALS);
-        const isInsufficientEth = selectedEth.isLessThan(minEth);
-        const isDisabled = wethBalance.isEqualTo(selectedWeth) || isSubmitting || isInsufficientEth;
-
-        return (
-            <Modal {...restProps}>
-                <CloseModalButton onClick={this._closeModal} />
-                <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
-                {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toFixed(2)} </ETHPrice> : null}
-                <EthBoxes>
-                    <EthBox boxType={ETHBoxType.Eth}>
-                        {editing === Editing.Eth ? (
-                            <FormBox noValidate={true} onSubmit={this._disableEdit}>
-                                <InputEth
-                                    autofocus={true}
-                                    boxType={ETHBoxType.Eth}
-                                    decimals={18}
-                                    max={totalEth}
-                                    min={ZERO}
-                                    onChange={this._updateEth}
-                                    value={selectedEth}
-                                    placeholder={PLACEHOLDER}
-                                    valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
-                                />
-                            </FormBox>
-                        ) : (
-                            <EthBoxValue
-                                boxType={ETHBoxType.Eth}
-                                isZero={selectedEthStr === minSlidervalue}
-                                onClick={this._enableEditEth}
-                            >
-                                {selectedEthStr}
-                            </EthBoxValue>
-                        )}
-                        <EthBoxUnit>ETH</EthBoxUnit>
-                    </EthBox>
-                    <EthBox boxType={ETHBoxType.Weth}>
-                        {editing === Editing.Weth ? (
-                            <FormBox noValidate={true} onSubmit={this._disableEdit}>
-                                <InputEth
-                                    autofocus={true}
-                                    decimals={ETH_DECIMALS}
-                                    max={totalEth}
-                                    min={ZERO}
-                                    onChange={this._updateWeth}
-                                    value={selectedWeth}
-                                    boxType={ETHBoxType.Weth}
-                                    placeholder={PLACEHOLDER}
-                                    valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
-                                />
-                            </FormBox>
-                        ) : (
-                            <EthBoxValue
-                                boxType={ETHBoxType.Weth}
-                                isZero={selectedWethStr === minSlidervalue}
-                                onClick={this._enableEditWeth}
-                            >
-                                {selectedWethStr}
-                            </EthBoxValue>
-                        )}
-                        <EthBoxUnit>wETH</EthBoxUnit>
-                        <TooltipStyled>
-                            <Tooltip description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
-                        </TooltipStyled>
-                    </EthBox>
-                </EthBoxes>
-                <Slider
-                    max={totalEthStr}
-                    min="0"
-                    onChange={this._updateSelectedWeth}
-                    step="0.01"
-                    style={{
-                        '--min': '0',
-                        '--max': totalEthStr,
-                        '--val': selectedWethStr,
-                        '--color': 'red',
-                        color: 'var(--color)',
-                    }}
-                    type="range"
-                    value={selectedWethStr}
-                />
-                <SetMinEthWrapper hideWarning={isInsufficientEth ? false : true}>
-                    ETH required for fees.&nbsp;
-                    <SetMinEthButton href="" onClick={this._setMinEth}>
-                        0.05 ETH Recommended
-                    </SetMinEthButton>
-                </SetMinEthWrapper>
-                <Button onClick={this.submit} disabled={isDisabled} variant={ButtonVariant.Balance}>
-                    Update Balance{isSubmitting && '...'}
-                </Button>
-            </Modal>
-        );
-    };
-
-    public submit = () => {
-        this.props.onSubmit(this.state.selectedWeth);
-    };
-
-    private readonly _updateEth = (newEth: BigNumber) => {
-        const { totalEth } = this.props;
-
-        this.setState({
-            selectedWeth: totalEth.minus(newEth),
-        });
-    };
-
-    private readonly _updateWeth = (newWeth: BigNumber) => {
-        this.setState({
-            selectedWeth: newWeth,
-        });
-    };
-
-    private readonly _updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
-        const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, ETH_DECIMALS);
-
-        this.setState({
-            selectedWeth: newSelectedWeth,
-        });
-    };
-
-    private readonly _closeModal = (e: any) => {
-        if (this.props.onRequestClose) {
-            this.props.onRequestClose(e);
+    useEffect(() => {
+        if (props.isOpen) {
+            setSelectedWeth(wethBalance);
         }
-        this.setState({
-            selectedWeth: this.props.wethBalance,
-        });
-    };
+    }, [wethBalance, props.isOpen]);
 
-    private readonly _setMinEth: React.ReactEventHandler<HTMLAnchorElement> = e => {
-        e.preventDefault();
+    const _updateEth = useCallback(
+        (newEth: BigNumber) => {
+            setSelectedWeth(totalEth.minus(newEth));
+        },
+        [totalEth],
+    );
 
-        this.setState({
-            selectedWeth: this.props.totalEth.minus(minEth),
-        });
-    };
+    const _updateWeth = useCallback((newWeth: BigNumber) => {
+        setSelectedWeth(newWeth);
+    }, []);
 
-    private readonly _enableEditEth = () => {
-        this.setState({
-            editing: Editing.Eth,
-        });
-    };
+    const _updateSelectedWeth = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, ETH_DECIMALS);
+        setSelectedWeth(newSelectedWeth);
+    }, []);
 
-    private readonly _enableEditWeth = () => {
-        this.setState({
-            editing: Editing.Weth,
-        });
-    };
+    const _closeModal = useCallback(
+        (e: any) => {
+            if (onRequestClose) {
+                onRequestClose(e);
+            }
+            setSelectedWeth(wethBalance);
+        },
+        [onRequestClose, wethBalance],
+    );
 
-    private readonly _disableEdit = () => {
-        this.setState({
-            editing: Editing.None,
-        });
-    };
-}
+    const _setMinEth = useCallback(
+        (e: React.MouseEvent<HTMLAnchorElement>) => {
+            e.preventDefault();
 
-export { WethModal };
+            setSelectedWeth(totalEth.minus(minEth));
+        },
+        [totalEth],
+    );
+
+    const _enableEditEth = useCallback(() => {
+        setEditing(Editing.Eth);
+    }, []);
+
+    const _enableEditWeth = useCallback(() => {
+        setEditing(Editing.Weth);
+    }, []);
+
+    const _disableEdit = useCallback(() => {
+        setEditing(Editing.None);
+    }, []);
+
+    const submit = useCallback(() => {
+        onSubmit(selectedWeth);
+    }, [onSubmit, selectedWeth]);
+
+    const selectedEth = totalEth.minus(selectedWeth);
+    const selectedWethStr = tokenAmountInUnits(selectedWeth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
+    const selectedEthStr = tokenAmountInUnits(selectedEth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
+    const totalEthStr = tokenAmountInUnits(totalEth, ETH_DECIMALS);
+    const isInsufficientEth = selectedEth.isLessThan(minEth);
+    const isDisabled = wethBalance.isEqualTo(selectedWeth) || isSubmitting || isInsufficientEth;
+
+    return (
+        <Modal {...restProps} onRequestClose={_closeModal}>
+            <CloseModalButton onClick={_closeModal} />
+            <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
+            {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toFixed(2)} </ETHPrice> : null}
+            <EthBoxes>
+                <EthBox boxType={ETHBoxType.Eth}>
+                    {editing === Editing.Eth ? (
+                        <FormBox noValidate={true} onSubmit={_disableEdit}>
+                            <InputEth
+                                autoFocus={true}
+                                boxType={ETHBoxType.Eth}
+                                decimals={18}
+                                max={totalEth}
+                                min={ZERO}
+                                onChange={_updateEth}
+                                value={selectedEth}
+                                placeholder={PLACEHOLDER}
+                                valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
+                            />
+                        </FormBox>
+                    ) : (
+                        <EthBoxValue
+                            boxType={ETHBoxType.Eth}
+                            isZero={selectedEthStr === minSlidervalue}
+                            onClick={_enableEditEth}
+                        >
+                            {selectedEthStr}
+                        </EthBoxValue>
+                    )}
+                    <EthBoxUnit>ETH</EthBoxUnit>
+                </EthBox>
+                <EthBox boxType={ETHBoxType.Weth}>
+                    {editing === Editing.Weth ? (
+                        <FormBox noValidate={true} onSubmit={_disableEdit}>
+                            <InputEth
+                                autoFocus={true}
+                                decimals={ETH_DECIMALS}
+                                max={totalEth}
+                                min={ZERO}
+                                onChange={_updateWeth}
+                                value={selectedWeth}
+                                boxType={ETHBoxType.Weth}
+                                placeholder={PLACEHOLDER}
+                                valueFixedDecimals={UI_DECIMALS_DISPLAYED_ON_STEP_MODALS}
+                            />
+                        </FormBox>
+                    ) : (
+                        <EthBoxValue
+                            boxType={ETHBoxType.Weth}
+                            isZero={selectedWethStr === minSlidervalue}
+                            onClick={_enableEditWeth}
+                        >
+                            {selectedWethStr}
+                        </EthBoxValue>
+                    )}
+                    <EthBoxUnit>wETH</EthBoxUnit>
+                    <TooltipStyled>
+                        <Tooltip description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
+                    </TooltipStyled>
+                </EthBox>
+            </EthBoxes>
+            <Slider
+                max={totalEthStr}
+                min="0"
+                onChange={_updateSelectedWeth}
+                step="0.01"
+                style={{
+                    '--min': '0',
+                    '--max': totalEthStr,
+                    '--val': selectedWethStr,
+                    '--color': 'red',
+                    color: 'var(--color)',
+                } as any}
+                type="range"
+                value={selectedWethStr}
+            />
+            <SetMinEthWrapper hideWarning={isInsufficientEth ? false : true}>
+                ETH required for fees.&nbsp;
+                <SetMinEthButton href="" onClick={_setMinEth}>
+                    0.05 ETH Recommended
+                </SetMinEthButton>
+            </SetMinEthWrapper>
+            <Button onClick={submit} disabled={isDisabled} variant={ButtonVariant.Balance}>
+                Update Balance{isSubmitting && '...'}
+            </Button>
+        </Modal>
+    );
+};

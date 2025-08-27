@@ -33,33 +33,31 @@ interface OwnProps extends HTMLAttributes<HTMLSpanElement> {
 
 type Props = OwnProps;
 
-export class WalletConnectionStatusContainer extends React.PureComponent<Props> {
-    public render = () => {
-        const {
-            headerText,
-            walletConnectionContent,
-            ethAccount,
-            shouldCloseDropdownOnClickOutside,
-            ...restProps
-        } = this.props;
-        const status: string = ethAccount ? 'active' : '';
-        const header = (
-            <WalletConnectionStatusWrapper>
-                <WalletConnectionStatusDotStyled status={status} />
-                <WalletConnectionStatusText>{headerText}</WalletConnectionStatusText>
-                <ChevronDownIcon />
-            </WalletConnectionStatusWrapper>
-        );
+export const WalletConnectionStatusContainer: React.FC<Props> = React.memo(props => {
+    const {
+        headerText,
+        walletConnectionContent,
+        ethAccount,
+        shouldCloseDropdownOnClickOutside,
+        ...restProps
+    } = props;
+    const status: string = ethAccount ? 'active' : '';
+    const header = (
+        <WalletConnectionStatusWrapper>
+            <WalletConnectionStatusDotStyled status={status} />
+            <WalletConnectionStatusText>{headerText}</WalletConnectionStatusText>
+            <ChevronDownIcon />
+        </WalletConnectionStatusWrapper>
+    );
 
-        const body = <>{walletConnectionContent}</>;
-        return (
-            <Dropdown
-                body={body}
-                header={header}
-                horizontalPosition={DropdownPositions.Right}
-                shouldCloseDropdownOnClickOutside={shouldCloseDropdownOnClickOutside}
-                {...restProps}
-            />
-        );
-    };
-}
+    const body = <>{walletConnectionContent}</>;
+    return (
+        <Dropdown
+            body={body}
+            header={header}
+            horizontalPosition={DropdownPositions.Right}
+            shouldCloseDropdownOnClickOutside={shouldCloseDropdownOnClickOutside}
+            {...restProps}
+        />
+    );
+});

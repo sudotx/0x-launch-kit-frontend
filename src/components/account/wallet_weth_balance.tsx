@@ -1,7 +1,7 @@
 import { BigNumber } from '@0x/utils';
-import React from 'react';
-import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components';
+import React, { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import styled, { useTheme } from 'styled-components';
 
 import { startWrapEtherSteps } from '../../store/actions';
 import {
@@ -14,40 +14,20 @@ import {
 import { Theme, themeDimensions } from '../../themes/commons';
 import { getKnownTokens } from '../../util/known_tokens';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { ConvertBalanceState, StoreState, Web3State } from '../../util/types';
+import { ConvertBalanceState, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { LoadingWrapper } from '../common/loading';
 import { IconType, Tooltip } from '../common/tooltip';
+import { AppDispatch } from '../../store';
 
 import { WethModal } from './wallet_weth_modal';
-
-interface StateProps {
-    ethBalance: BigNumber;
-    ethInUsd: BigNumber | null;
-    web3State: Web3State;
-    wethBalance: BigNumber;
-    convertBalanceState: ConvertBalanceState;
-}
-
-interface DispatchProps {
-    onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
-}
 
 interface OwnProps {
     className?: string;
     inDropdown?: boolean;
-    theme: Theme;
     onWethModalOpen?: () => any;
     onWethModalClose?: () => any;
-}
-
-type Props = OwnProps & StateProps & DispatchProps;
-
-interface State {
-    isSubmitting: boolean;
-    modalIsOpen: boolean;
-    selectedWeth: string;
 }
 
 const Content = styled.div`
@@ -155,147 +135,129 @@ const Note = styled.p`
     text-align: center;
 `;
 
-class WalletWethBalance extends React.PureComponent<Props, State> {
-    public readonly state: State = {
-        modalIsOpen: false,
-        selectedWeth: '0',
-        isSubmitting: false,
-    };
+const WalletWethBalance: React.FC<OwnProps> = props => {
+    const {
+        className,
+        inDropdown,
+        onWethModalClose,
+        onWethModalOpen,
+    } = props;
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
 
-    public render = () => {
-        const {
-            ethBalance,
-            web3State,
-            wethBalance,
-            ethInUsd,
-            theme,
-            inDropdown,
-            className,
-            convertBalanceState,
-        } = this.props;
-        const { isSubmitting } = this.state;
-        const totalEth = ethBalance.plus(wethBalance);
-        const wethToken = getKnownTokens().getWethToken();
-        const formattedEth = tokenAmountInUnits(ethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedWeth = tokenAmountInUnits(wethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedTotalEth = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
+    const dispatch = useDispatch<AppDispatch>();
+    const theme = useTheme() as Theme;
 
-        let content: React.ReactNode;
+    const ethBalance = useSelector(getEthBalance);
+    const wethBalance = useSelector(getWethBalance);
+    const web3State = useSelector(getWeb3State);
+    const ethInUsd = useSelector(getEthInUsd);
+    const convertBalanceState = useSelector(getConvertBalanceState);
 
-        const isButtonConvertDisable = convertBalanceState !== ConvertBalanceState.Success;
+    const onStartWrapEtherSteps = useCallback(
+        async (newBalance: BigNumber) => {
+            return dispatch(startWrapEtherSteps(newBalance)).unwrap();
+        },
+        [dispatch],
+    );
 
-        if (web3State === Web3State.Loading) {
-            content = <LoadingWrapper />;
-        } else if (ethBalance && wethBalance) {
-            content = (
-                <>
-                    <Row>
-                        <Label>ETH</Label>
-                        <Value>{formattedEth}</Value>
-                    </Row>
-                    <Button disabled={isButtonConvertDisable} onClick={this.openModal}>
-                        <ButtonLabel>Convert</ButtonLabel>
-                        <ArrowUpDownIcon />
-                    </Button>
-                    <Row>
-                        <LabelWrapper>
-                            <Label>wETH</Label>{' '}
-                            <Tooltip
-                                description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
-                                iconType={IconType.Fill}
-                            />
-                        </LabelWrapper>
-                        <Value>{formattedWeth}</Value>
-                    </Row>
-                    <Row>
-                        <Label>Total Value</Label>
-                        <Value>{formattedTotalEth} ETH</Value>
-                    </Row>
-                    <WethModal
-                        ethInUsd={ethInUsd}
-                        isOpen={this.state.modalIsOpen}
-                        isSubmitting={isSubmitting}
-                        onRequestClose={this.closeModal}
-                        onSubmit={this.handleSubmit}
-                        style={theme.modalTheme}
-                        totalEth={totalEth}
-                        wethBalance={wethBalance}
-                    />
-                </>
-            );
-        }
+    const openModal = useCallback(
+        (e: any) => {
+            e.stopPropagation(); // avoids dropdown closing when used inside one
+            setModalIsOpen(true);
+            if (onWethModalOpen) {
+                onWethModalOpen();
+            }
+        },
+        [onWethModalOpen],
+    );
 
-        return (
-            <>
-                <Card title={inDropdown ? '' : 'ETH / wETH Balances'} className={className}>
-                    <Content>{content}</Content>
-                </Card>
-                {inDropdown ? null : (
-                    <Note>
-                        wETH is used for trades on 0x
-                        <br />1 wETH = 1 ETH
-                    </Note>
-                )}
-            </>
-        );
-    };
-
-    public handleSubmit = async (newWeth: BigNumber) => {
-        this.setState({
-            isSubmitting: true,
-        });
-
-        try {
-            await this.props.onStartWrapEtherSteps(newWeth);
-        } finally {
-            this.setState({
-                isSubmitting: false,
-            });
-            this.closeModal();
-        }
-    };
-
-    public openModal = (e: any) => {
-        e.stopPropagation(); // avoids dropdown closing when used inside one
-        const { onWethModalOpen } = this.props;
-        this.setState({
-            modalIsOpen: true,
-        });
-        if (onWethModalOpen) {
-            onWethModalOpen();
-        }
-    };
-
-    public closeModal = () => {
-        const { onWethModalClose } = this.props;
-        this.setState({
-            modalIsOpen: false,
-        });
+    const closeModal = useCallback(() => {
+        setModalIsOpen(false);
         if (onWethModalClose) {
             onWethModalClose();
         }
-    };
-}
+    }, [onWethModalClose]);
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        ethBalance: getEthBalance(state),
-        wethBalance: getWethBalance(state),
-        web3State: getWeb3State(state),
-        ethInUsd: getEthInUsd(state),
-        convertBalanceState: getConvertBalanceState(state),
-    };
+    const handleSubmit = useCallback(
+        async (newWeth: BigNumber) => {
+            setIsSubmitting(true);
+
+            try {
+                await onStartWrapEtherSteps(newWeth);
+            } finally {
+                setIsSubmitting(false);
+                closeModal();
+            }
+        },
+        [onStartWrapEtherSteps, closeModal],
+    );
+
+    const totalEth = ethBalance.plus(wethBalance);
+    const wethToken = getKnownTokens().getWethToken();
+    const formattedEth = tokenAmountInUnits(ethBalance, wethToken.decimals, wethToken.displayDecimals);
+    const formattedWeth = tokenAmountInUnits(wethBalance, wethToken.decimals, wethToken.displayDecimals);
+    const formattedTotalEth = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
+
+    let content: React.ReactNode;
+
+    const isButtonConvertDisable = convertBalanceState !== ConvertBalanceState.Success;
+
+    if (web3State === Web3State.Loading) {
+        content = <LoadingWrapper />;
+    } else if (ethBalance && wethBalance) {
+        content = (
+            <>
+                <Row>
+                    <Label>ETH</Label>
+                    <Value>{formattedEth}</Value>
+                </Row>
+                <Button disabled={isButtonConvertDisable} onClick={openModal}>
+                    <ButtonLabel>Convert</ButtonLabel>
+                    <ArrowUpDownIcon />
+                </Button>
+                <Row>
+                    <LabelWrapper>
+                        <Label>wETH</Label> <Tooltip
+                            description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
+                            iconType={IconType.Fill}
+                        />
+                    </LabelWrapper>
+                    <Value>{formattedWeth}</Value>
+                </Row>
+                <Row>
+                    <Label>Total Value</Label>
+                    <Value>{formattedTotalEth} ETH</Value>
+                </Row>
+                <WethModal
+                    ethInUsd={ethInUsd}
+                    isOpen={modalIsOpen}
+                    isSubmitting={isSubmitting}
+                    onRequestClose={closeModal}
+                    onSubmit={handleSubmit}
+                    style={theme.modalTheme as any}
+                    totalEth={totalEth}
+                    wethBalance={wethBalance}
+                />
+            </>
+        );
+    }
+
+    return (
+        <>
+            <Card title={inDropdown ? '' : 'ETH / wETH Balances'} className={className}>
+                <Content>{content}</Content>
+            </Card>
+            {inDropdown ? null : (
+                <Note>
+                    wETH is used for trades on 0x
+                    <br />1 wETH = 1 ETH
+                </Note>
+            )}
+        </>
+    );
 };
 
-const mapDispatchToProps = {
-    onStartWrapEtherSteps: startWrapEtherSteps,
-};
-
-const WalletWethBalanceContainer = withTheme(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(WalletWethBalance),
-);
+const WalletWethBalanceContainer = React.memo(WalletWethBalance);
 
 export { WalletWethBalance, WalletWethBalanceContainer };

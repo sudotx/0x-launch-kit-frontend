@@ -1,29 +1,17 @@
 import { BigNumber } from '@0x/utils';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
 import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
-import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
+import { Token, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { LoadingWrapper } from '../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
-
-interface StateProps {
-    ethBalance: BigNumber;
-    tokenBalances: TokenBalance[];
-    web3State: Web3State;
-    wethTokenBalance: TokenBalance | null;
-}
-
-interface DispatchProps {
-    onStartToggleTokenLockSteps: (args: { token: Token; isUnlocked: boolean }) => void;
-}
-
-type Props = StateProps & DispatchProps;
+import { AppDispatch } from '../../store';
 
 const THStyled = styled(TH)`
     &:first-child {
@@ -38,7 +26,7 @@ const TokenTD = styled(CustomTD)`
     width: 40px;
 `;
 
-const TokenIconStyled = styled(TokenIcon)`
+const TokenIconStyled = styled<any>(TokenIcon)`
     margin: 0 auto 0 0;
 `;
 
@@ -120,115 +108,109 @@ const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
     );
 };
 
-class WalletTokenBalances extends React.PureComponent<Props> {
-    public render = () => {
-        const { ethBalance, tokenBalances, onStartToggleTokenLockSteps, web3State, wethTokenBalance } = this.props;
+const WalletTokenBalances: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const ethBalance = useSelector(getEthBalance);
+    const tokenBalances = useSelector(getTokenBalances);
+    const web3State = useSelector(getWeb3State);
+    const wethTokenBalance = useSelector(getWethTokenBalance);
 
-        if (!wethTokenBalance) {
-            return null;
-        }
+    const onStartToggleTokenLockSteps = React.useCallback(
+        (args: { token: Token; isUnlocked: boolean }) => {
+            dispatch(startToggleTokenLockSteps(args)).unwrap();
+        },
+        [dispatch],
+    );
 
-        const wethToken = wethTokenBalance.token;
-        const totalEth = wethTokenBalance.balance.plus(ethBalance);
-        const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
-        const onTotalEthClick = () => onStartToggleTokenLockSteps({ token: wethTokenBalance.token, isUnlocked: wethTokenBalance.isUnlocked });
+    if (!wethTokenBalance) {
+        return null;
+    }
 
-        const totalEthRow = (
-            <TR>
-                <TokenTD>
-                    {/* <TokenIconStyled
+    const wethToken = wethTokenBalance.token;
+    const totalEth = wethTokenBalance.balance.plus(ethBalance);
+    const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
+    const onTotalEthClick = () =>
+        onStartToggleTokenLockSteps({ token: wethTokenBalance.token, isUnlocked: wethTokenBalance.isUnlocked });
+
+    const totalEthRow = (
+        <TR>
+            <TokenTD>
+                {/* <TokenIconStyled
                         // symbol={wethToken.symbol}
                         // primaryColor={wethToken.primaryColor}
                         // icon={wethToken.icon}
 						/> */}
-                    <TokenIconStyled />
+                <TokenIconStyled symbol={wethToken.symbol} primaryColor={wethToken.primaryColor} icon={wethToken.icon} />
+            </TokenTD>
+            <CustomTDTokenName styles={{ borderBottom: true }}>
+                <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
+            </CustomTDTokenName>
+            <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                {formattedTotalEthBalance}
+            </CustomTD>
+            <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+            <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+            <LockCell
+                isUnlocked={wethTokenBalance.isUnlocked}
+                onClick={onTotalEthClick}
+                styles={{ borderBottom: true, textAlign: 'center' }}
+            />
+        </TR>
+    );
+
+    const tokensRows = tokenBalances.map((tokenBalance, index) => {
+        const { token, balance, isUnlocked } = tokenBalance;
+        const { symbol } = token;
+        const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
+        const onClick = () => onStartToggleTokenLockSteps({ token, isUnlocked });
+
+        return (
+            <TR key={symbol}>
+                <TokenTD>
+                    <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>
-                    <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
+                    <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
                 </CustomTDTokenName>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
-                    {formattedTotalEthBalance}
-                </CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedBalance}</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
                 <LockCell
-                    isUnlocked={wethTokenBalance.isUnlocked}
-                    onClick={onTotalEthClick}
+                    isUnlocked={isUnlocked}
+                    onClick={onClick}
                     styles={{ borderBottom: true, textAlign: 'center' }}
                 />
             </TR>
         );
+    });
 
-        const tokensRows = tokenBalances.map((tokenBalance, index) => {
-            const { token, balance, isUnlocked } = tokenBalance;
-            const { symbol } = token;
-            const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
-            const onClick = () => onStartToggleTokenLockSteps({ token, isUnlocked });
+    let content: React.ReactNode;
+    if (web3State === Web3State.Loading) {
+        content = <LoadingWrapper />;
+    } else {
+        content = (
+            <Table isResponsive={true}>
+                <THead>
+                    <TR>
+                        <THStyled>Token</THStyled>
+                        <THStyled>{ }</THStyled>
+                        <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
+                        <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
+                        <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
+                        <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
+                    </TR>
+                </THead>
+                <TBody>
+                    {totalEthRow}
+                    {tokensRows}
+                </TBody>
+            </Table>
+        );
+    }
 
-            return (
-                <TR key={symbol}>
-                    <TokenTD>
-                        <TokenIconStyled />
-                        {/* <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} /> */}
-                    </TokenTD>
-                    <CustomTDTokenName styles={{ borderBottom: true }}>
-                        <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
-                    </CustomTDTokenName>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedBalance}</CustomTD>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
-                    <LockCell
-                        isUnlocked={isUnlocked}
-                        onClick={onClick}
-                        styles={{ borderBottom: true, textAlign: 'center' }}
-                    />
-                </TR>
-            );
-        });
-
-        let content: React.ReactNode;
-        if (web3State === Web3State.Loading) {
-            content = <LoadingWrapper />;
-        } else {
-            content = (
-                <Table isResponsive={true}>
-                    <THead>
-                        <TR>
-                            <THStyled>Token</THStyled>
-                            <THStyled>{ }</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
-                            <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
-                        </TR>
-                    </THead>
-                    <TBody>
-                        {totalEthRow}
-                        {tokensRows}
-                    </TBody>
-                </Table>
-            );
-        }
-
-        return <Card title="Token Balances">{content}</Card>;
-    };
-}
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        ethBalance: getEthBalance(state),
-        tokenBalances: getTokenBalances(state),
-        web3State: getWeb3State(state),
-        wethTokenBalance: getWethTokenBalance(state),
-    };
-};
-const mapDispatchToProps = {
-    onStartToggleTokenLockSteps: startToggleTokenLockSteps,
+    return <Card title="Token Balances">{content}</Card>;
 };
 
-const WalletTokenBalancesContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(WalletTokenBalances);
+const WalletTokenBalancesContainer = React.memo(WalletTokenBalances);
 
 export { WalletTokenBalances, WalletTokenBalancesContainer };
