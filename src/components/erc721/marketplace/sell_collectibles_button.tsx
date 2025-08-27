@@ -20,7 +20,10 @@ export class SellCollectiblesButton extends React.Component {
     public render = () => {
         return (
             <>
-                <CollectibleListModal isOpen={this.state.isModalOpen} onModalCloseRequest={this._handleModalToggle} />
+                {(CollectibleListModal as any)({
+                    isOpen: this.state.isModalOpen,
+                    onModalCloseRequest: this._handleModalToggle,
+                })}
                 <ButtonStyled variant={ButtonVariant.Quaternary} onClick={this._handleModalToggle}>
                     Sell collectibles
                 </ButtonStyled>

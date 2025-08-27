@@ -1,8 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../../account';
-import { CheckMetamaskStateModalContainer } from '../../common/check_metamask_state_modal_container';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
 import { Content } from '../common/content_wrapper';
@@ -17,13 +16,12 @@ const ColumnWideMyWallet = styled(ColumnWide)`
 
 export const MyWallet = () => (
     <Content>
-        <CheckMetamaskStateModalContainer>
-            <ColumnNarrow>
-                <WalletWethBalanceContainer />
-            </ColumnNarrow>
-            <ColumnWideMyWallet>
-                <WalletTokenBalancesContainer />
-            </ColumnWideMyWallet>
-        </CheckMetamaskStateModalContainer>
+        <ConnectButton />
+        <ColumnNarrow>
+            <WalletWethBalanceContainer />
+        </ColumnNarrow>
+        <ColumnWideMyWallet>
+            <WalletTokenBalancesContainer />
+        </ColumnWideMyWallet>
     </Content>
 );

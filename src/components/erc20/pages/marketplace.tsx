@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { CheckMetamaskStateModalContainer } from '../../common/check_metamask_state_modal_container';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
 import { Content } from '../common/content_wrapper';
@@ -23,7 +22,6 @@ class Marketplace extends React.PureComponent {
                 <ColumnWide>
                     <OrderHistoryContainer />
                 </ColumnWide>
-                <CheckMetamaskStateModalContainer />
             </Content>
         );
     };

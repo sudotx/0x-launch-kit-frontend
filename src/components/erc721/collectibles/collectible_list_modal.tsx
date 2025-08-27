@@ -1,37 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getUserCollectiblesAvailableToSell } from '../../../store/selectors';
 import { Theme } from '../../../themes/commons';
 import { filterCollectibleByName } from '../../../util/filterable_collectibles';
-import { Collectible, StoreState } from '../../../util/types';
+import { Collectible } from '../../../util/types';
 import { EmptyContent } from '../../common/empty_content';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
 import { InputSearch } from '../common/input_search';
 
 import { CollectibleOnListContainer } from './collectible_details_list';
 
-interface StateProps {
-    userCollectibles: { [key: string]: Collectible };
-}
-
-interface DispatchProps {
-    updateSelectedCollectible: (collectible: Collectible | null) => any;
-}
-
 interface OwnProps {
     theme: Theme;
     isOpen: boolean;
     onModalCloseRequest: () => any;
-}
-
-type Props = OwnProps & DispatchProps & StateProps;
-
-interface State {
-    filterText: string;
 }
 
 const modalWidth = '328px';
@@ -88,70 +74,60 @@ const initialState = {
     filterText: '',
 };
 
-class CollectibleListModalContainer extends React.PureComponent<Props, State> {
-    public state = {
-        ...initialState,
+const CollectibleListModalContainer: React.FC<OwnProps> = props => {
+    const {
+        theme,
+        isOpen,
+        onModalCloseRequest
+    } = props;
+    const [filterText, setFilterText] = useState('');
+    const dispatch = useDispatch();
+    const userCollectibles = useSelector(getUserCollectiblesAvailableToSell);
+
+    const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
+    const filteredCollectibles = filterCollectibleByName(collectibles, filterText);
+
+    const closeModal = () => {
+        onModalCloseRequest();
+        setFilterText('');
     };
 
-    public render = () => {
-        const { theme, isOpen, userCollectibles } = this.props;
-        const collectibles = Object.keys(userCollectibles).map(key => userCollectibles[key]);
-        const { filterText } = this.state;
-        const filteredCollectibles = filterCollectibleByName(collectibles, filterText);
-        return (
-            <Modal isOpen={isOpen} style={theme.modalTheme} onRequestClose={this._closeModal}>
-                <ModalTitleWrapper>
-                    <ModalTitleTop>
-                        <ModalTitle>Select an item to sell</ModalTitle>
-                        <CloseModalButtonStyle onClick={this._closeModal} />
-                    </ModalTitleTop>
-                    <SearchStyled placeholder={'Search Wallet'} onChange={this._handleSearchInputChanged} />
-                </ModalTitleWrapper>
-                <ModalContent>
-                    {filteredCollectibles.length > 0 ? (
-                        filteredCollectibles.map((item, index) => (
-                            <CollectibleOnListContainer
-                                collectible={item}
-                                isListItem={true}
-                                key={index}
-                                onClick={this._closeModal}
-                            />
-                        ))
-                    ) : (
-                        <EmptyContent text={'No results found'} />
-                    )}
-                </ModalContent>
-            </Modal>
-        );
+    const handleSearchInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFilterText(event.target.value || '');
     };
 
-    private readonly _closeModal = () => {
-        this.props.onModalCloseRequest();
-        this.setState(initialState);
+    const handleCollectibleClick = (collectible: Collectible) => {
+        dispatch(selectCollectible(collectible));
+        closeModal();
     };
 
-    private readonly _handleSearchInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ filterText: event.target.value || '' });
-    };
-}
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        userCollectibles: getUserCollectiblesAvailableToSell(state),
-    };
+    return (
+        <Modal isOpen={isOpen} style={theme.modalTheme as any} onRequestClose={closeModal}>
+            <ModalTitleWrapper>
+                <ModalTitleTop>
+                    <ModalTitle>Select an item to sell</ModalTitle>
+                    <CloseModalButtonStyle onClick={closeModal} />
+                </ModalTitleTop>
+                <SearchStyled placeholder={'Search Wallet'} onChange={handleSearchInputChanged} />
+            </ModalTitleWrapper>
+            <ModalContent>
+                {filteredCollectibles.length > 0 ? (
+                    filteredCollectibles.map((item, index) => (
+                        <CollectibleOnListContainer
+                            collectible={item}
+                            isListItem={true}
+                            key={index}
+                            onClick={() => handleCollectibleClick(item)}
+                        />
+                    ))
+                ) : (
+                    <EmptyContent text={'No results found'} />
+                )}
+            </ModalContent>
+        </Modal>
+    );
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        updateSelectedCollectible: (collectible: Collectible | null) => dispatch(selectCollectible(collectible)),
-    };
-};
-
-const CollectibleListModal = withTheme(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps,
-    )(CollectibleListModalContainer),
-);
+const CollectibleListModal = withTheme(CollectibleListModalContainer);
 
 export { CollectibleListModal };

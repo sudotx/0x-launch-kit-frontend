@@ -13,6 +13,7 @@ import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible, StoreState } from '../../../util/types';
 
 import { TradeButton } from './trade_button';
+import { AppDispatch } from '../../../store';
 
 const buySellWrapperWidth = '270px';
 
@@ -55,7 +56,7 @@ CollectibleText.defaultProps = {
     textAlign: 'left',
 };
 
-const CollectibleTradeButton = styled(TradeButton)`
+const CollectibleTradeButton = styled<any>(TradeButton)`
     margin-bottom: 15px;
 `;
 
@@ -85,7 +86,7 @@ interface StateProps {
 
 interface DispatchProps {
     updateSelectedCollectible: (collectible: Collectible) => any;
-    onStartBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) => Promise<any>;
+    onStartBuyCollectibleSteps: (collectible: Collectible) => Promise<any>;
     onCancelOrderCollectible: (order: any) => any;
 }
 
@@ -174,10 +175,10 @@ class CollectibleBuySell extends React.Component<Props> {
         this.setState({ isLoading: true });
 
         try {
-            const { collectible, ethAccount, onStartBuyCollectibleSteps } = this.props;
+            const { collectible, onStartBuyCollectibleSteps } = this.props;
             if (collectible) {
                 // tslint:disable-next-line:no-floating-promises
-                onStartBuyCollectibleSteps(collectible, ethAccount);
+                onStartBuyCollectibleSteps(collectible);
             }
         } catch (err) {
             window.alert(`Could not sell the specified order`);
@@ -194,11 +195,11 @@ const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
+const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => {
     return {
         updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
-        onStartBuyCollectibleSteps: (collectible: Collectible, ethAccount: string) =>
-            dispatch(startBuyCollectibleSteps(collectible, ethAccount)),
+        onStartBuyCollectibleSteps: (collectible: Collectible) =>
+            dispatch(startBuyCollectibleSteps({ collectible })).unwrap(),
         onCancelOrderCollectible: (order: any) => dispatch(cancelOrderCollectible(order)),
     };
 };

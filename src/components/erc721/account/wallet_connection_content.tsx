@@ -1,13 +1,12 @@
 import { BigNumber } from '@0x/utils';
-import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
+import React, { HTMLAttributes, useState } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { ETH_DECIMALS } from '../../../common/constants';
 import { getEthAccount, getEthBalance } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
-import { StoreState } from '../../../util/types';
 import { WalletWethBalanceContainer } from '../../account';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { WalletConnectionStatusDot } from '../../account/wallet_connections_status_dot';
@@ -25,10 +24,7 @@ const connectToWallet = () => {
 const copyToClipboard = async (text: string) => {
     try {
         await navigator.clipboard.writeText(text);
-        // Optional: Show success feedback
-        // alert('Address copied to clipboard!');
     } catch (err) {
-        // Fallback for older browsers
         const textArea = document.createElement('textarea');
         textArea.value = text;
         document.body.appendChild(textArea);
@@ -88,79 +84,46 @@ const DropdownTextItemStyled = styled(DropdownTextItem)`
     border: none;
 `;
 
-interface OwnProps extends HTMLAttributes<HTMLSpanElement> { }
+interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
 
-interface StateProps {
-    ethAccount: string;
-    ethBalance: BigNumber;
-}
+const WalletConnectionContent: React.FC<OwnProps> = props => {
+    const [isEthModalOpen, setIsEthModalOpen] = useState(false);
+    const ethAccount = useSelector(getEthAccount);
+    const ethBalance = useSelector(getEthBalance);
 
-type Props = StateProps & OwnProps;
+    const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
+    const status: string = ethAccount ? 'active' : '';
+    const ethBalanceText = ethBalance ? `${tokenAmountInUnits(ethBalance, ETH_DECIMALS)} ETH` : 'No connected';
 
-interface State {
-    isEthModalOpen: boolean;
-}
-
-class WalletConnectionContent extends React.Component<Props, State> {
-    public readonly state: State = {
-        isEthModalOpen: false,
-    };
-    public render = () => {
-        const { ethAccount, ethBalance, ...restProps } = this.props;
-        const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
-        const status: string = ethAccount ? 'active' : '';
-        const ethBalanceText = ethBalance ? `${tokenAmountInUnits(ethBalance, ETH_DECIMALS)} ETH` : 'No connected';
-        const content = (
-            <WalletConnectionWrapper>
-                <DropdownHeader>
-                    <DropdownHeaderTitle>Balances</DropdownHeaderTitle>
-                    <WalletAddress>
-                        <WalletConnectionStatusDotStyled status={status} />
-                        {ethAccountText}
-                    </WalletAddress>
-                </DropdownHeader>
-                <WalletWethBalanceContainerStyled
-                // onWethModalOpen={this._ethModalOpen}
-                // onWethModalClose={this._ethModalClose}
-                />
-                <DropdownTextItemStyled
-                    onClick={() => ethAccount && copyToClipboard(ethAccount)}
-                    text="Copy Address"
-                />
-                <DropdownTextItemStyled onClick={connectToWallet} text="Connect a different address" />
-            </WalletConnectionWrapper>
-        );
-
-        return (
-            <WalletConnectionStatusContainer
-                walletConnectionContent={content}
-                shouldCloseDropdownOnClickOutside={!this.state.isEthModalOpen}
-                headerText={ethBalanceText}
-                ethAccount={ethAccount}
-                {...restProps}
+    const content = (
+        <WalletConnectionWrapper>
+            <DropdownHeader>
+                <DropdownHeaderTitle>Balances</DropdownHeaderTitle>
+                <WalletAddress>
+                    <WalletConnectionStatusDotStyled status={status} />
+                    {ethAccountText}
+                </WalletAddress>
+            </DropdownHeader>
+            <WalletWethBalanceContainerStyled
+                onWethModalOpen={() => setIsEthModalOpen(true)}
+                onWethModalClose={() => setIsEthModalOpen(false)}
             />
-        );
-    };
+            <DropdownTextItemStyled onClick={() => ethAccount && copyToClipboard(ethAccount)} text="Copy Address" />
+            <DropdownTextItemStyled onClick={connectToWallet} text="Connect a different address" />
+        </WalletConnectionWrapper>
+    );
 
-    private readonly _ethModalOpen = () => {
-        this.setState({ isEthModalOpen: true });
-    };
-
-    private readonly _ethModalClose = () => {
-        this.setState({ isEthModalOpen: false });
-    };
-}
-
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        ethAccount: getEthAccount(state),
-        ethBalance: getEthBalance(state),
-    };
+    return (
+        <WalletConnectionStatusContainer
+            walletConnectionContent={content}
+            shouldCloseDropdownOnClickOutside={!isEthModalOpen}
+            headerText={ethBalanceText}
+            ethAccount={ethAccount}
+            {...props}
+        />
+    );
 };
 
-const WalletConnectionContentContainer = connect(
-    mapStateToProps,
-    {},
-)(WalletConnectionContent);
+const WalletConnectionContentContainer = React.memo(WalletConnectionContent);
 
 export { WalletConnectionContent, WalletConnectionContentContainer };

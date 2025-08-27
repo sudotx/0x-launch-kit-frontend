@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getCollectiblePrice } from '../../../util/collectibles';
@@ -14,14 +14,9 @@ interface OwnProps extends HTMLAttributes<HTMLDivElement> {
     onClick: () => any;
 }
 
-interface DispatchProps {
-    updateSelectedCollectible: (collectible: Collectible) => any;
-}
-
-type Props = DispatchProps & OwnProps;
-
-export const CollectibleOnList: React.FC<Props> = (props: Props) => {
+export const CollectibleOnList: React.FC<OwnProps> = props => {
     const { collectible, onClick, isListItem } = props;
+    const dispatch = useDispatch();
     const { color, image, name } = collectible;
     const price = getCollectiblePrice(collectible);
 
@@ -29,7 +24,7 @@ export const CollectibleOnList: React.FC<Props> = (props: Props) => {
         event.preventDefault();
         onClick();
         try {
-            props.updateSelectedCollectible(collectible);
+            dispatch(selectCollectible(collectible));
         } catch (err) {
             window.alert(`Could not sell the specified order`);
         }
@@ -42,13 +37,4 @@ export const CollectibleOnList: React.FC<Props> = (props: Props) => {
     );
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        updateSelectedCollectible: (collectible: Collectible) => dispatch(selectCollectible(collectible)),
-    };
-};
-
-export const CollectibleOnListContainer = connect(
-    null,
-    mapDispatchToProps,
-)(CollectibleOnList);
+export const CollectibleOnListContainer = React.memo(CollectibleOnList);

@@ -157,7 +157,7 @@ class SearchModal extends React.Component<Props, State> {
                 isOpen={isOpen}
                 onRequestClose={this._closeModal}
                 shouldCloseOnOverlayClick={true}
-                style={modalTheme}
+                style={modalTheme as any}
             >
                 <SearchStyled placeholder={'Search'} onChange={this._onChangeSearchText} autoFocus={true} />
                 {shouldShowResults ? (
@@ -208,6 +208,9 @@ const mapStateToProps = (state: StoreState): StateProps => {
     };
 };
 
-const SearchModalContainer = withTheme(connect(mapStateToProps)(SearchModal));
+const SearchModalContainer = withTheme(
+    connect<StateProps, {}, OwnProps, StoreState>(mapStateToProps)(SearchModal),
+);
 
+export type { OwnProps as SearchModalProps };
 export { SearchModalContainer };

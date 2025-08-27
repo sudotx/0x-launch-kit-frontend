@@ -1,5 +1,5 @@
-import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
+import React, { HTMLAttributes, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
@@ -9,42 +9,16 @@ import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/select
 import { themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
-import { CurrencyPair, Filter, Market, StoreState, Token } from '../../../util/types';
+import { CurrencyPair, Filter, Market, Token } from '../../../util/types';
 import { CardBase } from '../../common/card_base';
 import { Dropdown } from '../../common/dropdown';
 import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
 import { MagnifierIcon } from '../../common/icons/magnifier_icon';
 import { TokenIcon } from '../../common/icons/token_icon';
 import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from '../../common/table';
+import { AppDispatch } from '../../../store';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> { }
-
-interface DispatchProps {
-    changeMarket: (currencyPair: CurrencyPair) => any;
-}
-
-interface PropsToken {
-    baseToken: Token | null;
-    currencyPair: CurrencyPair;
-    markets: Market[] | null;
-}
-
-type Props = PropsDivElement & PropsToken & DispatchProps;
-
-interface State {
-    selectedFilter: Filter;
-    search: string;
-    isUserOnDropdown: boolean;
-}
-
-interface TokenFiltersTabProps {
-    active: boolean;
-    onClick: number;
-}
-
-interface MarketRowProps {
-    active: boolean;
-}
 
 const rowHeight = '48px';
 
@@ -93,7 +67,7 @@ const TokenFiltersTabs = styled.div`
     margin-right: 10px;
 `;
 
-const TokenFiltersTab = styled.span<TokenFiltersTabProps>`
+const TokenFiltersTab = styled.span<{ active: boolean }>`
     color: ${props =>
         props.active ? props.theme.componentsTheme.textColorCommon : props.theme.componentsTheme.lightGray};
     cursor: pointer;
@@ -167,7 +141,7 @@ const tableHeaderFontWeight = `
     font-weight: 700;
 `;
 
-const TRStyled = styled(TR) <MarketRowProps>`
+const TRStyled = styled(TR) <{ active: boolean }>`
     background-color: ${props => (props.active ? props.theme.componentsTheme.rowActive : 'transparent')};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
 
@@ -219,120 +193,88 @@ const TokenLabel = styled.div`
     margin: 0 0 0 12px;
 `;
 
-const DropdownTokenIcon = styled(TokenIcon)`
+const DropdownTokenIcon = styled<any>(TokenIcon)`
     margin-right: 10px;
     vertical-align: top;
 `;
+const TokenIconStyled = styled<any>(TokenIcon)``;
 
-class MarketsDropdown extends React.Component<Props, State> {
-    public readonly state: State = {
-        selectedFilter: marketFilters[0],
-        search: '',
-        isUserOnDropdown: false,
+const MarketsDropdown: React.FC<PropsDivElement> = props => {
+    const [selectedFilter, setSelectedFilter] = useState<Filter>(marketFilters[0]);
+    const [search, setSearch] = useState('');
+    const [isUserOnDropdown, setIsUserOnDropdown] = useState(false);
+    const dropdownRef = useRef<Dropdown>(null);
+
+    const dispatch = useDispatch<AppDispatch>();
+    const baseToken = useSelector(getBaseToken);
+    const currencyPair = useSelector(getCurrencyPair);
+    const markets = useSelector(getMarkets);
+
+    const handleChangeMarket = (pair: CurrencyPair) => {
+        dispatch(changeMarket(pair)).unwrap();
     };
 
-    private readonly _dropdown = React.createRef<Dropdown>();
-
-    public render = () => {
-        const { currencyPair, baseToken, ...restProps } = this.props;
-
-        const header = (
-            <MarketsDropdownHeader>
-                <MarketsDropdownHeaderText>
-                    {baseToken ? (
-                        <DropdownTokenIcon
-                        // symbol={baseToken.symbol}
-                        // primaryColor={baseToken.primaryColor}
-                        // isInline={true}
-                        // icon={baseToken.icon}
-                        /> as any
-                    ) : null}
-                    {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
-                </MarketsDropdownHeaderText>
-                <ChevronDownIcon />
-            </MarketsDropdownHeader>
-        );
-
-        const body = (
-            <MarketsDropdownBody>
-                <MarketsFilters onMouseOver={this._setUserOnDropdown} onMouseOut={this._removeUserOnDropdown}>
-                    <MarketsFiltersLabel>Markets</MarketsFiltersLabel>
-                    {this._getTokensFilterTabs()}
-                    {this._getSearchField()}
-                </MarketsFilters>
-                <TableWrapper>{this._getMarkets()}</TableWrapper>
-            </MarketsDropdownBody>
-        );
-        return (
-            <MarketsDropdownWrapper
-                body={body}
-                header={header}
-                ref={this._dropdown}
-                shouldCloseDropdownOnClickOutside={!this.state.isUserOnDropdown}
-                {...restProps}
-            />
-        );
+    const setUserOnDropdown = () => {
+        setIsUserOnDropdown(true);
     };
 
-    private readonly _setUserOnDropdown = () => {
-        this.setState({ isUserOnDropdown: true });
+    const removeUserOnDropdown = () => {
+        setIsUserOnDropdown(false);
     };
 
-    private readonly _removeUserOnDropdown = () => {
-        this.setState({ isUserOnDropdown: false });
+    const setTokensFilterTab = (filter: Filter) => {
+        setSelectedFilter(filter);
     };
 
-    private readonly _getTokensFilterTabs = () => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.currentTarget.value);
+    };
+
+    const setSelectedMarket = (pair: CurrencyPair) => {
+        handleChangeMarket(pair);
+        if (dropdownRef.current) {
+            dropdownRef.current.closeDropdown();
+        }
+    };
+
+    const getPrice = (market: Market) => {
+        if (market.price) {
+            return market.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
+        }
+        return '-';
+    };
+
+    const getTokensFilterTabs = () => {
         return (
             <TokenFiltersTabs>
-                {marketFilters.map((filter: Filter, index) => {
-                    return (
-                        <TokenFiltersTab
-                            active={filter === this.state.selectedFilter}
-                            key={index}
-                            onClick={this._setTokensFilterTab.bind(this, filter)}
-                        >
-                            {filter.text}
-                        </TokenFiltersTab>
-                    );
-                })}
+                {marketFilters.map((filter: Filter, index) => (
+                    <TokenFiltersTab
+                        active={filter === selectedFilter}
+                        key={index}
+                        onClick={() => setTokensFilterTab(filter)}
+                    >
+                        {filter.text}
+                    </TokenFiltersTab>
+                ))}
             </TokenFiltersTabs>
         );
     };
 
-    private readonly _setTokensFilterTab: any = (filter: Filter) => {
-        this.setState({ selectedFilter: filter });
-    };
-
-    private readonly _getSearchField = () => {
+    const getSearchField = () => {
         return (
             <SearchWrapper>
                 <MagnifierIconWrapper>{MagnifierIcon()}</MagnifierIconWrapper>
-                <SearchField onChange={this._handleChange} value={this.state.search} />
+                <SearchField onChange={handleChange} value={search} />
             </SearchWrapper>
         );
     };
 
-    private readonly _handleChange = (e: any) => {
-        const search = e.currentTarget.value;
-
-        this.setState({
-            search,
-        });
-    };
-
-    private readonly _getMarkets = () => {
-        const { baseToken, currencyPair, markets } = this.props;
-        const { search, selectedFilter } = this.state;
-
+    const getMarketsList = () => {
         if (!baseToken || !markets) {
             return null;
         }
 
-        const filteredMarkets =
-            selectedFilter == null || selectedFilter.value === null
-                ? markets
-                : filterMarketsByTokenSymbol(markets, selectedFilter.value);
+        const filteredMarkets = selectedFilter.value === null ? markets : filterMarketsByTokenSymbol(markets, selectedFilter.value);
         const searchedMarkets = filterMarketsByString(filteredMarkets, search);
 
         return (
@@ -348,29 +290,22 @@ class MarketsDropdown extends React.Component<Props, State> {
                         const isActive =
                             market.currencyPair.base === currencyPair.base &&
                             market.currencyPair.quote === currencyPair.quote;
-                        const setSelectedMarket = () => this._setSelectedMarket(market.currencyPair);
-
                         const token = getKnownTokens().getTokenBySymbol(market.currencyPair.base);
-
                         const baseSymbol = market.currencyPair.base.toUpperCase();
                         const quoteSymbol = market.currencyPair.quote.toUpperCase();
 
                         return (
-                            <TRStyled active={isActive} key={index} onClick={setSelectedMarket}>
+                            <TRStyled active={isActive} key={index} onClick={() => setSelectedMarket(market.currencyPair)}>
                                 <CustomTDFirstStyled styles={{ textAlign: 'left', borderBottom: true }}>
                                     <TokenIconAndLabel>
-                                        <TokenIcon
-                                        // symbol={token.symbol}
-                                        // primaryColor={token.primaryColor}
-                                        // icon={token.icon}
-                                        /> as any
+                                        <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} />
                                         <TokenLabel>
                                             {baseSymbol} / {quoteSymbol}
                                         </TokenLabel>
                                     </TokenIconAndLabel>
                                 </CustomTDFirstStyled>
                                 <CustomTDLastStyled styles={{ textAlign: 'center', borderBottom: true, tabular: true }}>
-                                    {this._getPrice(market)}
+                                    {getPrice(market)}
                                 </CustomTDLastStyled>
                             </TRStyled>
                         );
@@ -380,39 +315,45 @@ class MarketsDropdown extends React.Component<Props, State> {
         );
     };
 
-    private readonly _setSelectedMarket: any = (currencyPair: CurrencyPair) => {
-        this.props.changeMarket(currencyPair);
-        if (this._dropdown.current) {
-            this._dropdown.current.closeDropdown();
-        }
-    };
+    const header = (
+        <MarketsDropdownHeader>
+            <MarketsDropdownHeaderText>
+                {baseToken ? (
+                    <DropdownTokenIcon
+                        symbol={baseToken.symbol}
+                        primaryColor={baseToken.primaryColor}
+                        isInline={true}
+                        icon={baseToken.icon}
+                    />
+                ) : null}
+                {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
+            </MarketsDropdownHeaderText>
+            <ChevronDownIcon />
+        </MarketsDropdownHeader>
+    );
 
-    private readonly _getPrice: any = (market: Market) => {
-        if (market.price) {
-            return market.price.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
-        }
+    const body = (
+        <MarketsDropdownBody>
+            <MarketsFilters onMouseOver={setUserOnDropdown} onMouseOut={removeUserOnDropdown}>
+                <MarketsFiltersLabel>Markets</MarketsFiltersLabel>
+                {getTokensFilterTabs()}
+                {getSearchField()}
+            </MarketsFilters>
+            <TableWrapper>{getMarketsList()}</TableWrapper>
+        </MarketsDropdownBody>
+    );
 
-        return '-';
-    };
-}
-
-const mapStateToProps = (state: StoreState): PropsToken => {
-    return {
-        baseToken: getBaseToken(state),
-        currencyPair: getCurrencyPair(state),
-        markets: getMarkets(state),
-    };
+    return (
+        <MarketsDropdownWrapper
+            body={body}
+            header={header}
+            ref={dropdownRef}
+            shouldCloseDropdownOnClickOutside={!isUserOnDropdown}
+            {...props}
+        />
+    );
 };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-        changeMarket: (currencyPair: CurrencyPair) => dispatch(changeMarket(currencyPair)),
-    };
-};
-
-const MarketsDropdownContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(MarketsDropdown);
+const MarketsDropdownContainer = React.memo(MarketsDropdown);
 
 export { MarketsDropdown, MarketsDropdownContainer };

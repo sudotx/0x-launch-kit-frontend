@@ -59,7 +59,7 @@ const WalletDropdown = styled(WalletConnectionContentContainer)`
     }
 `;
 
-const ToolbarContent = (props: Props) => {
+const ToolbarContent: React.FC<Props> = props => {
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
         props.onGoToHome();
