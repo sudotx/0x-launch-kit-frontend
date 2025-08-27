@@ -10,7 +10,7 @@ import { ExtraArgument } from '../store/index';
 import { ThemeModalStyle, ThemeProperties } from '../themes/commons';
 
 export interface TabItem {
-    // active: boolean;
+    active?: boolean;
     onClick: any;
     text: string;
 }
