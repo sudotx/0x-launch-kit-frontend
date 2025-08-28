@@ -32,15 +32,9 @@ export enum FontSize {
 
 const ErrorCardContainer = styled.div<ErrorProps>`
     align-items: center;
-    background-color: ${props => props.theme.componentsTheme.errorCardBackground};
-    border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.errorCardBorder};
-    color: ${props => props.theme.componentsTheme.errorCardText};
     display: flex;
-    font-size: ${props => (props.fontSize === FontSize.Large ? '16px' : '14px')};
     line-height: 1.2;
     padding: 10px 15px;
-    ${props => (props.textAlign === 'center' ? 'justify-content: center;' : '')}
 `;
 
 const IconContainer = styled.span`

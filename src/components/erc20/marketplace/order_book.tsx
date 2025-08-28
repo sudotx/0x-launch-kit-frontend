@@ -22,6 +22,7 @@ import { setOrderPriceSelected } from '../../../store/ui/reducers';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
+import { mockOrderBook, mockBaseToken, mockQuoteToken, mockSpread, mockSpreadPercentage } from '../../../utils/mockData';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
@@ -83,9 +84,6 @@ const GridRow = styled.div`
 const GridRowInner = styled(GridRow)`
     background-color: 'transparent';
     cursor: pointer;
-    &:hover {
-        background-color: ${props => props.theme.componentsTheme.rowOrderActive};
-    }
 `;
 
 const GridRowTop = styled(GridRow)`
@@ -140,13 +138,14 @@ interface OrderToRowProps {
     order: OrderBookItem;
     index: number;
     baseToken: Token;
-    priceColor: string;
+    // priceColor: string;
     mySizeOrders: OrderBookItem[];
     web3State?: Web3State;
 }
 
 const OrderToRow: React.FC<OrderToRowProps> = props => {
-    const { order, index, baseToken, priceColor, mySizeOrders = [], web3State } = props;
+    const { order, index, baseToken, mySizeOrders = [], web3State } = props;
+    // const { order, index, baseToken, priceColor, mySizeOrders = [], web3State } = props;
     const [isHover, setIsHover] = useState(false);
     const dispatch = useDispatch();
 
@@ -181,11 +180,14 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
             onClick={() => handleSetOrderPriceSelected(order.price)}
         >
             <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
-                <ShowNumberWithColors isHover={isHover} num={new BigNumber(size)} />
+                <ShowNumberWithColors ishover={isHover} num={new BigNumber(size)} />
             </CustomTD>
-            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
             </CustomTD>
+            {/* <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+                {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
+            </CustomTD> */}
             {mySizeRow}
         </GridRowInner>
     );
@@ -316,7 +318,7 @@ const OrderBookTable: React.FC<Props> = props => {
                                     order={order}
                                     index={index}
                                     baseToken={baseToken}
-                                    priceColor={getColor(order)}
+                                    // priceColor={getColor(order)}
                                     mySizeOrders={mySizeSellArray}
                                     web3State={web3State}
                                 />
@@ -340,7 +342,7 @@ const OrderBookTable: React.FC<Props> = props => {
                                     order={order}
                                     index={index}
                                     baseToken={baseToken}
-                                    priceColor={getColor(order)}
+                                    // priceColor={getColor(order)}
                                     mySizeOrders={mySizeBuyArray}
                                     web3State={web3State}
                                 />
@@ -357,15 +359,26 @@ const OrderBookTable: React.FC<Props> = props => {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        orderBook: getOrderBook(state),
-        baseToken: getBaseToken(state),
-        userOrders: getUserOrders(state),
-        quoteToken: getQuoteToken(state),
-        web3State: getWeb3State(state),
-        absoluteSpread: getSpread(state),
-        percentageSpread: getSpreadInPercentage(state),
+        orderBook: mockOrderBook,
+        baseToken: mockBaseToken,
+        userOrders: [],
+        quoteToken: mockQuoteToken,
+        web3State: undefined,
+        absoluteSpread: mockSpread,
+        percentageSpread: mockSpreadPercentage,
     };
 };
+// const mapStateToProps = (state: StoreState): StateProps => {
+//     return {
+//         orderBook: getOrderBook(state) || mockOrderBook,
+//         baseToken: getBaseToken(state) || mockBaseToken,
+//         userOrders: getUserOrders(state) || [],
+//         quoteToken: getQuoteToken(state) || mockQuoteToken,
+//         web3State: getWeb3State(state) || 'Done',
+//         absoluteSpread: getSpread(state) || mockSpread,
+//         percentageSpread: getSpreadInPercentage(state) || mockSpreadPercentage,
+//     };
+// };
 
 const OrderBookTableContainer = withTheme(connect(mapStateToProps)(OrderBookTable));
 const OrderBookTableWithTheme = withTheme(OrderBookTable);

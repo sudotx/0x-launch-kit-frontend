@@ -7,9 +7,9 @@ import { ETH_DECIMALS } from '../../../common/constants';
 import { getEthAccount, getEthBalance } from '../../../store/selectors';
 import { themeDimensions } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
-import { WalletWethBalanceContainer } from '../../account';
-import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
-import { WalletConnectionStatusDot } from '../../account/wallet_connections_status_dot';
+// import { WalletWethBalanceContainer } from '../../account';
+// import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
+// import { WalletConnectionStatusDot } from '../../account/wallet_connections_status_dot';
 import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
 
@@ -68,23 +68,23 @@ const WalletAddress = styled.div`
     line-height: 1.3;
 `;
 
-const WalletConnectionStatusDotStyled = styled(WalletConnectionStatusDot)`
-    margin-right: 8px;
-`;
+// const WalletConnectionStatusDotStyled = styled(WalletConnectionStatusDot)`
+//     margin-right: 8px;
+// `;
 
-const WalletWethBalanceContainerStyled = styled(WalletWethBalanceContainer)`
-    background: #fbfbfb;
-    border-left: none;
-    border-radius: 0;
-    border-right: none;
-    margin: 0;
-`;
+// const WalletWethBalanceContainerStyled = styled(WalletWethBalanceContainer)`
+//     background: #fbfbfb;
+//     border-left: none;
+//     border-radius: 0;
+//     border-right: none;
+//     margin: 0;
+// `;
 
 const DropdownTextItemStyled = styled(DropdownTextItem)`
     border: none;
 `;
 
-interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
+interface OwnProps extends HTMLAttributes<HTMLSpanElement> { }
 
 const WalletConnectionContent: React.FC<OwnProps> = props => {
     const [isEthModalOpen, setIsEthModalOpen] = useState(false);
@@ -100,27 +100,30 @@ const WalletConnectionContent: React.FC<OwnProps> = props => {
             <DropdownHeader>
                 <DropdownHeaderTitle>Balances</DropdownHeaderTitle>
                 <WalletAddress>
-                    <WalletConnectionStatusDotStyled status={status} />
+                    {/* <WalletConnectionStatusDotStyled status={status} /> */}
                     {ethAccountText}
                 </WalletAddress>
             </DropdownHeader>
-            <WalletWethBalanceContainerStyled
+            {/* <WalletWethBalanceContainerStyled
                 onWethModalOpen={() => setIsEthModalOpen(true)}
                 onWethModalClose={() => setIsEthModalOpen(false)}
-            />
+            /> */}
             <DropdownTextItemStyled onClick={() => ethAccount && copyToClipboard(ethAccount)} text="Copy Address" />
             <DropdownTextItemStyled onClick={connectToWallet} text="Connect a different address" />
         </WalletConnectionWrapper>
     );
 
     return (
-        <WalletConnectionStatusContainer
-            walletConnectionContent={content}
-            shouldCloseDropdownOnClickOutside={!isEthModalOpen}
-            headerText={ethBalanceText}
-            ethAccount={ethAccount}
-            {...props}
-        />
+        // <WalletConnectionStatusContainer
+        //     walletConnectionContent={content}
+        //     shouldCloseDropdownOnClickOutside={!isEthModalOpen}
+        //     headerText={ethBalanceText}
+        //     ethAccount={ethAccount}
+        //     {...props}
+        // />
+        <div>
+            <h1>Hello</h1>
+        </div>
     );
 };
 

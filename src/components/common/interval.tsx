@@ -1,24 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Props {
     delay: number;
     children: (now: Date) => React.ReactNode;
 }
 
-export class Interval extends React.Component<Props> {
-    private _interval: any = null;
+export const Interval: React.FC<Props> = ({ delay, children }) => {
+    const [now, setNow] = useState(new Date());
 
-    public componentDidMount = () => {
-        this._interval = setInterval(() => this.forceUpdate(), this.props.delay);
-    };
+    useEffect(() => {
+        const interval = setInterval(() => setNow(new Date()), delay);
+        return () => {
+            clearInterval(interval);
+        };
+    }, [delay]);
 
-    public componentWillUnmount = () => {
-        if (this._interval) {
-            clearInterval(this._interval);
-        }
-    };
-
-    public render = () => {
-        return this.props.children(new Date());
-    };
-}
+    return <>{children(now)}</>;
+};

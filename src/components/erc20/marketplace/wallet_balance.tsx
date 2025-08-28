@@ -1,29 +1,19 @@
 import { BigNumber } from '@0x/utils';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { useAccount, useBalance } from 'wagmi';
 
-import { METAMASK_EXTENSION_URL } from '../../../common/constants';
-import { initWallet } from '../../../store/actions';
-import {
-    getBaseToken,
-    getBaseTokenBalance,
-    getCurrencyPair,
-    getEthAccount,
-    getQuoteToken,
-    getQuoteTokenBalance,
-    getTotalEthBalance,
-    getWeb3State,
-} from '../../../store/selectors';
-import { errorsWallet } from '../../../util/error_messages';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { ButtonVariant, Web3State } from '../../../util/types';
+import { ButtonVariant } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
-import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
+import { ErrorCard } from '../../common/error_card';
 import { IconType, Tooltip } from '../../common/tooltip';
-import { AppDispatch } from '../../../store';
+import { useSelector } from 'react-redux';
+import { getCurrencyPair, getQuoteToken, getBaseTokenBalance, getQuoteTokenBalance, getTotalEthBalance } from '../../../store/selectors';
+import { mockQuoteToken, mockBaseToken } from '../../../utils/mockData';
 
 const LabelWrapper = styled.div`
     align-items: center;
@@ -35,7 +25,6 @@ const LabelWrapper = styled.div`
 
 const Label = styled.span`
     align-items: center;
-    color: ${props => props.theme.componentsTheme.textColorCommon};
     display: flex;
     flex-shrink: 0;
     font-size: 16px;
@@ -43,7 +32,6 @@ const Label = styled.span`
 `;
 
 const Value = styled.span`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;
@@ -53,11 +41,7 @@ const Value = styled.span`
     white-space: nowrap;
 `;
 
-const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
-    background-color: ${props =>
-        props.web3State === Web3State.Done
-            ? props.theme.componentsTheme.green
-            : props.theme.componentsTheme.errorButtonBackground};
+const WalletStatusBadge = styled.div<{ isConnected?: boolean }>`
     border-radius: 50%;
     height: 8px;
     margin-right: 6px;
@@ -65,7 +49,6 @@ const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
 `;
 
 const WalletStatusTitle = styled.h3`
-    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -89,7 +72,6 @@ interface ErrorCardStyledProps {
 }
 
 const ErrorCardStyled = styled(ErrorCard) <ErrorCardStyledProps>`
-    cursor: ${props => props.cursor};
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -115,19 +97,16 @@ const WalletErrorText = styled.p`
 `;
 
 const SimplifiedTextBox = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
-    ${props => (props.bottom ? `bottom: ${props.bottom};` : '')}
-    ${props => (props.left ? `left: ${props.left};` : '')}
-    ${props => (props.right ? `right: ${props.right};` : '')}
-    ${props => (props.top ? `top: ${props.top};` : '')}
     position: absolute;
     z-index: 1;
 
-    rect {
-        fill: ${props => props.theme.componentsTheme.simplifiedTextBoxColor};
-    }
 `;
 
 const ButtonStyled = styled(Button)`
+    width: 100%;
+`;
+
+const ConnectButtonWrapper = styled.div`
     width: 100%;
 `;
 
@@ -143,38 +122,42 @@ const simplifiedTextBoxSmall = () => (
     </svg>
 );
 
-const getWalletName = () => 'MetaMask';
+const getWalletName = () => 'Wallet';
 
-const getWallet = (web3State: Web3State) => (
+const getWallet = (isConnected: boolean) => (
     <WalletStatusContainer>
-        <WalletStatusBadge web3State={web3State} />
+        <WalletStatusBadge isConnected={isConnected} />
         <WalletStatusTitle>{getWalletName()}</WalletStatusTitle>
     </WalletStatusContainer>
 );
 
-const getWalletTitle = (web3State: Web3State) => {
-    return web3State === Web3State.NotInstalled ? 'No wallet found' : 'Wallet Balance';
-};
-
-const openMetamaskExtensionUrl = () => {
-    const win = window.open(METAMASK_EXTENSION_URL, '_blank');
-    if (win) {
-        win.focus();
-    }
+const getWalletTitle = (isConnected: boolean) => {
+    return isConnected ? 'Wallet Balance' : 'Connect Wallet';
 };
 
 const WalletBalance: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const web3State = useSelector(getWeb3State);
-    const currencyPair = useSelector(getCurrencyPair);
-    const quoteToken = useSelector(getQuoteToken);
-    const baseTokenBalance = useSelector(getBaseTokenBalance);
-    const quoteTokenBalance = useSelector(getQuoteTokenBalance);
-    const totalEthBalance = useSelector(getTotalEthBalance);
+    const { isConnected, address, isConnecting } = useAccount();
+    const { data: ethBalance } = useBalance({
+        address: address,
+    });
 
-    const onConnectWallet = () => dispatch(initWallet());
+    // Use mock data as fallbacks
+    const currencyPair = useSelector(getCurrencyPair) || { base: 'ZRX', quote: 'WETH' };
+    const quoteToken = useSelector(getQuoteToken) || mockQuoteToken;
+    const baseTokenBalance = useSelector(getBaseTokenBalance) || {
+        balance: new BigNumber('1000000000000000000000'), // 1000 tokens
+        token: mockBaseToken
+    };
+    const quoteTokenBalance = useSelector(getQuoteTokenBalance) || {
+        balance: new BigNumber('500000000000000000000') // 500 tokens
+    };
+    const totalEthBalance = useSelector(getTotalEthBalance) || new BigNumber('1000000000000000000'); // 1 ETH
 
     const getWalletContent = () => {
+        if (isConnecting) {
+            return <ButtonStyled variant={ButtonVariant.Tertiary}>Connecting...</ButtonStyled>;
+        }
+
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
             const quoteTokenBalanceAmount = isWeth(quoteToken.symbol) ? totalEthBalance : quoteTokenBalance.balance;
             const quoteBalanceString = tokenAmountInUnits(
@@ -208,62 +191,11 @@ const WalletBalance: React.FC = () => {
             );
         }
 
-        if (web3State === Web3State.Locked) {
-            return (
-                <WalletErrorContainer>
-                    <ErrorCardStyled
-                        fontSize={FontSize.Large}
-                        icon={ErrorIcons.Lock}
-                        onClick={onConnectWallet}
-                        text={errorsWallet.mmConnect}
-                        textAlign="center"
-                    />
-                    <SimplifiedTextBox top="0" left="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
-                    <SimplifiedTextBox top="0" right="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" left="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" right="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
-                </WalletErrorContainer>
-            );
-        }
-
-        if (web3State === Web3State.NotInstalled) {
-            return (
-                <>
-                    <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
-                    <ButtonStyled variant={ButtonVariant.Tertiary} onClick={openMetamaskExtensionUrl}>
-                        {errorsWallet.mmGetExtension}
-                    </ButtonStyled>
-                </>
-            );
-        }
-
-        if (web3State === Web3State.Loading) {
-            return <ButtonStyled variant={ButtonVariant.Tertiary}>{errorsWallet.mmLoading}</ButtonStyled>;
-        }
-
-        if (web3State === Web3State.Error) {
-            return (
-                <WalletErrorContainer>
-                    <ErrorCardStyled
-                        cursor={'default'}
-                        fontSize={FontSize.Large}
-                        icon={ErrorIcons.Warning}
-                        text={errorsWallet.mmWrongNetwork}
-                        textAlign="center"
-                    />
-                    <SimplifiedTextBox top="0" left="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
-                    <SimplifiedTextBox top="0" right="0">{simplifiedTextBoxBig()}</SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" left="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
-                    <SimplifiedTextBox bottom="0" right="0">{simplifiedTextBoxSmall()}</SimplifiedTextBox>
-                </WalletErrorContainer>
-            );
-        }
-
         return null;
     };
 
     return (
-        <Card title={getWalletTitle(web3State)} action={getWallet(web3State)} minHeightBody={'0px'}>
+        <Card title={getWalletTitle(isConnected)} action={getWallet(isConnected)} minHeightBody={'0px'}>
             {getWalletContent()}
         </Card>
     );

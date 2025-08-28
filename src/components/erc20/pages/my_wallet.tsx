@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../../account';
+// import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../../account';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
@@ -15,13 +15,16 @@ const ColumnWideMyWallet = styled(ColumnWide)`
 `;
 
 export const MyWallet = () => (
-    <Content>
-        <ConnectButton />
-        <ColumnNarrow>
-            <WalletWethBalanceContainer />
-        </ColumnNarrow>
-        <ColumnWideMyWallet>
-            <WalletTokenBalancesContainer />
-        </ColumnWideMyWallet>
-    </Content>
+    // <Content>
+    //     <ConnectButton />
+    //     <ColumnNarrow>
+    //         <WalletWethBalanceContainer />
+    //     </ColumnNarrow>
+    //     <ColumnWideMyWallet>
+    //         <WalletTokenBalancesContainer />
+    //     </ColumnWideMyWallet>
+    // </Content>
+    <div>
+        hello
+    </div>
 );

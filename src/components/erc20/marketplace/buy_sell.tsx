@@ -1,24 +1,21 @@
 import { BigNumber } from '@0x/utils';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { ZERO } from '../../../common/constants';
 import { AppDispatch } from '../../../store';
-import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
+import { startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getCurrencyPair, getOrderPriceSelected, getWeb3State } from '../../../store/selectors';
-import { themeDimensions } from '../../../themes/commons';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import {
     ButtonIcons,
     ButtonVariant,
-    CurrencyPair,
-    OrderFeeData,
     OrderSide,
     OrderType,
-    Web3State,
+    Web3State
 } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { Button } from '../../common/button';
@@ -27,15 +24,14 @@ import { CardTabSelector } from '../../common/card_tab_selector';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
 import { OrderDetailsContainer } from './order_details';
+import { mockBaseToken, mockQuoteToken } from '../../../utils/mockData';
 
 const BuySellWrapper = styled(CardBase)`
-    margin-bottom: ${themeDimensions.verticalSeparationSm};
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 20px ${themeDimensions.horizontalPadding};
 `;
 
 const TabsContainer = styled.div`
@@ -46,21 +42,10 @@ const TabsContainer = styled.div`
 
 const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     align-items: center;
-    background-color: ${props =>
-        props.isSelected ? 'transparent' : props.theme.componentsTheme.inactiveTabBackgroundColor};
-    border-bottom-color: ${props => (props.isSelected ? 'transparent' : props.theme.componentsTheme.cardBorderColor)};
     border-bottom-style: solid;
     border-bottom-width: 1px;
-    border-right-color: ${props => (props.isSelected ? props.theme.componentsTheme.cardBorderColor : 'transparent')};
     border-right-style: solid;
     border-right-width: 1px;
-    color: ${props =>
-        props.isSelected
-            ? props.side === OrderSide.Buy
-                ? props.theme.componentsTheme.green
-                : props.theme.componentsTheme.red
-            : props.theme.componentsTheme.textLight};
-    cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
     display: flex;
     font-weight: 600;
     height: 47px;
@@ -68,15 +53,12 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     width: 50%;
 
     &:first-child {
-        border-top-left-radius: ${themeDimensions.borderRadius};
     }
 
     &:last-child {
-        border-left-color: ${props => (props.isSelected ? props.theme.componentsTheme.cardBorderColor : 'transparent')};
         border-left-style: solid;
         border-left-width: 1px;
         border-right: none;
-        border-top-right-radius: ${themeDimensions.borderRadius};
     }
 `;
 
@@ -88,7 +70,6 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: ${props => props.color || props.theme.componentsTheme.textColorCommon};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -100,16 +81,11 @@ const InnerTabs = styled(CardTabSelector)`
 `;
 
 const FieldContainer = styled.div`
-    height: ${themeDimensions.fieldHeight};
     margin-bottom: 25px;
     position: relative;
 `;
 
 const BigInputNumberStyled = styled<any>(BigNumberInput)`
-    background-color: ${props => props.theme.componentsTheme.textInputBackgroundColor};
-    border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.textInputBorderColor};
-    color: ${props => props.theme.componentsTheme.textInputTextColor};
     font-feature-settings: 'tnum' 1;
     font-size: 16px;
     height: 100%;
@@ -130,7 +106,6 @@ const TokenContainer = styled.div`
 `;
 
 const TokenText = styled.span`
-    color: ${props => props.theme.componentsTheme.textInputTextColor};
     font-size: 14px;
     font-weight: normal;
     line-height: 21px;
@@ -154,9 +129,11 @@ const BuySell: React.FC = () => {
     const [error, setError] = useState<{ btnMsg: string | null; cardMsg: string | null }>({ btnMsg: null, cardMsg: null });
 
     const dispatch = useDispatch<AppDispatch>();
-    const web3State = useSelector(getWeb3State);
-    const currencyPair = useSelector(getCurrencyPair);
-    const orderPriceSelected = useSelector(getOrderPriceSelected);
+    const web3State = useSelector(getWeb3State) || 'Done';
+    const currencyPair = { base: 'ZRX', quote: 'WETH' };
+    // const currencyPair = useSelector(getCurrencyPair) || { base: 'ZRX', quote: 'WETH' };
+    const orderPriceSelected = new BigNumber('2000000000000000000');
+    // const orderPriceSelected = useSelector(getOrderPriceSelected)
 
     useEffect(() => {
         if (orderPriceSelected && orderType === OrderType.Limit) {
@@ -215,9 +192,9 @@ const BuySell: React.FC = () => {
     const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
     const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
-    const btnText = error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
+    // const btnText = error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
 
-    const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
+    // const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
 
     return (
         <>
@@ -237,13 +214,13 @@ const BuySell: React.FC = () => {
                     </LabelContainer>
                     <FieldContainer>
                         <BigInputNumberStyled
-                            decimals={decimals}
+                            // decimals={decimals}
                             min={ZERO}
                             onChange={setMakerAmount}
                             value={makerAmount}
                             placeholder={'0.00'}
                         />
-                        <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
+                        {/* <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} /> */}
                     </FieldContainer>
                     {orderType === OrderType.Limit && (
                         <>
@@ -258,16 +235,16 @@ const BuySell: React.FC = () => {
                                     value={price}
                                     placeholder={'0.00'}
                                 />
-                                <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
+                                {/* <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} /> */}
                             </FieldContainer>
                         </>
                     )}
-                    <OrderDetailsContainer
+                    {/* <OrderDetailsContainer
                         orderType={orderType}
                         orderSide={tab}
                         tokenAmount={makerAmount || ZERO}
                         tokenPrice={price || ZERO}
-                        currencyPair={currencyPair}
+                    // currencyPair={currencyPair}
                     />
                     <Button
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
@@ -282,7 +259,7 @@ const BuySell: React.FC = () => {
                         }
                     >
                         {btnText}
-                    </Button>
+                    </Button> */}
                 </Content>
             </BuySellWrapper>
             {error.cardMsg ? <ErrorCard fontSize={FontSize.Large} text={error.cardMsg} icon={ErrorIcons.Sad} /> : null}

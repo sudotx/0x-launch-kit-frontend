@@ -11,7 +11,6 @@ interface Props extends HTMLAttributes<HTMLDivElement>, EmptyWrapperProps {
 
 const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
     align-items: center;
-    color: ${props => props.theme.componentsTheme.lightGray};
     display: flex;
     font-size: 16px;
     font-weight: 500;

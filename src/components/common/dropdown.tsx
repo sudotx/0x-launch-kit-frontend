@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react';
+import React, { HTMLAttributes, useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import styled from 'styled-components';
 
 export enum DropdownPositions {
@@ -37,64 +37,56 @@ const DropdownWrapperBody = styled.div<DropdownWrapperBodyProps>`
     ${props => (props.horizontalPosition === DropdownPositions.Right ? 'right: 0;' : '')}
 `;
 
-interface State {
-    isOpen: boolean;
+export interface DropdownRef {
+    closeDropdown: () => void;
 }
 
-export class Dropdown extends React.Component<Props, State> {
-    public readonly state: State = {
-        isOpen: false,
-    };
-    private _wrapperRef: any;
+export const Dropdown = forwardRef<DropdownRef, Props>((props, ref) => {
+    const { header, body, horizontalPosition = DropdownPositions.Left, shouldCloseDropdownOnClickOutside = true, ...restProps } = props;
+    const [isOpen, setIsOpen] = useState(false);
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
-    public render = () => {
-        const { header, body, horizontalPosition = DropdownPositions.Left, ...restProps } = this.props;
-
-        return (
-            <DropdownWrapper ref={this._setWrapperRef} {...restProps}>
-                <DropdownWrapperHeader onClick={this._toggleDropdown}>{header}</DropdownWrapperHeader>
-                {this.state.isOpen ? (
-                    <DropdownWrapperBody horizontalPosition={horizontalPosition} onClick={this._closeDropdownBody}>
-                        {body}
-                    </DropdownWrapperBody>
-                ) : null}
-            </DropdownWrapper>
-        );
+    const closeDropdown = () => {
+        setIsOpen(false);
     };
 
-    public componentDidMount = () => {
-        document.addEventListener('mousedown', this._handleClickOutside);
-    };
+    useImperativeHandle(ref, () => ({
+        closeDropdown,
+    }));
 
-    public componentWillUnmount = () => {
-        document.removeEventListener('mousedown', this._handleClickOutside);
-    };
-
-    public closeDropdown = () => {
-        this.setState({ isOpen: false });
-    };
-
-    private readonly _setWrapperRef = (node: any) => {
-        this._wrapperRef = node;
-    };
-
-    private readonly _handleClickOutside = (event: any) => {
-        const { shouldCloseDropdownOnClickOutside = true } = this.props;
-        if (this._wrapperRef && !this._wrapperRef.contains(event.target)) {
-            if (shouldCloseDropdownOnClickOutside) {
-                this.closeDropdown();
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+                if (shouldCloseDropdownOnClickOutside) {
+                    closeDropdown();
+                }
             }
-        }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [shouldCloseDropdownOnClickOutside]);
+
+    const toggleDropdown = () => {
+        setIsOpen(prev => !prev);
     };
 
-    private readonly _toggleDropdown = () => {
-        this.setState({ isOpen: !this.state.isOpen });
-    };
-
-    private readonly _closeDropdownBody = () => {
-        const { shouldCloseDropdownOnClickOutside = true } = this.props;
+    const closeDropdownBody = () => {
         if (shouldCloseDropdownOnClickOutside) {
-            this.closeDropdown();
+            closeDropdown();
         }
     };
-}
+
+    return (
+        <DropdownWrapper ref={wrapperRef} {...restProps}>
+            <DropdownWrapperHeader onClick={toggleDropdown}>{header}</DropdownWrapperHeader>
+            {isOpen ? (
+                <DropdownWrapperBody horizontalPosition={horizontalPosition} onClick={closeDropdownBody}>
+                    {body}
+                </DropdownWrapperBody>
+            ) : null}
+        </DropdownWrapper>
+    );
+});

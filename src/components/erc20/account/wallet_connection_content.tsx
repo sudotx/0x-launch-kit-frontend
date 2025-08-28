@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { getEthAccount } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
-import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
+// import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
 
@@ -55,12 +55,15 @@ const WalletConnectionContent: React.FC<OwnProps> = props => {
     );
 
     return (
-        <WalletConnectionStatusContainer
-            walletConnectionContent={content}
-            headerText={ethAccountText}
-            ethAccount={ethAccount}
-            {...props}
-        />
+        // <WalletConnectionStatusContainer
+        //     walletConnectionContent={content}
+        //     headerText={ethAccountText}
+        //     ethAccount={ethAccount}
+        //     {...props}
+        // />
+        <div>
+            hello
+        </div>
     );
 };
 

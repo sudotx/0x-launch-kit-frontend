@@ -60,7 +60,7 @@ class StepsModal extends React.Component<Props> {
         const stepIndex = doneSteps.length;
 
         return (
-            <Modal isOpen={isOpen} style={theme.modalTheme}>
+            <Modal isOpen={isOpen} >
                 <CloseModalButton onClick={reset} />
                 <ModalContent>
                     {currentStep && currentStep.kind === StepKind.ToggleTokenLock && (

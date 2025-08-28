@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TimeAgo from 'react-timeago';
 import styled, { css } from 'styled-components';
 
@@ -16,10 +16,6 @@ import { Spinner } from '../common/spinner';
 interface Props {
     item: Notification;
     estimatedTxTimeMs: number;
-}
-
-interface State {
-    pending: boolean;
 }
 
 interface StyledIsActive {
@@ -81,64 +77,29 @@ const NotificationIcon = styled.div`
     flex-shrink: 0;
 `;
 
-class NotificationItem extends React.Component<Props, State> {
-    private _txMined: CancelablePromise<any> | null = null;
+const NotificationItem: React.FC<Props> = props => {
+    const { item, estimatedTxTimeMs } = props;
+    const [pending, setPending] = useState(false);
 
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            pending: false,
-        };
-    }
-
-    public componentDidMount = async () => {
-        const { item } = this.props;
+    useEffect(() => {
+        let txMined: CancelablePromise<any> | null = null;
 
         if (item.kind === NotificationKind.Market || item.kind === NotificationKind.CancelOrder) {
-            this.setState({
-                pending: true,
-            });
+            setPending(true);
 
-            this._txMined = makeCancelable(item.tx);
+            txMined = makeCancelable(item.tx);
 
-            await this._txMined.promise.finally(() => this.setState({ pending: false }));
+            txMined.promise.finally(() => setPending(false));
         }
-    };
 
-    public componentWillUnmount = () => {
-        if (this._txMined) {
-            this._txMined.cancel();
-        }
-    };
+        return () => {
+            if (txMined) {
+                txMined.cancel();
+            }
+        };
+    }, [item]);
 
-    public render = () => {
-        const { item } = this.props;
-
-        const notificationBody = (
-            <>
-                <NotificationContent>
-                    <NotificationTitle>{this._getTitleFromItem(item)}</NotificationTitle>
-                    <NotificationText>{this._getTextFromItem(item)}</NotificationText>
-                </NotificationContent>
-                <NotificationIcon>{this._getNotificationIcon(item)}</NotificationIcon>
-            </>
-        );
-
-        return item.kind === NotificationKind.Limit ? (
-            <NotificationWrapperLimit active={this.state.pending}>{notificationBody}</NotificationWrapperLimit>
-        ) : (
-            <NotificationWrapperMarketOrCancel
-                active={this.state.pending}
-                href={getEtherscanUrlForNotificationTx(item)}
-                target="_blank"
-            >
-                {notificationBody}
-            </NotificationWrapperMarketOrCancel>
-        );
-    };
-
-    private readonly _getTitleFromItem = (item: Notification): string => {
+    const getTitleFromItem = (item: Notification): string => {
         let operation: string;
 
         switch (item.kind) {
@@ -164,10 +125,8 @@ class NotificationItem extends React.Component<Props, State> {
         return `${operation} ${amount} ${item.token.symbol.toUpperCase()}`;
     };
 
-    private readonly _getTextFromItem = (item: Notification): React.ReactNode => {
-        const { estimatedTxTimeMs } = this.props;
-
-        if (this.state.pending) {
+    const getTextFromItem = (item: Notification): React.ReactNode => {
+        if (pending) {
             return (
                 <Interval delay={1000}>
                     {now => <PendingTime now={now} startTime={item.timestamp} estimatedTimeMs={estimatedTxTimeMs} />}
@@ -186,8 +145,8 @@ class NotificationItem extends React.Component<Props, State> {
         return <TimeAgo date={item.timestamp} formatter={formatter} />;
     };
 
-    private readonly _getNotificationIcon = (item: Notification) => {
-        if (this.state.pending) {
+    const getNotificationIcon = (item: Notification) => {
+        if (pending) {
             return <Spinner />;
         } else if (item.kind === NotificationKind.CancelOrder) {
             return <NotificationCancelIcon />;
@@ -195,6 +154,28 @@ class NotificationItem extends React.Component<Props, State> {
             return <NotificationCheckmarkIcon />;
         }
     };
-}
+
+    const notificationBody = (
+        <>
+            <NotificationContent>
+                <NotificationTitle>{getTitleFromItem(item)}</NotificationTitle>
+                <NotificationText>{getTextFromItem(item)}</NotificationText>
+            </NotificationContent>
+            <NotificationIcon>{getNotificationIcon(item)}</NotificationIcon>
+        </>
+    );
+
+    return item.kind === NotificationKind.Limit ? (
+        <NotificationWrapperLimit active={pending}>{notificationBody}</NotificationWrapperLimit>
+    ) : (
+        <NotificationWrapperMarketOrCancel
+            active={pending}
+            href={getEtherscanUrlForNotificationTx(item)}
+            target="_blank"
+        >
+            {notificationBody}
+        </NotificationWrapperMarketOrCancel>
+    );
+};
 
 export { NotificationItem };
