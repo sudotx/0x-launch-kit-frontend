@@ -1,11 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useAccount } from 'wagmi';
 import styled, { css } from 'styled-components';
 
-import { getWeb3State } from '../../store/selectors';
 import { themeBreakPoints, themeDimensions } from '../../themes/commons';
-import { errorsWallet } from '../../util/error_messages';
-import { StoreState, Web3State } from '../../util/types';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 import { ErrorCard, ErrorIcons, FontSize } from './error_card';
 
@@ -14,12 +12,6 @@ interface OwnProps {
     endContent: React.ReactNode;
     startContent: React.ReactNode;
 }
-
-interface StateProps {
-    web3State: Web3State;
-}
-
-type Props = OwnProps & StateProps;
 
 export const separatorTopbar = css`
     &:after {
@@ -36,18 +28,13 @@ export const separatorTopbar = css`
 `;
 
 const ToolbarWrapper = styled.div`
-    align-items: center;
-    background: ${props => props.theme.componentsTheme.topbarBackgroundColor};
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.topbarBorderColor};
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
-    height: ${themeDimensions.toolbarHeight};
     justify-content: space-between;
-    padding: 0 ${themeDimensions.horizontalPadding};
     position: sticky;
     top: 0;
-    z-index: 123;
+    margin: 10px
 `;
 
 const ToolbarStart = styled.div`
@@ -81,54 +68,27 @@ const ToolbarEnd = styled.div`
     }
 `;
 
-const Toolbar = (props: Props) => {
+const ToolbarContainer = (props: OwnProps) => {
     const { startContent, endContent, centerContent } = props;
-
-    const getContentFromWeb3State = (web3State: Web3State): React.ReactNode => {
-        switch (web3State) {
-            case Web3State.Locked:
-                return <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLocked} icon={ErrorIcons.Lock} />;
-            case Web3State.NotInstalled:
-                return (
-                    <ErrorCard
-                        fontSize={FontSize.Large}
-                        text={errorsWallet.mmNotInstalled}
-                        icon={ErrorIcons.Metamask}
-                    />
-                );
-            case Web3State.Loading:
-                return <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmLoading} icon={ErrorIcons.Metamask} />;
-            case Web3State.Error:
-                return (
-                    <ErrorCard fontSize={FontSize.Large} text={errorsWallet.mmWrongNetwork} icon={ErrorIcons.Warning} />
-                );
-            case Web3State.Done:
-                return (
-                    <>
-                        <ToolbarCenter>{centerContent}</ToolbarCenter>
-                        <ToolbarEnd>{endContent}</ToolbarEnd>
-                    </>
-                );
-            default:
-                const _exhaustiveCheck: never = web3State;
-                return _exhaustiveCheck;
-        }
-    };
+    const { isConnected } = useAccount();
 
     return (
         <ToolbarWrapper>
             <ToolbarStart>{startContent}</ToolbarStart>
-            {getContentFromWeb3State(props.web3State)}
+            {isConnected ? (
+                <>
+                    <ToolbarCenter>{centerContent}</ToolbarCenter>
+                    <ToolbarEnd>{endContent}</ToolbarEnd>
+                </>
+            ) : (
+                <ToolbarEnd>
+                    <ConnectButton />
+                </ToolbarEnd>
+            )}
         </ToolbarWrapper>
     );
 };
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        web3State: getWeb3State(state),
-    };
-};
-
-const ToolbarContainer = connect(mapStateToProps)(Toolbar);
+const Toolbar = ToolbarContainer;
 
 export { Toolbar, ToolbarContainer };

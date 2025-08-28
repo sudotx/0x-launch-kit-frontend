@@ -25,7 +25,7 @@ export const initializeProvider = async (): Promise<ethers.providers.Web3Provide
             await provider.send("eth_requestAccounts", []);
 
             // Get signer
-            signer = await provider.getSigner();
+            signer = provider.getSigner();
 
             // Register listeners
             ethereum.on("accountsChanged", () => {

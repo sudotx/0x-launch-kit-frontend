@@ -3,19 +3,19 @@ import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'sanitize.css';
 
-import { ConnectButton, getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { http, WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
-import { ERC20_APP_BASE_PATH, ERC721_APP_BASE_PATH, LOGGER_ID } from './common/constants';
+import { LOGGER_ID } from './common/constants';
 import App from './components/app';
-import { Erc20App } from './components/erc20/erc20_app';
-import { Erc721App } from './components/erc721/erc721_app';
 import './index.css';
 import { store } from './store';
+
+import Home from './pages/Home';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -47,16 +47,6 @@ if (['development', 'production'].includes(process.env.NODE_ENV || 'development'
 	window.localStorage.debug = `${LOGGER_ID}*`;
 }
 
-function Home() {
-	return (
-		<div>
-			<ConnectButton />
-			<h1>Hello Exchange</h1>
-		</div>
-	)
-}
-
-
 function Web3WrappedApp() {
 	return (
 		<WagmiProvider config={config}>
@@ -66,8 +56,6 @@ function Web3WrappedApp() {
 						<BrowserRouter>
 							<App>
 								<Routes>
-									<Route path={ERC20_APP_BASE_PATH} element={<Erc20App />} />
-									<Route path={ERC721_APP_BASE_PATH} element={<Erc721App />} />
 									<Route path="/" element={<Home />} />
 								</Routes>
 							</App>

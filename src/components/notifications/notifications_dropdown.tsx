@@ -71,51 +71,40 @@ const NoNotifications = styled.div`
     text-align: center;
 `;
 
-class NotificationsDropdown extends React.Component<Props, {}> {
-    public render = () => {
-        const {
-            estimatedTxTimeMs,
-            notifications,
-            hasUnreadNotifications,
-            onMarkNotificationsAsRead,
-            ...restProps
-        } = this.props;
+const NotificationsDropdown: React.FC<Props> = props => {
+    const { estimatedTxTimeMs, notifications, hasUnreadNotifications, onMarkNotificationsAsRead, ...restProps } =
+        props;
 
-        const notificationsList = notifications.map((item, index) => (
-            <NotificationItem key={index} item={item} estimatedTxTimeMs={estimatedTxTimeMs} />
-        ));
+    const notificationsList = notifications.map((item, index) => (
+        <NotificationItem key={index} item={item} estimatedTxTimeMs={estimatedTxTimeMs} />
+    ));
 
-        const header = (
-            <NotificationsDropdownHeader>
-                <BellIcon />
-                {hasUnreadNotifications ? <NewNotificationsBadge /> : null}
-            </NotificationsDropdownHeader>
-        );
+    const header = (
+        <NotificationsDropdownHeader>
+            <BellIcon />
+            {hasUnreadNotifications ? <NewNotificationsBadge /> : null}
+        </NotificationsDropdownHeader>
+    );
 
-        const body = (
-            <NotificationsDropdownBody>
-                <NotificationDropdownTitle>Notifications</NotificationDropdownTitle>
-                <NotificationsList>
-                    {notifications.length === 0 ? (
-                        <NoNotifications>No notifications</NoNotifications>
-                    ) : (
-                        notificationsList
-                    )}
-                </NotificationsList>
-            </NotificationsDropdownBody>
-        );
+    const body = (
+        <NotificationsDropdownBody>
+            <NotificationDropdownTitle>Notifications</NotificationDropdownTitle>
+            <NotificationsList>
+                {notifications.length === 0 ? <NoNotifications>No notifications</NoNotifications> : notificationsList}
+            </NotificationsList>
+        </NotificationsDropdownBody>
+    );
 
-        return (
-            <NotificationsDropdownWrapper
-                body={body}
-                header={header}
-                horizontalPosition={DropdownPositions.Right}
-                onClick={onMarkNotificationsAsRead}
-                {...restProps}
-            />
-        );
-    };
-}
+    return (
+        <NotificationsDropdownWrapper
+            body={body}
+            header={header}
+            horizontalPosition={DropdownPositions.Right}
+            onClick={onMarkNotificationsAsRead}
+            {...restProps}
+        />
+    );
+};
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
