@@ -1,4 +1,3 @@
-import React from 'react';
 
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
@@ -8,9 +7,9 @@ import { OrderBookTableContainer } from '../marketplace/order_book';
 import { OrderHistoryContainer } from '../marketplace/order_history';
 import { WalletBalanceContainer } from '../marketplace/wallet_balance';
 
-class Marketplace extends React.PureComponent {
-    public render = () => {
-        return (
+const Marketplace = () => {
+    return (
+        <>
             <Content>
                 <ColumnNarrow>
                     <WalletBalanceContainer />
@@ -23,8 +22,9 @@ class Marketplace extends React.PureComponent {
                     <OrderHistoryContainer />
                 </ColumnWide>
             </Content>
-        );
-    };
+        </>
+    )
 }
+
 
 export { Marketplace };

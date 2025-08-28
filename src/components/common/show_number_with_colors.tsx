@@ -14,14 +14,9 @@ interface SpanRightProps {
 }
 
 const SpanLeft = styled.span`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
 `;
 
 const SpanRight = styled.span<SpanRightProps>`
-    color: ${props =>
-        props.isHover
-            ? props.theme.componentsTheme.textColorCommon
-            : props.theme.componentsTheme.numberDecimalsColor};
 `;
 
 export const ShowNumberWithColors: React.FC<ShowNumberWithColorsProps> = ({ num, isHover }) => {

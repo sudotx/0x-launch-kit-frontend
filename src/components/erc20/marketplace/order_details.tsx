@@ -1,17 +1,17 @@
 import { BigNumber, NULL_BYTES } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { ZERO } from '../../../common/constants';
-import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { AppDispatch } from '../../../store';
+import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, OrderFeeData, OrderSide, OrderType, UIOrder } from '../../../util/types';
+import { CurrencyPair, OrderFeeData, OrderSide, OrderType } from '../../../util/types';
 
 const Row = styled.div`
     align-items: center;

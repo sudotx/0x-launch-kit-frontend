@@ -1,16 +1,13 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import { useAccount } from 'wagmi';
 import styled, { css } from 'styled-components';
 
-import { themeBreakPoints, themeDimensions } from '../../themes/commons';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { themeBreakPoints } from '../../themes/commons';
 
-import { ErrorCard, ErrorIcons, FontSize } from './error_card';
+import { NavigationBar } from './navigation_bar';
 
 interface OwnProps {
-    centerContent?: React.ReactNode;
-    endContent: React.ReactNode;
-    startContent: React.ReactNode;
+    logo: React.ReactNode;
 }
 
 export const separatorTopbar = css`
@@ -32,9 +29,10 @@ const ToolbarWrapper = styled.div`
     flex-grow: 0;
     flex-shrink: 0;
     justify-content: space-between;
+    align-items: center;
     position: sticky;
     top: 0;
-    margin: 10px
+    margin: 10px;
 `;
 
 const ToolbarStart = styled.div`
@@ -69,22 +67,17 @@ const ToolbarEnd = styled.div`
 `;
 
 const ToolbarContainer = (props: OwnProps) => {
-    const { startContent, endContent, centerContent } = props;
-    const { isConnected } = useAccount();
+    const { logo } = props;
 
     return (
         <ToolbarWrapper>
-            <ToolbarStart>{startContent}</ToolbarStart>
-            {isConnected ? (
-                <>
-                    <ToolbarCenter>{centerContent}</ToolbarCenter>
-                    <ToolbarEnd>{endContent}</ToolbarEnd>
-                </>
-            ) : (
-                <ToolbarEnd>
-                    <ConnectButton />
-                </ToolbarEnd>
-            )}
+            <ToolbarStart>{logo}</ToolbarStart>
+            <ToolbarCenter>
+                <NavigationBar />
+            </ToolbarCenter>
+            <ToolbarEnd>
+                <ConnectButton />
+            </ToolbarEnd>
         </ToolbarWrapper>
     );
 };

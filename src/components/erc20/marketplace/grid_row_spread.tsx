@@ -20,15 +20,9 @@ const GridRow = styled.div`
     grid-template-columns: 1fr 1fr 1fr;
 `;
 
-export const GridRowSpreadContainer = styled(GridRow)<GridRowSpreadProps>`
-    ${props => (props.stickySpreadState === 'top' ? 'top: 29px;' : '')}
-    ${props => (props.stickySpreadState === 'bottom' ? 'bottom: 0;' : '')}
-
-    background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
+export const GridRowSpreadContainer = styled(GridRow) <GridRowSpreadProps>`
     flex-grow: 0;
     flex-shrink: 0;
-    position: ${props => (props.stickySpreadState === 'hidden' ? 'relative' : 'absolute')};
-    width: ${props => props.stickySpreadWidth};
     z-index: 12;
 `;
 
