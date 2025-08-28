@@ -24,7 +24,7 @@ import { CardTabSelector } from '../../common/card_tab_selector';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
 import { OrderDetailsContainer } from './order_details';
-import { mockBaseToken, mockQuoteToken } from '../../../utils/mockData';
+import { mockBaseToken, mockQuoteToken } from '../../../util/mockData';
 
 const BuySellWrapper = styled(CardBase)`
 `;

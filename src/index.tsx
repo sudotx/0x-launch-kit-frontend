@@ -1,28 +1,23 @@
-// import ReactModal from 'react-modal';
+import "@rainbow-me/rainbowkit/styles.css";
+import 'sanitize.css';
+import './index.css';
+
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import ReactModal from 'react-modal';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import 'sanitize.css';
 
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { StrictMode, Suspense } from 'react';
-import { createRoot } from 'react-dom/client';
 import { http, WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
-import App from './components/app';
-import './index.css';
+
 import { store } from './store';
 
-import { Home, LazyNotFound } from './pages/LazyPages';
-import Erc721 from './pages/erc721/Erc721';
+import { Erc721, Home, NotFound } from './pages';
 
-// Loading component for Suspense fallback
-const LoadingSpinner = () => (
-	<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-		<div>Loading...</div>
-	</div>
-);
+import App from './components/app';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -46,7 +41,7 @@ export const config = getDefaultConfig({
 	}
 });
 
-// ReactModal.setAppElement('#root');
+ReactModal.setAppElement('#root');
 
 function Web3WrappedApp() {
 	return (
@@ -61,17 +56,13 @@ function Web3WrappedApp() {
 									<Route
 										path="/erc721"
 										element={
-											<Suspense fallback={<LoadingSpinner />}>
-												<Erc721 />
-											</Suspense>
+											<Erc721 />
 										}
 									/>
 									<Route
 										path="*"
 										element={
-											<Suspense fallback={<LoadingSpinner />}>
-												<LazyNotFound />
-											</Suspense>
+											<NotFound />
 										}
 									/>
 								</Routes>

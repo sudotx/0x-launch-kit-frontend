@@ -1,5 +1,5 @@
 import { BigNumber } from '@0x/utils';
-import { OrderBook, OrderSide, Token, UIOrder } from '../util/types';
+import { OrderBook, OrderSide, Token, UIOrder } from './types';
 import { OrderStatus } from '@0x/types';
 import { SignedOrder } from '@0x/connect';
 

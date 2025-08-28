@@ -13,7 +13,7 @@ import { ErrorCard } from '../../common/error_card';
 import { IconType, Tooltip } from '../../common/tooltip';
 import { useSelector } from 'react-redux';
 import { getCurrencyPair, getQuoteToken, getBaseTokenBalance, getQuoteTokenBalance, getTotalEthBalance } from '../../../store/selectors';
-import { mockQuoteToken, mockBaseToken } from '../../../utils/mockData';
+import { mockQuoteToken, mockBaseToken } from '../../../util/mockData';
 
 const LabelWrapper = styled.div`
     align-items: center;

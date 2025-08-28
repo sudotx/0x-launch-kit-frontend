@@ -22,7 +22,7 @@ import { setOrderPriceSelected } from '../../../store/ui/reducers';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
-import { mockOrderBook, mockBaseToken, mockQuoteToken, mockSpread, mockSpreadPercentage } from '../../../utils/mockData';
+import { mockOrderBook, mockBaseToken, mockQuoteToken, mockSpread, mockSpreadPercentage } from '../../../util/mockData';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
