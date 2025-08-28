@@ -180,7 +180,7 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
             onClick={() => handleSetOrderPriceSelected(order.price)}
         >
             <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
-                <ShowNumberWithColors isHover={isHover} num={new BigNumber(size)} />
+                <ShowNumberWithColors ishover={isHover} num={new BigNumber(size)} />
             </CustomTD>
             <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}

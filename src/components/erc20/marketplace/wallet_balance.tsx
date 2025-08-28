@@ -158,14 +158,6 @@ const WalletBalance: React.FC = () => {
             return <ButtonStyled variant={ButtonVariant.Tertiary}>Connecting...</ButtonStyled>;
         }
 
-        if (!isConnected) {
-            return (
-                <ConnectButtonWrapper>
-                    <ConnectButton />
-                </ConnectButtonWrapper>
-            );
-        }
-
         if (quoteToken && baseTokenBalance && quoteTokenBalance) {
             const quoteTokenBalanceAmount = isWeth(quoteToken.symbol) ? totalEthBalance : quoteTokenBalance.balance;
             const quoteBalanceString = tokenAmountInUnits(

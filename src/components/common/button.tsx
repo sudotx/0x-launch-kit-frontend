@@ -13,43 +13,9 @@ interface Props extends HTMLAttributes<HTMLButtonElement> {
 }
 
 const StyledButton = styled.button<{ variant?: ButtonVariant }>`
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Primary
-            ? `background-color: ${props.theme.componentsTheme.buttonPrimaryBackgroundColor};`
-            : ''}
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Secondary
-            ? `background-color: ${props.theme.componentsTheme.buttonSecondaryBackgroundColor};`
-            : ''}
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Tertiary
-            ? `background-color: ${props.theme.componentsTheme.buttonTertiaryBackgroundColor};`
-            : ''}
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Quaternary
-            ? `background-color: ${props.theme.componentsTheme.buttonQuaternaryBackgroundColor};`
-            : ''}
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Error
-            ? `background-color: ${props.theme.componentsTheme.buttonErrorBackgroundColor};`
-            : ''}
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Balance
-            ? `background-color: ${props.theme.componentsTheme.ethBoxActiveColor};`
-            : ''}
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Sell
-            ? `background-color: ${props.theme.componentsTheme.buttonSellBackgroundColor};`
-            : ''}
-    ${props =>
-        props.variant && props.variant === ButtonVariant.Buy
-            ? `background-color: ${props.theme.componentsTheme.buttonBuyBackgroundColor};`
-            : ''}
 
     align-items: center;
-    border-radius: ${themeDimensions.borderRadius};
     border: none;
-    color: ${props => props.theme.componentsTheme.buttonTextColor};
     cursor: pointer;
     display: flex;
     font-size: 16px;
