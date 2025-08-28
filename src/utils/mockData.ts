@@ -68,6 +68,7 @@ const partialSignedOrder: Omit<SignedOrder, 'signature' | 'makerAssetAmount' | '
     exchangeAddress: '0x48bacb9266a570d521063ef5dd96e616862e5881',
     feeRecipientAddress: '0x1000000000000000000000000000000000000001',
     expirationTimeSeconds: new BigNumber(Math.floor(Date.now() / 1000) + 3600),
+    chainId: 1
 };
 
 export const mockUserOrders: UIOrder[] = [
