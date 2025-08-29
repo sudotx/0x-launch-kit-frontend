@@ -15,7 +15,7 @@ import { sepolia } from "wagmi/chains";
 
 import { store } from './store';
 
-import { Erc721, Home, NotFound, MyWallet } from './pages';
+import { Erc721, Home, MyWallet, NotFound } from './pages';
 
 import App from './app';
 

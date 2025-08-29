@@ -13,6 +13,7 @@ interface ItemProps {
 
 const CardTabSelectorWrapper = styled.div`
     align-items: center;
+    color: lightgray;
     display: flex;
     font-size: 14px;
     font-weight: 500;
@@ -22,6 +23,8 @@ const CardTabSelectorWrapper = styled.div`
 
 const CardTabSelectorItem = styled.span<ItemProps>`
     user-select: none;
+    color: black;
+    cursor: pointer;
 `;
 
 const CardTabSelectorItemSeparator = styled.span<ItemProps>`

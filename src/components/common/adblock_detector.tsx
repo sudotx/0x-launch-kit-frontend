@@ -7,6 +7,8 @@ import { Theme } from '../../themes/commons';
 
 import { CloseModalButton } from './icons/close_modal_button';
 
+import { TriangleAlert } from 'lucide-react';
+
 const ModalContent = styled.div`
     align-items: center;
     display: flex;
@@ -104,9 +106,9 @@ const AdBlockDetector: React.FC = () => {
             <CloseModalButton onClick={closeModal} />
             <ModalContent>
                 <ModalTitle>Ad Blocker Detected</ModalTitle>
-                {/* <IconContainer>
-                    <RedExclamationSign />
-                </IconContainer> */}
+                <IconContainer>
+                    <TriangleAlert />
+                </IconContainer>
                 <ModalText>This dApp may not work correctly with your ad blocker enabled</ModalText>
             </ModalContent>
         </Modal>

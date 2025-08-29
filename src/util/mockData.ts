@@ -161,3 +161,73 @@ export const mockUserOrders: UIOrder[] = [
         status: OrderStatus.FullyFilled,
     },
 ];
+
+export const mockOpenBuyOrders: UIOrder[] = [
+    {
+        rawOrder: {
+            ...partialSignedOrder,
+            makerAssetData: wethAssetData, // Maker is giving WETH
+            takerAssetData: zrxAssetData,  // Taker is giving ZRX
+            makerAssetAmount: new BigNumber('19000000000000000000'), // 19 WETH
+            takerAssetAmount: new BigNumber('10000000000000000000'), // 10 ZRX
+            salt: new BigNumber('101'),
+            signature: '0x'
+        },
+        side: OrderSide.Buy,
+        size: new BigNumber('10000000000000000000'), // 10 ZRX
+        filled: new BigNumber('0'),
+        price: new BigNumber('1.9'), // Price of 1 ZRX is 1.9 WETH
+        status: OrderStatus.Fillable,
+    },
+    {
+        rawOrder: {
+            ...partialSignedOrder,
+            makerAssetData: wethAssetData,
+            takerAssetData: zrxAssetData,
+            makerAssetAmount: new BigNumber('36000000000000000000'), // 36 WETH
+            takerAssetAmount: new BigNumber('20000000000000000000'), // 20 ZRX
+            salt: new BigNumber('102'),
+            signature: '0x'
+        },
+        side: OrderSide.Buy,
+        size: new BigNumber('20000000000000000000'), // 20 ZRX
+        filled: new BigNumber('5000000000000000000'), // 5 ZRX filled
+        price: new BigNumber('1.8'), // Price of 1 ZRX is 1.8 WETH
+        status: OrderStatus.Fillable,
+    },
+];
+
+export const mockOpenSellOrders: UIOrder[] = [
+    {
+        rawOrder: {
+            ...partialSignedOrder,
+            makerAssetData: zrxAssetData, // Maker is giving ZRX
+            takerAssetData: wethAssetData, // Taker is giving WETH
+            makerAssetAmount: new BigNumber('15000000000000000000'), // 15 ZRX
+            takerAssetAmount: new BigNumber('31500000000000000000'), // 31.5 WETH
+            salt: new BigNumber('103'),
+            signature: '0x'
+        },
+        side: OrderSide.Sell,
+        size: new BigNumber('15000000000000000000'), // 15 ZRX
+        filled: new BigNumber('0'),
+        price: new BigNumber('2.1'), // Price of 1 ZRX is 2.1 WETH
+        status: OrderStatus.Fillable,
+    },
+    {
+        rawOrder: {
+            ...partialSignedOrder,
+            makerAssetData: zrxAssetData,
+            takerAssetData: wethAssetData,
+            makerAssetAmount: new BigNumber('25000000000000000000'), // 25 ZRX
+            takerAssetAmount: new BigNumber('55000000000000000000'), // 55 WETH
+            salt: new BigNumber('104'),
+            signature: '0x'
+        },
+        side: OrderSide.Sell,
+        size: new BigNumber('25000000000000000000'), // 25 ZRX
+        filled: new BigNumber('10000000000000000000'), // 10 ZRX filled
+        price: new BigNumber('2.2'), // Price of 1 ZRX is 2.2 WETH
+        status: OrderStatus.Fillable,
+    },
+];

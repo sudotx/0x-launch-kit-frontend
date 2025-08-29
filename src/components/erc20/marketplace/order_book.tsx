@@ -84,6 +84,9 @@ const GridRow = styled.div`
 const GridRowInner = styled(GridRow)`
     background-color: 'transparent';
     cursor: pointer;
+    &:hover {
+        background-color: lightgray;
+    }
 `;
 
 const GridRowTop = styled(GridRow)`
@@ -145,7 +148,6 @@ interface OrderToRowProps {
 
 const OrderToRow: React.FC<OrderToRowProps> = props => {
     const { order, index, baseToken, mySizeOrders = [], web3State } = props;
-    // const { order, index, baseToken, priceColor, mySizeOrders = [], web3State } = props;
     const [isHover, setIsHover] = useState(false);
     const dispatch = useDispatch();
 

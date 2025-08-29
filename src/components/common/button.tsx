@@ -13,7 +13,7 @@ interface Props extends HTMLAttributes<HTMLButtonElement> {
 }
 
 const StyledButton = styled.button<{ variant?: ButtonVariant }>`
-
+    background-color: green;
     align-items: center;
     border: none;
     cursor: pointer;

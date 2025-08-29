@@ -23,6 +23,19 @@ interface TableTDProps {
 }
 
 export const Table = styled.table<TableProps>`
+    border-bottom: '1px solid black';
+    border-top: '1px solid black';
+    margin-left: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
+    margin-right: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
+    min-width: ${props => (true ? 'fit-content' : '0')};
+    width: ${props =>
+        props.fitInCard
+            ? `calc(100% + ${themeDimensions.horizontalPadding} + ${themeDimensions.horizontalPadding})`
+            : '100%'};
+
+    @media (min-width: ${themeBreakPoints.xl}) {
+        min-width: 100%;
+    }
 `;
 
 export const THead = styled.thead`
