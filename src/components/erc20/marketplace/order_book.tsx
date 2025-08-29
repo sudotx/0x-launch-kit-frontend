@@ -102,8 +102,8 @@ const ItemsScroll = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    max-height: 500px;
-    overflow: auto;
+    max-height: 200px;
+    overflow: hidden;
     position: relative;
 
     @media (min-width: ${themeBreakPoints.xl}) {
@@ -123,7 +123,6 @@ const ItemsMainContainer = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    justify-content: center;
     min-height: fit-content;
     position: relative;
     z-index: 1;
