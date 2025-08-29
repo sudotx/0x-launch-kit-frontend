@@ -69,7 +69,7 @@ const FieldContainer = styled.div`
 `;
 
 const BigInputNumberStyled = styled<any>(BigNumberInput)`
-    background-color: red;
+    background-color: white;
     border-radius: ${themeDimensions.borderRadius};
     border: 1px solid black;
     color: black;

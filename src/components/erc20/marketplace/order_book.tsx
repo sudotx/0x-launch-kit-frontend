@@ -104,10 +104,19 @@ const ItemsScroll = styled.div`
     flex-grow: 1;
     max-height: 500px;
     overflow: auto;
+    position: relative;
 
     @media (min-width: ${themeBreakPoints.xl}) {
         max-height: none;
     }
+`;
+
+const StickyContainer = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
 `;
 
 const ItemsMainContainer = styled.div`
@@ -123,7 +132,6 @@ const ItemsMainContainer = styled.div`
 const ItemsInnerContainer = styled.div`
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     flex-shrink: 1;
 `;
 
@@ -302,11 +310,13 @@ const OrderBookTable: React.FC<Props> = props => {
                     {mySizeHeader}
                 </GridRowTop>
                 <ItemsScroll ref={itemsScroll} onScroll={updateStickySpreadState}>
-                    <GridRowSpread
-                        ref={spreadRowFixed}
-                        spreadAbsValue={spreadAbsFixed}
-                        spreadPercentValue={spreadPercentFixed}
-                    />
+                    <StickyContainer>
+                        <GridRowSpread
+                            ref={spreadRowFixed}
+                            spreadAbsValue={spreadAbsFixed}
+                            spreadPercentValue={spreadPercentFixed}
+                        />
+                    </StickyContainer>
                     <ItemsMainContainer>
                         <TopItems>
                             {sellOrders.map((order, index) => (

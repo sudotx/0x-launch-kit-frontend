@@ -53,7 +53,7 @@ export const TR = styled.tr`
 
 export const TH = styled.th<TableTDProps>`
     border-bottom: 1px solid black;
-    color: blue;
+    color: black;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
