@@ -24,42 +24,23 @@ import { CardTabSelector } from '../../common/card_tab_selector';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
 import { OrderDetailsContainer } from './order_details';
-import { mockBaseToken, mockQuoteToken } from '../../../utils/mockData';
+import { mockBaseToken, mockQuoteToken } from '../../../util/mockData';
+import { themeDimensions } from '../../../themes/commons';
 
 const BuySellWrapper = styled(CardBase)`
+    margin-bottom: ${themeDimensions.verticalSeparationSm};
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: column;
+    padding: 20px ${themeDimensions.horizontalPadding};
 `;
 
 const TabsContainer = styled.div`
     align-items: center;
     display: flex;
     justify-content: space-between;
-`;
-
-const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
-    align-items: center;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-right-style: solid;
-    border-right-width: 1px;
-    display: flex;
-    font-weight: 600;
-    height: 47px;
-    justify-content: center;
-    width: 50%;
-
-    &:first-child {
-    }
-
-    &:last-child {
-        border-left-style: solid;
-        border-left-width: 1px;
-        border-right: none;
-    }
 `;
 
 const LabelContainer = styled.div`
@@ -70,6 +51,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
+    color: black;
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -81,11 +63,16 @@ const InnerTabs = styled(CardTabSelector)`
 `;
 
 const FieldContainer = styled.div`
+    height: ${themeDimensions.fieldHeight};
     margin-bottom: 25px;
     position: relative;
 `;
 
 const BigInputNumberStyled = styled<any>(BigNumberInput)`
+    background-color: red;
+    border-radius: ${themeDimensions.borderRadius};
+    border: 1px solid black;
+    color: black;
     font-feature-settings: 'tnum' 1;
     font-size: 16px;
     height: 100%;
@@ -106,6 +93,7 @@ const TokenContainer = styled.div`
 `;
 
 const TokenText = styled.span`
+    color: black;
     font-size: 14px;
     font-weight: normal;
     line-height: 21px;
@@ -131,9 +119,37 @@ const BuySell: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const web3State = useSelector(getWeb3State) || 'Done';
     const currencyPair = { base: 'ZRX', quote: 'WETH' };
-    // const currencyPair = useSelector(getCurrencyPair) || { base: 'ZRX', quote: 'WETH' };
     const orderPriceSelected = new BigNumber('2000000000000000000');
-    // const orderPriceSelected = useSelector(getOrderPriceSelected)
+
+    const TabButton = styled.div<{ side: OrderSide }>`
+        align-items: center;
+        background-color: transparent;
+        border-bottom-color: black;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-right-color: black;
+        color: black
+        cursor: pointer;
+        display: flex;
+        font-weight: 600;
+        height: 47px;
+        justify-content: center;
+        width: 50%;
+
+        &:first-child {
+            border-top-left-radius: ${themeDimensions.borderRadius};
+        }
+
+        &:last-child {
+            border-left-color: black;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right: none;
+            border-top-right-radius: ${themeDimensions.borderRadius};
+        }
+    `;
 
     useEffect(() => {
         if (orderPriceSelected && orderType === OrderType.Limit) {
@@ -192,18 +208,18 @@ const BuySell: React.FC = () => {
     const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
 
     const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
-    // const btnText = error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
+    const btnText = error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
 
-    // const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
+    const decimals = getKnownTokens().getTokenBySymbol(currencyPair.base).decimals;
 
     return (
         <>
             <BuySellWrapper>
                 <TabsContainer>
-                    <TabButton isSelected={tab === OrderSide.Buy} onClick={() => setTab(OrderSide.Buy)} side={OrderSide.Buy}>
+                    <TabButton onClick={() => setTab(OrderSide.Buy)} side={OrderSide.Buy}>
                         Buy
                     </TabButton>
-                    <TabButton isSelected={tab === OrderSide.Sell} onClick={() => setTab(OrderSide.Sell)} side={OrderSide.Sell}>
+                    <TabButton onClick={() => setTab(OrderSide.Sell)} side={OrderSide.Sell}>
                         Sell
                     </TabButton>
                 </TabsContainer>
@@ -214,13 +230,13 @@ const BuySell: React.FC = () => {
                     </LabelContainer>
                     <FieldContainer>
                         <BigInputNumberStyled
-                            // decimals={decimals}
+                            decimals={decimals}
                             min={ZERO}
                             onChange={setMakerAmount}
                             value={makerAmount}
                             placeholder={'0.00'}
                         />
-                        {/* <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} /> */}
+                        <BigInputNumberTokenLabel tokenSymbol={currencyPair.base} />
                     </FieldContainer>
                     {orderType === OrderType.Limit && (
                         <>
@@ -235,16 +251,16 @@ const BuySell: React.FC = () => {
                                     value={price}
                                     placeholder={'0.00'}
                                 />
-                                {/* <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} /> */}
+                                <BigInputNumberTokenLabel tokenSymbol={currencyPair.quote} />
                             </FieldContainer>
                         </>
                     )}
-                    {/* <OrderDetailsContainer
+                    <OrderDetailsContainer
                         orderType={orderType}
                         orderSide={tab}
                         tokenAmount={makerAmount || ZERO}
                         tokenPrice={price || ZERO}
-                    // currencyPair={currencyPair}
+                        currencyPair={currencyPair}
                     />
                     <Button
                         disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
@@ -259,7 +275,7 @@ const BuySell: React.FC = () => {
                         }
                     >
                         {btnText}
-                    </Button> */}
+                    </Button>
                 </Content>
             </BuySellWrapper>
             {error.cardMsg ? <ErrorCard fontSize={FontSize.Large} text={error.cardMsg} icon={ErrorIcons.Sad} /> : null}

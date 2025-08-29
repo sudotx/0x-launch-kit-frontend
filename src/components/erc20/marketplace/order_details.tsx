@@ -11,11 +11,12 @@ import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, OrderFeeData, OrderSide, OrderType } from '../../../util/types';
+import { CurrencyPair, OrderFeeData, OrderSide, OrderType, UIOrder } from '../../../util/types';
+import { mockOpenBuyOrders, mockOpenSellOrders } from '../../../util/mockData';
 
 const Row = styled.div`
     align-items: center;
-    border-top: dashed 1px ${props => props.theme.componentsTheme.borderColor};
+    border-top: dashed 1px black;
     display: flex;
     justify-content: space-between;
     padding: 12px 0;
@@ -28,7 +29,7 @@ const Row = styled.div`
 `;
 
 const Value = styled.div`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     flex-shrink: 0;
     font-feature-settings: 'tnum' 1;
     font-size: 14px;
@@ -49,7 +50,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: ${props => props.color || props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -59,7 +60,7 @@ const Label = styled.label<{ color?: string }>`
 const MainLabel = styled(Label)``;
 
 const FeeLabel = styled(Label)`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-weight: normal;
 `;
 
@@ -92,8 +93,8 @@ const OrderDetails: React.FC<OwnProps> = props => {
     const [canOrderBeFilled, setCanOrderBeFilled] = useState(true);
 
     const dispatch = useDispatch<AppDispatch>();
-    const openSellOrders = useSelector(getOpenSellOrders);
-    const openBuyOrders = useSelector(getOpenBuyOrders);
+    const openSellOrders: UIOrder[] = mockOpenSellOrders;
+    const openBuyOrders: UIOrder[] = mockOpenBuyOrders;
 
     useEffect(() => {
         const updateOrderDetailsState = async () => {

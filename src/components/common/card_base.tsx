@@ -8,6 +8,9 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CardWrapper = styled.div`
+    background-color: lightgrey;
+    border-radius: ${themeDimensions.borderRadius};
+    border: 1px solid black;
 `;
 
 export const CardBase: React.FC<Props> = props => {

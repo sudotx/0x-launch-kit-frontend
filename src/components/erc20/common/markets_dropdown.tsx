@@ -17,6 +17,7 @@ import { MagnifierIcon } from '../../common/icons/magnifier_icon';
 import { TokenIcon } from '../../common/icons/token_icon';
 import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from '../../common/table';
 import { AppDispatch } from '../../../store';
+import { mockBaseToken, mockCurrencyPair, mockMarkets } from '../../../util/mockData';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> { }
 
@@ -30,7 +31,7 @@ const MarketsDropdownHeader = styled.div`
 `;
 
 const MarketsDropdownHeaderText = styled.span`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-size: 18px;
     font-weight: 600;
     line-height: 26px;
@@ -38,7 +39,7 @@ const MarketsDropdownHeaderText = styled.span`
 `;
 
 const MarketsDropdownBody = styled(CardBase)`
-    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
+    box-shadow: 2px 2px 10px;
     max-height: 100%;
     max-width: 100%;
     width: 401px;
@@ -46,7 +47,7 @@ const MarketsDropdownBody = styled(CardBase)`
 
 const MarketsFilters = styled.div`
     align-items: center;
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
+    border-bottom: 1px solid black;
     display: flex;
     justify-content: space-between;
     min-height: ${rowHeight};
@@ -54,7 +55,7 @@ const MarketsFilters = styled.div`
 `;
 
 const MarketsFiltersLabel = styled.h2`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-size: 16px;
     font-weight: 600;
     line-height: normal;
@@ -68,8 +69,7 @@ const TokenFiltersTabs = styled.div`
 `;
 
 const TokenFiltersTab = styled.span<{ active: boolean }>`
-    color: ${props =>
-        props.active ? props.theme.componentsTheme.textColorCommon : props.theme.componentsTheme.lightGray};
+    color: black;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
@@ -77,7 +77,7 @@ const TokenFiltersTab = styled.span<{ active: boolean }>`
     user-select: none;
 
     &:after {
-        color: ${props => props.theme.componentsTheme.lightGray};
+        color: lightgray;
         content: '/';
         margin: 0 6px;
     }
@@ -97,10 +97,10 @@ const SearchWrapper = styled.div`
 `;
 
 const SearchField = styled.input`
-    background: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
+    background: white;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.marketsSearchFieldBorderColor};
-    color: ${props => props.theme.componentsTheme.marketsSearchFieldTextColor};
+    border: 1px solid black;
+    color: black;
     font-size: 13px;
     height: ${searchFieldHeight};
     left: 0;
@@ -112,7 +112,7 @@ const SearchField = styled.input`
     z-index: 1;
 
     &:focus {
-        border-color: ${props => props.theme.componentsTheme.marketsSearchFieldBorderColor};
+        border-color: black;
     }
 `;
 
@@ -142,11 +142,11 @@ const tableHeaderFontWeight = `
 `;
 
 const TRStyled = styled(TR) <{ active: boolean }>`
-    background-color: ${props => (props.active ? props.theme.componentsTheme.rowActive : 'transparent')};
-    cursor: ${props => (props.active ? 'default' : 'pointer')};
+    background-color: "transparent";
+    cursor: 'default';
 
     &:hover {
-        background-color: ${props => props.theme.componentsTheme.rowActive};
+        background-color: lightgray;
     }
 
     &:last-child > td {
@@ -186,7 +186,7 @@ const TokenIconAndLabel = styled.div`
 `;
 
 const TokenLabel = styled.div`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-size: 14px;
     font-weight: 700;
     line-height: 1.2;
@@ -203,12 +203,12 @@ const MarketsDropdown: React.FC<PropsDivElement> = props => {
     const [selectedFilter, setSelectedFilter] = useState<Filter>(marketFilters[0]);
     const [search, setSearch] = useState('');
     const [isUserOnDropdown, setIsUserOnDropdown] = useState(false);
-    const dropdownRef = useRef<Dropdown>(null);
+    const dropdownRef = useRef<any>(null);
 
     const dispatch = useDispatch<AppDispatch>();
-    const baseToken = useSelector(getBaseToken);
-    const currencyPair = useSelector(getCurrencyPair);
-    const markets = useSelector(getMarkets);
+    const baseToken = mockBaseToken;
+    const currencyPair = mockCurrencyPair;
+    const markets = mockMarkets;
 
     const handleChangeMarket = (pair: CurrencyPair) => {
         dispatch(changeMarket(pair)).unwrap();

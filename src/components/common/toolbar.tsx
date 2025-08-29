@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import { themeBreakPoints } from '../../themes/commons';
 
 import { NavigationBar } from './navigation_bar';
+import { MarketsDropdownContainer } from '../erc20/common/markets_dropdown';
 
 interface OwnProps {
     logo: React.ReactNode;
@@ -12,7 +13,7 @@ interface OwnProps {
 
 export const separatorTopbar = css`
     &:after {
-        background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
+        background-color: black;
         content: '';
         height: 26px;
         margin-left: 17px;
@@ -24,13 +25,21 @@ export const separatorTopbar = css`
     }
 `;
 
+
+const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
+    align-items: center;
+    display: flex;
+
+    ${separatorTopbar}
+`;
+
 const ToolbarWrapper = styled.div`
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    position: static;
     top: 0;
     margin: 10px;
 `;
@@ -73,7 +82,7 @@ const ToolbarContainer = (props: OwnProps) => {
         <ToolbarWrapper>
             <ToolbarStart>{logo}</ToolbarStart>
             <ToolbarCenter>
-                <NavigationBar />
+                <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
             </ToolbarCenter>
             <ToolbarEnd>
                 <ConnectButton />

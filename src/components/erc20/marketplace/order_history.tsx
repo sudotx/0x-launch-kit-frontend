@@ -13,7 +13,7 @@ import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
-import { mockBaseToken, mockQuoteToken, mockUserOrders } from '../../../utils/mockData';
+import { mockBaseToken, mockQuoteToken, mockUserOrders } from '../../../util/mockData';
 
 const SideTD = styled(CustomTD) <{ side: OrderSide }>`
     color: ${props =>

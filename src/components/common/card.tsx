@@ -16,7 +16,7 @@ const CardWrapper = styled(CardBase)`
     display: flex;
     flex-direction: column;
     max-height: 100%;
-
+    margin-bottom: ${themeDimensions.verticalSeparationSm};
     &:last-child {
         margin-bottom: 0;
     }
@@ -24,6 +24,7 @@ const CardWrapper = styled(CardBase)`
 
 const CardHeader = styled.div`
     align-items: center;
+    border-bottom: 1px solid black;
     display: flex;
     flex-grow: 0;
     flex-shrink: 0;
@@ -31,6 +32,7 @@ const CardHeader = styled.div`
 `;
 
 const CardTitle = styled.h1`
+    color: black;
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
@@ -41,8 +43,10 @@ const CardTitle = styled.h1`
 
 const CardBody = styled.div<{ minHeightBody?: string }>`
     margin: 0;
+    min-height: 50px;
     overflow-x: auto;
     position: relative;
+    padding: ${themeDimensions.verticalPadding} ${themeDimensions.horizontalPadding};
 `;
 
 CardBody.defaultProps = {

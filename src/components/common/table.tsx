@@ -23,6 +23,19 @@ interface TableTDProps {
 }
 
 export const Table = styled.table<TableProps>`
+    border-bottom: '1px solid black';
+    border-top: '1px solid black';
+    margin-left: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
+    margin-right: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
+    min-width: ${props => (true ? 'fit-content' : '0')};
+    width: ${props =>
+        props.fitInCard
+            ? `calc(100% + ${themeDimensions.horizontalPadding} + ${themeDimensions.horizontalPadding})`
+            : '100%'};
+
+    @media (min-width: ${themeBreakPoints.xl}) {
+        min-width: 100%;
+    }
 `;
 
 export const THead = styled.thead`
@@ -35,10 +48,15 @@ export const TBody = styled.tbody``;
 export const TR = styled.tr``;
 
 export const TH = styled.th<TableTDProps>`
+    border-bottom: '1px solid black'
+    border-top: '1px solid black';
+    color: black;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
     line-height: 1.2;
+    padding: 0 ${themeDimensions.horizontalPadding} 5px 0;
+    text-align: 'left';
     text-transform: uppercase;
     white-space: nowrap;
 
@@ -48,7 +66,15 @@ export const TH = styled.th<TableTDProps>`
 `;
 
 export const CustomTD = styled.td<TableTDProps>`
-
+    border-bottom: '1px solid black';
+    border-top: '1px solid black';
+    color: black;
+    font-feature-settings: 'tnum' '0';
+    font-size: 14px;
+    font-weight: 'normal';
+    line-height: '1.2';
+    padding: 5px ${themeDimensions.horizontalPadding} 5px 0;
+    text-align: 'left';
     &:last-child {
         padding-right: 0;
     }
@@ -69,6 +95,7 @@ export const CustomTDLast = styled(CustomTD)`
 `;
 
 export const CustomTDTitle = styled(CustomTD)`
+    color: black;
     font-size: 12px;
     text-transform: uppercase;
 `;

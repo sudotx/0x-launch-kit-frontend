@@ -10,6 +10,7 @@ import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
 import { MarketsDropdownContainer } from './markets_dropdown';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 interface DispatchProps {
     onGoToHome: () => any;
@@ -65,6 +66,7 @@ const ToolbarContent: React.FC<Props> = props => {
         props.onGoToHome();
     };
     const generalConfig = Config.getConfig().general;
+
     const startContent = (
         <>
             <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
@@ -77,16 +79,14 @@ const ToolbarContent: React.FC<Props> = props => {
     };
     const endContent = (
         <>
-            <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
-                My Wallet
-            </MyWalletLink>
-            <WalletDropdown />
-            <NotificationsDropdownContainer />
+            <ConnectButton />
         </>
     );
 
-    return <ToolbarContainer startContent={startContent} endContent={endContent} />;
+    return <ToolbarContainer logo={<div>hex</div>} />;
 };
+
+
 
 const ToolbarContentContainer = withTheme(
     connect(

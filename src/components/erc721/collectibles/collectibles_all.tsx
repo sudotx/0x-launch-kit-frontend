@@ -10,7 +10,7 @@ import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
 import { CenteredWrapper } from '../../common/centered_wrapper';
 import { ViewAll } from '../../common/view_all';
-import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button';
+import { SellCollectiblesButton } from '../../../pages/erc721/marketplace/sell_collectibles_button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
 
@@ -124,9 +124,8 @@ export class CollectiblesAll extends React.Component<Props> {
                     <SubSectionTitle>Recently listed</SubSectionTitle>
                     <ViewAll
                         text="View all"
-                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${
-                            CollectibleSortType.NewestAdded
-                        }`}
+                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${CollectibleSortType.NewestAdded
+                            }`}
                     />
                 </SubSectionTitleWrapper>
                 <CollectiblesCardListStyled
@@ -140,9 +139,8 @@ export class CollectiblesAll extends React.Component<Props> {
                     <SubSectionTitle>Most valued</SubSectionTitle>
                     <ViewAll
                         text="View all"
-                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${
-                            CollectibleSortType.PriceHighToLow
-                        }`}
+                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${CollectibleSortType.PriceHighToLow
+                            }`}
                     />
                 </SubSectionTitleWrapper>
                 <CollectiblesCardListStyled
