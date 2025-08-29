@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { themeBreakPoints } from '../../../themes/commons';
-import { Content } from '../common/content_wrapper';
-import { CollectibleBuySellContainer } from '../marketplace/collectible_buy_sell';
-import { CollectibleDescriptionContainer } from '../marketplace/collectible_description';
+import { themeBreakPoints } from '../../themes/commons';
+import { Content } from '../../components/erc721/common/content_wrapper';
+import { CollectibleBuySellContainer } from './marketplace/collectible_buy_sell';
+import { CollectibleDescriptionContainer } from './marketplace/collectible_description';
 
 const IndividualCollectibleWrapper = styled.div`
     align-items: center;

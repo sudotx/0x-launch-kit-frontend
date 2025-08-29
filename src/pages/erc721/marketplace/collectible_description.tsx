@@ -6,8 +6,8 @@ import { COLLECTIBLE_NAME } from '../../../common/constants';
 import { getCollectibleById, getEthAccount } from '../../../store/selectors';
 import { truncateAddress } from '../../../util/number_utils';
 import { Collectible, StoreState } from '../../../util/types';
-import { Card } from '../../common/card';
-import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
+import { Card } from '../../../components/common/card';
+import { OutsideUrlIcon } from '../../../components/common/icons/outside_url_icon';
 
 import { DutchAuctionPriceChartCard } from './dutch_auction_price_chart_card';
 

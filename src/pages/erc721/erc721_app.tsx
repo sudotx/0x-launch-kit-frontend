@@ -4,16 +4,16 @@ import styled, { ThemeProvider } from 'styled-components';
 import { ERC721_APP_BASE_PATH } from '../../common/constants';
 import { getThemeByMarketplace } from '../../themes/theme_meta_data_utils';
 import { MARKETPLACES } from '../../util/types';
-import { AdBlockDetector } from '../common/adblock_detector';
-import { CheckMetamaskStateModalContainer } from '../common/check_metamask_state_modal_container';
-import { GeneralLayout } from '../general_layout';
+import { AdBlockDetector } from '../../components/common/adblock_detector';
+import { CheckMetamaskStateModalContainer } from '../../components/common/check_metamask_state_modal_container';
+import { GeneralLayout } from '../../components/general_layout';
 
-import { CollectibleSellModal } from './collectibles/collectible_sell_modal';
-import { ToolbarContentContainer } from './common/toolbar_content';
-import { AllCollectibles } from './pages/all_collectibles';
-import { IndividualCollectible } from './pages/individual_collectible';
-import { ListCollectibles } from './pages/list_collectibles';
-import { MyCollectibles } from './pages/my_collectibles';
+import { CollectibleSellModal } from '../../components/erc721/collectibles/collectible_sell_modal';
+import { ToolbarContentContainer } from '../../components/erc721/common/toolbar_content';
+import { AllCollectibles } from './all_collectibles';
+import { IndividualCollectible } from './individual_collectible';
+import { ListCollectibles } from './list_collectibles';
+import { MyCollectibles } from './my_collectibles';
 
 const toolbar = <ToolbarContentContainer />;
 

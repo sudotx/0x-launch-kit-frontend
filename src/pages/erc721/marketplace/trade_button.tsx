@@ -9,7 +9,7 @@ import { getLogger } from '../../../util/logger';
 import { isDutchAuction } from '../../../util/orders';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible } from '../../../util/types';
-import { Button as ButtonBase } from '../../common/button';
+import { Button as ButtonBase } from '../../../components/common/button';
 
 const logger = getLogger('TradeButton');
 
@@ -19,7 +19,7 @@ interface BtnStyledProps {
     textColor?: string;
 }
 
-const BtnStyled = styled(ButtonBase)<BtnStyledProps>`
+const BtnStyled = styled(ButtonBase) <BtnStyledProps>`
     background-color: ${props => props.backgroundColor};
     border: 1px solid ${props => props.borderColor};
     color: ${props => props.textColor};

@@ -131,7 +131,7 @@ const BuySell: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const web3State = useSelector(getWeb3State) || 'Done';
     const currencyPair = { base: 'ZRX', quote: 'WETH' };
-    // const currencyPair = useSelector(getCurrencyPair) || { base: 'ZRX', quote: 'WETH' };
+    // const currencyPair = useSelector(getCurrencyPair);
     const orderPriceSelected = new BigNumber('2000000000000000000');
     // const orderPriceSelected = useSelector(getOrderPriceSelected)
 

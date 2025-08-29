@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAccount } from 'wagmi';
 
-import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from '../common/constants';
-import { AppDispatch } from '../store';
-import { updateMarketPriceEther, updateStore } from '../store/actions';
+import { UI_UPDATE_CHECK_INTERVAL, UPDATE_ETHER_PRICE_INTERVAL } from './common/constants';
+import { AppDispatch } from './store';
+import { updateMarketPriceEther, updateStore } from './store/actions';
 
 interface OwnProps {
     children: React.ReactNode;

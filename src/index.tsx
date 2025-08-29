@@ -15,9 +15,9 @@ import { sepolia } from "wagmi/chains";
 
 import { store } from './store';
 
-import { Erc721, Home, NotFound } from './pages';
+import { Erc721, Home, NotFound, MyWallet } from './pages';
 
-import App from './components/app';
+import App from './app';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -53,6 +53,12 @@ function Web3WrappedApp() {
 							<App>
 								<Routes>
 									<Route path="/" element={<Home />} />
+									<Route
+										path="/mywallet"
+										element={
+											<MyWallet />
+										}
+									/>
 									<Route
 										path="/erc721"
 										element={

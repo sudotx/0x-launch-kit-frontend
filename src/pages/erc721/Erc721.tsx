@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Erc721App } from '../../components/erc721/erc721_app';
+import { Erc721App } from './erc721_app';
 import { useReducerInjection } from '../../hooks/useReducerInjection';
 
 // Lazy import reducers

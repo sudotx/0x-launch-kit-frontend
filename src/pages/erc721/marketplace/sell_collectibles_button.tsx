@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { themeBreakPoints } from '../../../themes/commons';
 import { ButtonVariant } from '../../../util/types';
-import { Button } from '../../common/button';
-import { CollectibleListModal } from '../collectibles/collectible_list_modal';
+import { Button } from '../../../components/common/button';
+import { CollectibleListModal } from '../../../components/erc721/collectibles/collectible_list_modal';
 
 const ButtonStyled = styled(Button)`
     min-width: 195px;

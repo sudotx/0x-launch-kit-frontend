@@ -9,8 +9,8 @@ import { getCollectiblePrice } from '../../../util/collectibles';
 import { convertTimeInSecondsToDaysAndHours } from '../../../util/time_utils';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { Collectible } from '../../../util/types';
-import { Card } from '../../common/card';
-import { DecliningPriceGraph } from '../common/declining_price_graph';
+import { Card } from '../../../components/common/card';
+import { DecliningPriceGraph } from '../../../components/erc721/common/declining_price_graph';
 
 import { CollectibleDescriptionInnerTitle } from './collectible_description';
 

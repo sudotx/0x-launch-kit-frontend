@@ -1,5 +1,5 @@
 import { BigNumber } from '@0x/utils';
-import { OrderBook, OrderSide, Token, UIOrder } from './types';
+import { CurrencyPair, Market, OrderBook, OrderSide, Token, UIOrder } from './types';
 import { OrderStatus } from '@0x/types';
 import { SignedOrder } from '@0x/connect';
 
@@ -50,6 +50,46 @@ export const mockQuoteToken: Token = {
     decimals: 18,
     displayDecimals: 2
 };
+
+export const mockDaiToken: Token = {
+    symbol: 'DAI',
+    name: 'Dai',
+    primaryColor: '#f4b731',
+    icon: 'assets/icons/dai.svg',
+    address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+    decimals: 18,
+    displayDecimals: 2,
+};
+
+export const mockRepToken: Token = {
+    symbol: 'REP',
+    name: 'Augur',
+    primaryColor: '#4b384e',
+    icon: 'assets/icons/rep.svg',
+    address: '0x1985365e9f78359a9B6AD760e32412f4a445E862',
+    decimals: 18,
+    displayDecimals: 2,
+};
+
+export const mockCurrencyPair: CurrencyPair = {
+    base: 'ZRX',
+    quote: 'WETH',
+};
+
+export const mockMarkets: Market[] = [
+    {
+        currencyPair: { base: 'ZRX', quote: 'WETH' },
+        price: new BigNumber('0.0005'),
+    },
+    {
+        currencyPair: { base: 'REP', quote: 'WETH' },
+        price: new BigNumber('0.008'),
+    },
+    {
+        currencyPair: { base: 'ZRX', quote: 'DAI' },
+        price: new BigNumber('2'),
+    },
+];
 
 export const mockSpread = new BigNumber('100000000000000000'); // 0.1 ETH
 export const mockSpreadPercentage = new BigNumber('5'); // 5%

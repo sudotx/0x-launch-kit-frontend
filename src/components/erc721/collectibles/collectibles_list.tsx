@@ -13,7 +13,7 @@ import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
 import { CenteredWrapper } from '../../common/centered_wrapper';
-import { SellCollectiblesButton } from '../marketplace/sell_collectibles_button';
+import { SellCollectiblesButton } from '../../../pages/erc721/marketplace/sell_collectibles_button';
 
 import { CollectiblesCardList } from './collectibles_card_list';
 import { CollectiblesListFilter } from './collectibles_list_filter';
