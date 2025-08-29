@@ -23,11 +23,11 @@ interface TableTDProps {
 }
 
 export const Table = styled.table<TableProps>`
-    border-bottom: '1px solid black';
-    border-top: '1px solid black';
+    border-collapse: collapse;
+    border-spacing: 0;
     margin-left: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
     margin-right: ${props => (props.fitInCard ? `-${themeDimensions.horizontalPadding}` : '0')};
-    min-width: ${props => (true ? 'fit-content' : '0')};
+    min-width: ${props => (props.isResponsive ? 'fit-content' : '0')};
     width: ${props =>
         props.fitInCard
             ? `calc(100% + ${themeDimensions.horizontalPadding} + ${themeDimensions.horizontalPadding})`
@@ -45,18 +45,21 @@ export const THead = styled.thead`
 
 export const TBody = styled.tbody``;
 
-export const TR = styled.tr``;
+export const TR = styled.tr`
+    &:last-child > td {
+        border-bottom: none;
+    }
+`;
 
 export const TH = styled.th<TableTDProps>`
-    border-bottom: '1px solid black'
-    border-top: '1px solid black';
-    color: black;
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
     line-height: 1.2;
     padding: 0 ${themeDimensions.horizontalPadding} 5px 0;
-    text-align: 'left';
+    text-align: ${props => (props.styles && props.styles.textAlign) || 'left'};
     text-transform: uppercase;
     white-space: nowrap;
 
@@ -66,15 +69,14 @@ export const TH = styled.th<TableTDProps>`
 `;
 
 export const CustomTD = styled.td<TableTDProps>`
-    border-bottom: '1px solid black';
-    border-top: '1px solid black';
-    color: black;
-    font-feature-settings: 'tnum' '0';
+    border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    color: ${props => (props.styles && props.styles.color) || props.theme.componentsTheme.textColorCommon};
+    font-feature-settings: ${props => (props.styles && props.styles.tabular ? `'tnum' 1` : `'tnum' 0`)};
     font-size: 14px;
-    font-weight: 'normal';
-    line-height: '1.2';
+    font-weight: ${props => (props.styles && props.styles.fontWeight) || 'normal'};
+    line-height: ${props => (props.styles && props.styles.lineWeight) || '1.2'};
     padding: 5px ${themeDimensions.horizontalPadding} 5px 0;
-    text-align: 'left';
+    text-align: ${props => (props.styles && props.styles.textAlign) || 'left'};
     &:last-child {
         padding-right: 0;
     }
@@ -95,7 +97,7 @@ export const CustomTDLast = styled(CustomTD)`
 `;
 
 export const CustomTDTitle = styled(CustomTD)`
-    color: black;
+    color: ${props => props.theme.componentsTheme.textLight};
     font-size: 12px;
     text-transform: uppercase;
 `;

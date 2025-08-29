@@ -21,6 +21,10 @@ const GridRow = styled.div`
 `;
 
 export const GridRowSpreadContainer = styled(GridRow) <GridRowSpreadProps>`
+${props => (props.stickySpreadState === 'top' ? 'top: 29px;' : '')}
+${props => (props.stickySpreadState === 'bottom' ? 'bottom: 0;' : '')}
+
+    background-color: gray;
     flex-grow: 0;
     flex-shrink: 0;
     z-index: 12;

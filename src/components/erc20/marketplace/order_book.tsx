@@ -22,7 +22,6 @@ import { setOrderPriceSelected } from '../../../store/ui/reducers';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
-import { mockOrderBook, mockBaseToken, mockQuoteToken, mockSpread, mockSpreadPercentage } from '../../../util/mockData';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
@@ -82,10 +81,10 @@ const GridRow = styled.div`
 `;
 
 const GridRowInner = styled(GridRow)`
-    background-color: 'transparent';
+    background-color: transparent;
     cursor: pointer;
     &:hover {
-        background-color: lightgray;
+        background-color: ${props => props.theme.componentsTheme.rowActive};
     }
 `;
 
@@ -147,7 +146,7 @@ interface OrderToRowProps {
 }
 
 const OrderToRow: React.FC<OrderToRowProps> = props => {
-    const { order, index, baseToken, mySizeOrders = [], web3State } = props;
+    const { order, index, baseToken, priceColor, mySizeOrders = [], web3State } = props;
     const [isHover, setIsHover] = useState(false);
     const dispatch = useDispatch();
 
@@ -172,7 +171,7 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
         <CustomTDLast as="div" styles={{ tabular: true, textAlign: 'right', color: displayColor }} id="mySize">
             {isMySizeEmpty ? '-' : mySizeConverted}
         </CustomTDLast>
-    ) : null;
+    ) : <div />;
 
     return (
         <GridRowInner
@@ -184,10 +183,7 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
             <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors ishover={isHover} num={new BigNumber(size)} />
             </CustomTD>
-            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
-                {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-            </CustomTD>
-            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
             </CustomTD>
             {mySizeRow}
@@ -290,7 +286,7 @@ const OrderBookTable: React.FC<Props> = props => {
             <THLast as="div" styles={{ textAlign: 'right', borderBottom: true }}>
                 My Size
             </THLast>
-        ) : null;
+        ) : <div />;
 
         const spreadAbsFixed = absoluteSpread.toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH);
         const spreadPercentFixed = percentageSpread.toFixed(UI_DECIMALS_DISPLAYED_SPREAD_PERCENT);
@@ -361,29 +357,17 @@ const OrderBookTable: React.FC<Props> = props => {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        orderBook: mockOrderBook,
-        baseToken: mockBaseToken,
-        userOrders: [],
-        quoteToken: mockQuoteToken,
-        web3State: undefined,
-        absoluteSpread: mockSpread,
-        percentageSpread: mockSpreadPercentage,
+        orderBook: getOrderBook(state) as OrderBook,
+        baseToken: getBaseToken(state),
+        userOrders: getUserOrders(state),
+        quoteToken: getQuoteToken(state),
+        web3State: getWeb3State(state),
+        absoluteSpread: getSpread(state) as BigNumber,
+        percentageSpread: getSpreadInPercentage(state) as BigNumber,
     };
 };
-// const mapStateToProps = (state: StoreState): StateProps => {
-//     return {
-//         orderBook: getOrderBook(state) || mockOrderBook,
-//         baseToken: getBaseToken(state) || mockBaseToken,
-//         userOrders: getUserOrders(state) || [],
-//         quoteToken: getQuoteToken(state) || mockQuoteToken,
-//         web3State: getWeb3State(state) || 'Done',
-//         absoluteSpread: getSpread(state) || mockSpread,
-//         percentageSpread: getSpreadInPercentage(state) || mockSpreadPercentage,
-//     };
-// };
 
 const OrderBookTableContainer = withTheme(connect(mapStateToProps)(OrderBookTable));
 const OrderBookTableWithTheme = withTheme(OrderBookTable);
 
 export { OrderBookTable, OrderBookTableContainer, OrderBookTableWithTheme };
-
