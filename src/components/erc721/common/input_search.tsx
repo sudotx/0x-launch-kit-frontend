@@ -15,7 +15,7 @@ const SearchInput = styled.input<Props>`
     background-position: 12px 50%;
     background-repeat: no-repeat;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    border: 1px solid black;
     box-sizing: border-box;
     color: #666;
     font-size: 14px;

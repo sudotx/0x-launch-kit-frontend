@@ -52,7 +52,7 @@ export const TR = styled.tr`
 `;
 
 export const TH = styled.th<TableTDProps>`
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    border-bottom: 1px solid black;
     color: ${props => props.theme.componentsTheme.textLight};
     font-size: 12px;
     font-weight: 500;
@@ -69,14 +69,14 @@ export const TH = styled.th<TableTDProps>`
 `;
 
 export const CustomTD = styled.td<TableTDProps>`
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
-    color: ${props => (props.styles && props.styles.color) || props.theme.componentsTheme.textColorCommon};
+    border-bottom: 1px solid black;
+    color: black;
     font-feature-settings: ${props => (props.styles && props.styles.tabular ? `'tnum' 1` : `'tnum' 0`)};
     font-size: 14px;
     font-weight: ${props => (props.styles && props.styles.fontWeight) || 'normal'};
     line-height: ${props => (props.styles && props.styles.lineWeight) || '1.2'};
     padding: 5px ${themeDimensions.horizontalPadding} 5px 0;
-    text-align: ${props => (props.styles && props.styles.textAlign) || 'left'};
+    text-align: 'left';
     &:last-child {
         padding-right: 0;
     }

@@ -15,9 +15,9 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CollectibleAssetWrapper = styled.div`
-    background: ${props => props.theme.componentsTheme.cardBackgroundColor};
+    background: white;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    border: 1px solid black;
     box-sizing: border-box;
     cursor: pointer;
     position: relative;

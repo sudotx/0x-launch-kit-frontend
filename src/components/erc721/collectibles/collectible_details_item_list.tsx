@@ -12,10 +12,10 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CollectibleAssetWrapper = styled.div`
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    border-bottom: 1px solid black;
     cursor: pointer;
     display: flex;
-    padding: 12px ${props => props.theme.modalTheme.content.padding};
+    padding: 12px 10px;
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.03);
@@ -27,12 +27,12 @@ const CollectibleAssetWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div<{ color: string; image: string }>`
-    background-color: ${props => props.color || props.theme.componentsTheme.cardBackgroundColor};
+    background-color: white;
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
+    border: 1px solid black;
     height: 72px;
     margin-right: 15px;
     width: 72px;
@@ -47,7 +47,7 @@ const TextContainer = styled.div`
 `;
 
 const Title = styled.h3`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: black;
     font-size: 16px;
     font-weight: 600;
     line-height: 1.2;
