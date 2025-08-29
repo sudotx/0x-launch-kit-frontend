@@ -39,7 +39,7 @@ const ToolbarWrapper = styled.div`
     flex-shrink: 0;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    position: static;
     top: 0;
     margin: 10px;
 `;

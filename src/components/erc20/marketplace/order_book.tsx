@@ -141,7 +141,7 @@ interface OrderToRowProps {
     order: OrderBookItem;
     index: number;
     baseToken: Token;
-    // priceColor: string;
+    priceColor: string;
     mySizeOrders: OrderBookItem[];
     web3State?: Web3State;
 }
@@ -187,9 +187,9 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
             <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
             </CustomTD>
-            {/* <CustomTD as="div" styles={{ tabular: true, textAlign: 'right', color: priceColor }}>
+            <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 {parseFloat(price).toFixed(UI_DECIMALS_DISPLAYED_PRICE_ETH)}
-            </CustomTD> */}
+            </CustomTD>
             {mySizeRow}
         </GridRowInner>
     );
@@ -320,7 +320,7 @@ const OrderBookTable: React.FC<Props> = props => {
                                     order={order}
                                     index={index}
                                     baseToken={baseToken}
-                                    // priceColor={getColor(order)}
+                                    priceColor={getColor(order)}
                                     mySizeOrders={mySizeSellArray}
                                     web3State={web3State}
                                 />
@@ -344,7 +344,7 @@ const OrderBookTable: React.FC<Props> = props => {
                                     order={order}
                                     index={index}
                                     baseToken={baseToken}
-                                    // priceColor={getColor(order)}
+                                    priceColor={getColor(order)}
                                     mySizeOrders={mySizeBuyArray}
                                     web3State={web3State}
                                 />
