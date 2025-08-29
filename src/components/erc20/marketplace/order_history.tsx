@@ -2,18 +2,18 @@ import { OrderStatus } from '@0x/types';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { useAccount } from 'wagmi';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
-import { getBaseToken, getQuoteToken, getUserOrders, getWeb3State } from '../../../store/selectors';
+import { getBaseToken, getQuoteToken, getUserOrders } from '../../../store/selectors';
 import { tokenAmountInUnits } from '../../../util/tokens';
-import { OrderSide, Token, UIOrder, Web3State } from '../../../util/types';
+import { OrderSide, Token, UIOrder } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
-import { mockBaseToken, mockQuoteToken, mockUserOrders } from '../../../util/mockData';
 
 const SideTD = styled(CustomTD) <{ side: OrderSide }>`
     color: ${props =>
@@ -51,50 +51,42 @@ const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
 };
 
 const OrderHistory: React.FC = () => {
-    const baseToken = mockBaseToken
-    const orders = mockUserOrders;
-    const quoteToken = mockQuoteToken;
-    const web3State = undefined;
-    // const baseToken = useSelector(getBaseToken);
-    // const orders = useSelector(getUserOrders);
-    // const quoteToken = useSelector(getQuoteToken);
-    // const web3State = useSelector(getWeb3State);
+    const { isConnected, isConnecting, isDisconnected } = useAccount();
 
-    const ordersToShow = orders.filter(order => order.status === OrderStatus.Fillable);
+    const baseToken = useSelector(getBaseToken);
+    const orders = useSelector(getUserOrders);
+    const quoteToken = useSelector(getQuoteToken);
+
+    const ordersToShow = orders ? orders.filter(order => order.status === OrderStatus.Fillable) : [];
 
     let content: React.ReactNode;
-    // switch (web3State) {
-    //     case Web3State.Locked:
-    //     case Web3State.NotInstalled:
-    //     case Web3State.Loading: {
-    //         content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
-    //         break;
-    //     }
-    //     default: {
-    //         if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
-    //             content = <LoadingWrapper minHeight="120px" />;
-    //         } else if (!ordersToShow.length || !baseToken || !quoteToken) {
-    //             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
-    //         } else {
-    //             content = (
-    //                 <Table isResponsive={true}>
-    //                     <THead>
-    //                         <TR>
-    //                             <TH>Side</TH>
-    //                             <TH styles={{ textAlign: 'right' }}>Size ({baseToken.symbol})</TH>
-    //                             <TH styles={{ textAlign: 'right' }}>Filled ({baseToken.symbol})</TH>
-    //                             <TH styles={{ textAlign: 'right' }}>Price ({quoteToken.symbol})</TH>
-    //                             <TH>Status</TH>
-    //                             <TH>&nbsp;</TH>
-    //                         </TR>
-    //                     </THead>
-    //                     <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, baseToken))}</tbody>
-    //                 </Table>
-    //             );
-    //         }
-    //         break;
-    //     }
-    // }
+    if (isDisconnected || isConnecting) {
+        content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+    } else if (isConnected) {
+        if (!baseToken || !quoteToken || !orders) {
+            content = <LoadingWrapper minHeight="120px" />;
+        } else if (ordersToShow.length === 0) {
+            content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+        } else {
+            content = (
+                <Table isResponsive={true}>
+                    <THead>
+                        <TR>
+                            <TH>Side</TH>
+                            <TH styles={{ textAlign: 'right' }}>Size ({baseToken.symbol})</TH>
+                            <TH styles={{ textAlign: 'right' }}>Filled ({baseToken.symbol})</TH>
+                            <TH styles={{ textAlign: 'right' }}>Price ({quoteToken.symbol})</TH>
+                            <TH>Status</TH>
+                            <TH>&nbsp;</TH>
+                        </TR>
+                    </THead>
+                    <tbody>{ordersToShow.map((order, index) => orderToRow(order, index, baseToken))}</tbody>
+                </Table>
+            );
+        }
+    } else {
+        content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
+    }
 
     return <Card title="Orders">{content}</Card>;
 };

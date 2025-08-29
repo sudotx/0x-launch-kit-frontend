@@ -17,6 +17,7 @@ const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
     height: 100%;
     justify-content: center;
     width: 100%;
+    color: ${props => props.theme.componentsTheme.textLight};
 
     ${props =>
         props.alignAbsoluteCenter
