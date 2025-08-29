@@ -1,14 +1,7 @@
-import { ThemeProvider } from 'styled-components';
 
-import { ColumnNarrow } from '../components/common/column_narrow';
-import { ColumnWide } from '../components/common/column_wide';
-import { GeneralLayout } from '../components/general_layout';
-import { Content } from '../components/erc20/common/content_wrapper';
 import { ToolbarContentContainer } from '../components/erc20/common/toolbar_content';
-import { BuySellContainer } from '../components/erc20/marketplace/buy_sell';
-import { OrderBookTableContainer } from '../components/erc20/marketplace/order_book';
-import { OrderHistoryContainer } from '../components/erc20/marketplace/order_history';
-import { WalletBalanceContainer } from '../components/erc20/marketplace/wallet_balance';
+import { Marketplace } from '../components/erc20/marketplace';
+import { GeneralLayout } from '../components/general_layout';
 import { useReducerInjection } from '../hooks/useReducerInjection';
 import { getThemeByMarketplace } from '../themes/theme_meta_data_utils';
 import { MARKETPLACES } from '../util/types';
@@ -28,24 +21,8 @@ const Home = () => {
 
     return (
         <GeneralLayout toolbar={toolbar}>
-            <Content>
-                <ColumnNarrow>
-                    <WalletBalanceContainer />
-                    <BuySellContainer />
-                </ColumnNarrow>
-                <ColumnNarrow>
-                    <OrderBookTableContainer />
-                </ColumnNarrow>
-                <ColumnWide>
-                    <OrderHistoryContainer />
-                </ColumnWide>
-            </Content>
+            <Marketplace />
         </GeneralLayout>
-        // <ThemeProvider theme={themeColor}>
-        //     <GeneralLayout toolbar={toolbar}>
-        //         <ErcMarketplace20 />
-        //     </GeneralLayout>
-        // </ThemeProvider>
     );
 };
 
