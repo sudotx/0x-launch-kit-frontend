@@ -53,13 +53,13 @@ export const TR = styled.tr`
 
 export const TH = styled.th<TableTDProps>`
     border-bottom: 1px solid black;
-    color: ${props => props.theme.componentsTheme.textLight};
+    color: blue;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.5px;
     line-height: 1.2;
     padding: 0 ${themeDimensions.horizontalPadding} 5px 0;
-    text-align: ${props => (props.styles && props.styles.textAlign) || 'left'};
+    text-align: 'left';
     text-transform: uppercase;
     white-space: nowrap;
 
@@ -97,7 +97,7 @@ export const CustomTDLast = styled(CustomTD)`
 `;
 
 export const CustomTDTitle = styled(CustomTD)`
-    color: ${props => props.theme.componentsTheme.textLight};
+    color: black;
     font-size: 12px;
     text-transform: uppercase;
 `;

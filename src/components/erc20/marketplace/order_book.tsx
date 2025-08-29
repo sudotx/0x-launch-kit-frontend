@@ -10,14 +10,13 @@ import {
     ZERO,
 } from '../../../common/constants';
 import {
-    getBaseToken,
-    getOrderBook,
-    getQuoteToken,
-    getSpread,
-    getSpreadInPercentage,
-    getUserOrders,
-    getWeb3State,
-} from '../../../store/selectors';
+    mockOrderBook,
+    mockBaseToken,
+    mockQuoteToken,
+    mockUserOrders,
+    mockSpread,
+    mockSpreadPercentage,
+} from '../../../util/mockData';
 import { setOrderPriceSelected } from '../../../store/ui/reducers';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
@@ -84,7 +83,7 @@ const GridRowInner = styled(GridRow)`
     background-color: transparent;
     cursor: pointer;
     &:hover {
-        background-color: ${props => props.theme.componentsTheme.rowActive};
+        background-color: lightblue;
     }
 `;
 
@@ -211,7 +210,7 @@ const OrderBookTable: React.FC<Props> = props => {
     const mySizeBuyArray = mySizeOrders.filter(order => order.side === OrderSide.Buy);
 
     const getColor = (order: OrderBookItem): string => {
-        return order.side === OrderSide.Buy ? theme.componentsTheme.green : theme.componentsTheme.red;
+        return order.side === OrderSide.Buy ? 'green' : 'red';
     };
 
     const getSpreadWidth = (): string => {
@@ -357,15 +356,27 @@ const OrderBookTable: React.FC<Props> = props => {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        orderBook: getOrderBook(state) as OrderBook,
-        baseToken: getBaseToken(state),
-        userOrders: getUserOrders(state),
-        quoteToken: getQuoteToken(state),
-        web3State: getWeb3State(state),
-        absoluteSpread: getSpread(state) as BigNumber,
-        percentageSpread: getSpreadInPercentage(state) as BigNumber,
+        orderBook: mockOrderBook,
+        baseToken: mockBaseToken,
+        userOrders: mockUserOrders,
+        quoteToken: mockQuoteToken,
+        web3State: undefined,
+        absoluteSpread: new BigNumber(1000),
+        percentageSpread: new BigNumber(1000),
     };
 };
+
+// const mapStateToProps = (state: StoreState): StateProps => {
+//     return {
+//         orderBook: getOrderBook(state) as OrderBook,
+//         baseToken: getBaseToken(state),
+//         userOrders: getUserOrders(state),
+//         quoteToken: getQuoteToken(state),
+//         web3State: getWeb3State(state),
+//         absoluteSpread: getSpread(state) as BigNumber,
+//         percentageSpread: getSpreadInPercentage(state) as BigNumber,
+//     };
+// };
 
 const OrderBookTableContainer = withTheme(connect(mapStateToProps)(OrderBookTable));
 const OrderBookTableWithTheme = withTheme(OrderBookTable);

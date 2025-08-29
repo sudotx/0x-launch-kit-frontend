@@ -14,11 +14,11 @@ interface SpanRightProps {
 }
 
 const SpanLeft = styled.span`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
 `;
 
 const SpanRight = styled.span<SpanRightProps>`
-    color: ${props => (props.isHover ? props.theme.componentsTheme.textColorCommon : props.theme.componentsTheme.textLight)};
+    color: black;
 `;
 
 export const ShowNumberWithColors: React.FC<ShowNumberWithColorsProps> = ({ num, ishover }) => {
