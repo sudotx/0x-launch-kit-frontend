@@ -10,10 +10,9 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
-    background-color: ${props =>
-        props.active ? props.theme.componentsTheme.rowActive : props.theme.componentsTheme.dropdownBackgroundColor};
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.dropdownBorderColor};
-    color: ${props => props.theme.componentsTheme.dropdownTextColor};
+    background-color: blue
+    border-bottom: 1px solid black;
+    color: black;
     cursor: pointer;
     font-size: 14px;
     font-weight: normal;
@@ -21,7 +20,7 @@ export const DropdownTextItemWrapper = styled.div<{ active?: boolean }>`
     padding: 12px ${themeDimensions.horizontalPadding};
 
     &:hover {
-        background-color: ${props => props.theme.componentsTheme.rowActive};
+        background-color: blue;
     }
 
     &:first-child {
