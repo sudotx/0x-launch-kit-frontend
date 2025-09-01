@@ -233,7 +233,6 @@ export const mockOpenSellOrders: UIOrder[] = [
 ];
 
 export const mockCollectible: Collectible = {
-    id: '1',
     name: 'CryptoKitty',
     color: '#f0f0f0',
     image: 'https://www.cryptokitties.co/images/kitty-eth.svg',
@@ -246,11 +245,13 @@ export const mockCollectible: Collectible = {
         salt: new BigNumber('4'),
         signature: '0x'
     },
-    tokenId: new BigNumber('12345'),
+    tokenId: '1',
+    assetUrl: '',
+    currentOwner: '',
+    description: ''
 };
 
 export const mockCollectible2: Collectible = {
-    id: '2',
     name: 'Another Kitty',
     color: '#f0f0f0',
     image: 'https://www.cryptokitties.co/images/kitty-eth.svg',
@@ -263,16 +264,21 @@ export const mockCollectible2: Collectible = {
         salt: new BigNumber('5'),
         signature: '0x'
     },
-    tokenId: new BigNumber('12346'),
+    tokenId: '2',
+    assetUrl: '',
+    currentOwner: '',
+    description: ''
 };
 
 export const mockCollectible3: Collectible = {
-    id: '3',
     name: 'Third Kitty',
     color: '#f0f0f0',
     image: 'https://www.cryptokitties.co/images/kitty-eth.svg',
     order: null,
-    tokenId: new BigNumber('12347'),
+    tokenId: '3',
+    assetUrl: '',
+    currentOwner: '',
+    description: ''
 };
 
 export const mockCollectibles: Collectible[] = [mockCollectible, mockCollectible2, mockCollectible3];
