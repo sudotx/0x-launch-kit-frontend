@@ -7,6 +7,7 @@ import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
 import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../util/types';
+import { mockCollectiblesMap } from '../../../util/mockData';
 import { CenteredWrapper } from '../../common/centered_wrapper';
 import { ViewAll } from '../../common/view_all';
 import { SellCollectiblesButton } from '../../../pages/erc721/marketplace/sell_collectibles_button';
@@ -21,11 +22,11 @@ interface OwnProps {
 }
 
 interface StateProps {
-    collectibles: { [key: string]: Collectible };
+    // collectibles: { [key: string]: Collectible };
     // fetchStatus: AllCollectiblesFetchStatus;
 }
 
-type Props = StateProps & OwnProps;
+type Props = OwnProps;
 
 const HeaderWrapper = styled.div`
     display: flex;
@@ -105,10 +106,9 @@ const CollectiblesCardListStyled = styled(CollectiblesCardList)`
 `;
 
 const CollectiblesAll: React.FC<Props> = ({ title, description }) => {
-    // const collectibles = useSelector(getUsersCollectiblesAvailableToList);
     // const fetchStatus = useSelector(getAllCollectiblesFetchStatus);
 
-    // const collectibles = Object.keys(collectibles).map(key => collectibles[key]);
+    const collectiblesArray = Object.values(mockCollectiblesMap);
     // const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
     return (
@@ -129,13 +129,13 @@ const CollectiblesAll: React.FC<Props> = ({ title, description }) => {
                 />
             </SubSectionTitleWrapper>
 
-            {/* <CollectiblesCardListStyled
-                collectibles={collectibles}
+            <CollectiblesCardListStyled
+                collectibles={collectiblesArray}
                 filterType={CollectibleFilterType.ShowAll}
                 limit={MAX_ITEMS_TO_DISPLAY}
                 sortType={CollectibleSortType.NewestAdded}
-                isLoading={isLoading}
-            /> */}
+                isLoading={false}
+            />
 
             <SubSectionTitleWrapper>
                 <SubSectionTitle>Most valued</SubSectionTitle>
@@ -145,20 +145,20 @@ const CollectiblesAll: React.FC<Props> = ({ title, description }) => {
                 />
             </SubSectionTitleWrapper>
 
-            {/* <CollectiblesCardListStyled
-                collectibles={collectibles}
+            <CollectiblesCardListStyled
+                collectibles={collectiblesArray}
                 filterType={CollectibleFilterType.ShowAll}
                 limit={MAX_ITEMS_TO_DISPLAY}
                 sortType={CollectibleSortType.PriceHighToLow}
-                isLoading={isLoading}
-            /> */}
+                isLoading={true}
+            // isLoading={isLoading}
+            />
         </CenteredWrapper>
     );
 };
 
 // const mapStateToProps = (state: StoreState): StateProps => ({
 //     collectibles: getUsersCollectiblesAvailableToList(state),
-//     fetchStatus: getAllCollectiblesFetchStatus(state),
 // });
 
 export const AllCollectiblesContainer = connect()(CollectiblesAll);

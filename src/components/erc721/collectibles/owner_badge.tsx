@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Badge = styled.div`
     align-items: center;
-    background: ${props => props.theme.componentsTheme.cardBackgroundColor};
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 16px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
     display: flex;
@@ -17,7 +17,7 @@ const Badge = styled.div`
 `;
 
 const BadgeValue = styled.span`
-    color: ${props => props.theme.componentsTheme.cardTitleOwnerColor};
+    color: white;
     font-size: 14px;
     font-weight: 400;
     line-height: 14px;

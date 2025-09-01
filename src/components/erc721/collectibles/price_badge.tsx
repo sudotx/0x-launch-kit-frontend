@@ -11,7 +11,7 @@ interface Props {
 
 const Badge = styled.div`
     align-items: center;
-    background: ${props => props.theme.componentsTheme.cardBackgroundColor};
+    background: 'white';
     border-radius: 16px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
     display: flex;
@@ -24,7 +24,7 @@ const Badge = styled.div`
 `;
 
 const BadgeValue = styled.span`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: 'black';
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 14px;
     font-weight: 400;
@@ -33,7 +33,7 @@ const BadgeValue = styled.span`
 `;
 
 const BadgeAsset = styled.span`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: 'black';
     font-feature-settings: 'tnum' on, 'onum' on;
     font-size: 10px;
     font-weight: 400;

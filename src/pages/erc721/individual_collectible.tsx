@@ -5,6 +5,7 @@ import { themeBreakPoints } from '../../themes/commons';
 import { Content } from '../../components/erc721/common/content_wrapper';
 import { CollectibleBuySellContainer } from './marketplace/collectible_buy_sell';
 import { CollectibleDescriptionContainer } from './marketplace/collectible_description';
+import { mockCollectible } from '../../util/mockData';
 
 const IndividualCollectibleWrapper = styled.div`
     align-items: center;
@@ -55,7 +56,7 @@ export const IndividualCollectible = (props: Props) => {
         <Content>
             <IndividualCollectibleWrapper>
                 <CollectibleBuySell collectibleId={collectibleId} />
-                <CollectibleDescription collectibleId={collectibleId} />
+                <CollectibleDescription collectibleId={collectibleId} collectible={mockCollectible} ethAccount='' />
             </IndividualCollectibleWrapper>
         </Content>
     );

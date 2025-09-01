@@ -83,7 +83,7 @@ const ToolbarContent: React.FC<Props> = props => {
         </>
     );
 
-    return <ToolbarContainer logo={<div>hex</div>} />;
+    return <ToolbarContainer logo={<div>Exchange</div>} />;
 };
 
 

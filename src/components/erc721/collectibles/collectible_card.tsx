@@ -60,7 +60,8 @@ interface OwnProps {
 const CollectibleCard: React.FC<OwnProps> = ({ collectible, price, onClick, ...restProps }) => {
     const ethAccount = useSelector(getEthAccount);
     const { currentOwner, tokenId, color, image, name } = collectible;
-    const isOwner = currentOwner.toLowerCase() === ethAccount.toLowerCase();
+    const isOwner = true;
+    // const isOwner = currentOwner.toLowerCase() === ethAccount.toLowerCase();
     const ownerBadge = isOwner ? <OwnerBadge /> : null;
 
     return (

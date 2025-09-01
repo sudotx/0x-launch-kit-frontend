@@ -1,5 +1,5 @@
 import { BigNumber } from '@0x/utils';
-import { CurrencyPair, Market, OrderBook, OrderSide, Token, UIOrder } from './types';
+import { Collectible, CurrencyPair, Market, OrderBook, OrderSide, Token, UIOrder } from './types';
 import { OrderStatus } from '@0x/types';
 import { SignedOrder } from '@0x/connect';
 
@@ -247,4 +247,38 @@ export const mockCollectible: Collectible = {
         signature: '0x'
     },
     tokenId: new BigNumber('12345'),
+};
+
+export const mockCollectible2: Collectible = {
+    id: '2',
+    name: 'Another Kitty',
+    color: '#f0f0f0',
+    image: 'https://www.cryptokitties.co/images/kitty-eth.svg',
+    order: {
+        ...partialSignedOrder,
+        makerAssetData: zrxAssetData,
+        takerAssetData: wethAssetData,
+        makerAssetAmount: new BigNumber('2000000000000000000'), // 2 ETH
+        takerAssetAmount: new BigNumber('1'),
+        salt: new BigNumber('5'),
+        signature: '0x'
+    },
+    tokenId: new BigNumber('12346'),
+};
+
+export const mockCollectible3: Collectible = {
+    id: '3',
+    name: 'Third Kitty',
+    color: '#f0f0f0',
+    image: 'https://www.cryptokitties.co/images/kitty-eth.svg',
+    order: null,
+    tokenId: new BigNumber('12347'),
+};
+
+export const mockCollectibles: Collectible[] = [mockCollectible, mockCollectible2, mockCollectible3];
+
+export const mockCollectiblesMap: { [key: string]: Collectible } = {
+    '1': mockCollectible,
+    '2': mockCollectible2,
+    '3': mockCollectible3,
 };
