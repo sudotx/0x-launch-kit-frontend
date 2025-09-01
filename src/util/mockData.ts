@@ -231,3 +231,20 @@ export const mockOpenSellOrders: UIOrder[] = [
         status: OrderStatus.Fillable,
     },
 ];
+
+export const mockCollectible: Collectible = {
+    id: '1',
+    name: 'CryptoKitty',
+    color: '#f0f0f0',
+    image: 'https://www.cryptokitties.co/images/kitty-eth.svg',
+    order: {
+        ...partialSignedOrder,
+        makerAssetData: zrxAssetData,
+        takerAssetData: wethAssetData,
+        makerAssetAmount: new BigNumber('1000000000000000000'), // 1 ETH
+        takerAssetAmount: new BigNumber('1'),
+        salt: new BigNumber('4'),
+        signature: '0x'
+    },
+    tokenId: new BigNumber('12345'),
+};

@@ -36,7 +36,7 @@ const CollectibleDescriptionType = styled.a`
 `;
 
 const CollectibleDescriptionTypeText = styled.span`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: black;
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -54,7 +54,7 @@ const CollectibleDescriptionTypeImage = styled.span<{ backgroundImage: string }>
 `;
 
 export const CollectibleDescriptionInnerTitle = styled.h4`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: black;
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -62,7 +62,7 @@ export const CollectibleDescriptionInnerTitle = styled.h4`
 `;
 
 const CollectibleDescriptionText = styled.p`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: black;
     font-feature-settings: 'calt' 0;
     font-size: 14px;
     line-height: 1.6;
@@ -162,13 +162,14 @@ const CollectibleDescription = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
-    return {
-        collectible: getCollectibleById(state, props),
-        ethAccount: getEthAccount(state),
-    };
-};
+// const mapStateToProps = (state: StoreState, props: OwnProps): StateProps => {
+//     return {
+//         collectible: getCollectibleById(state, props),
+//         ethAccount: getEthAccount(state),
+//     };
+// };
 
-const CollectibleDescriptionContainer = connect(mapStateToProps)(CollectibleDescription);
+const CollectibleDescriptionContainer = connect()(CollectibleDescription);
+// const CollectibleDescriptionContainer = connect(mapStateToProps)(CollectibleDescription);
 
 export { CollectibleDescription, CollectibleDescriptionContainer };

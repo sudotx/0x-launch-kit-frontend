@@ -1,9 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { ERC721_APP_BASE_PATH } from '../../../common/constants';
-import { getAllCollectiblesFetchStatus, getUsersCollectiblesAvailableToList } from '../../../store/selectors';
 import { themeBreakPoints } from '../../../themes/commons';
 import { CollectibleFilterType } from '../../../util/filterable_collectibles';
 import { CollectibleSortType } from '../../../util/sortable_collectibles';
@@ -11,8 +10,8 @@ import { AllCollectiblesFetchStatus, Collectible, StoreState } from '../../../ut
 import { CenteredWrapper } from '../../common/centered_wrapper';
 import { ViewAll } from '../../common/view_all';
 import { SellCollectiblesButton } from '../../../pages/erc721/marketplace/sell_collectibles_button';
-
 import { CollectiblesCardList } from './collectibles_card_list';
+import { getAllCollectiblesFetchStatus, getUsersCollectiblesAvailableToList } from '../../../store/selectors';
 
 const MAX_ITEMS_TO_DISPLAY = 5;
 
@@ -23,7 +22,7 @@ interface OwnProps {
 
 interface StateProps {
     collectibles: { [key: string]: Collectible };
-    fetchStatus: AllCollectiblesFetchStatus;
+    // fetchStatus: AllCollectiblesFetchStatus;
 }
 
 type Props = StateProps & OwnProps;
@@ -44,7 +43,7 @@ const HeaderWrapper = styled.div`
 `;
 
 const Title = styled.h1`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-size: 24px;
     font-weight: 600;
     line-height: 1.2;
@@ -57,7 +56,7 @@ const Title = styled.h1`
 `;
 
 const Description = styled.p`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-size: 16px;
     font-weight: normal;
     line-height: 1.7;
@@ -84,7 +83,7 @@ const SubSectionTitleWrapper = styled.div`
 `;
 
 const SubSectionTitle = styled.h3`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: red;
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;
@@ -105,60 +104,62 @@ const CollectiblesCardListStyled = styled(CollectiblesCardList)`
     }
 `;
 
-export class CollectiblesAll extends React.Component<Props> {
-    public render = () => {
-        const { title, description, fetchStatus } = this.props;
-        const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
-        const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
+const CollectiblesAll: React.FC<Props> = ({ title, description }) => {
+    // const collectibles = useSelector(getUsersCollectiblesAvailableToList);
+    // const fetchStatus = useSelector(getAllCollectiblesFetchStatus);
 
-        return (
-            <CenteredWrapper>
-                <HeaderWrapper>
-                    <Summary>
-                        <Title>{title}</Title>
-                        <Description>{description}</Description>
-                    </Summary>
-                    <SellCollectiblesButton />
-                </HeaderWrapper>
-                <SubSectionTitleWrapper>
-                    <SubSectionTitle>Recently listed</SubSectionTitle>
-                    <ViewAll
-                        text="View all"
-                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${CollectibleSortType.NewestAdded
-                            }`}
-                    />
-                </SubSectionTitleWrapper>
-                <CollectiblesCardListStyled
-                    collectibles={collectibles}
-                    filterType={CollectibleFilterType.ShowAll}
-                    limit={MAX_ITEMS_TO_DISPLAY}
-                    sortType={CollectibleSortType.NewestAdded}
-                    isLoading={isLoading}
-                />
-                <SubSectionTitleWrapper>
-                    <SubSectionTitle>Most valued</SubSectionTitle>
-                    <ViewAll
-                        text="View all"
-                        to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${CollectibleSortType.PriceHighToLow
-                            }`}
-                    />
-                </SubSectionTitleWrapper>
-                <CollectiblesCardListStyled
-                    collectibles={collectibles}
-                    filterType={CollectibleFilterType.ShowAll}
-                    limit={MAX_ITEMS_TO_DISPLAY}
-                    sortType={CollectibleSortType.PriceHighToLow}
-                    isLoading={isLoading}
-                />
-            </CenteredWrapper>
-        );
-    };
-}
+    // const collectibles = Object.keys(collectibles).map(key => collectibles[key]);
+    // const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
-const allMapStateToProps = (state: StoreState): StateProps => {
-    return {
-        collectibles: getUsersCollectiblesAvailableToList(state),
-        fetchStatus: getAllCollectiblesFetchStatus(state),
-    };
+    return (
+        <CenteredWrapper>
+            <HeaderWrapper>
+                <Summary>
+                    <Title>{title}</Title>
+                    <Description>{description}</Description>
+                </Summary>
+                <SellCollectiblesButton />
+            </HeaderWrapper>
+
+            <SubSectionTitleWrapper>
+                <SubSectionTitle>Recently listed</SubSectionTitle>
+                <ViewAll
+                    text="View all"
+                    to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${CollectibleSortType.NewestAdded}`}
+                />
+            </SubSectionTitleWrapper>
+
+            {/* <CollectiblesCardListStyled
+                collectibles={collectibles}
+                filterType={CollectibleFilterType.ShowAll}
+                limit={MAX_ITEMS_TO_DISPLAY}
+                sortType={CollectibleSortType.NewestAdded}
+                isLoading={isLoading}
+            /> */}
+
+            <SubSectionTitleWrapper>
+                <SubSectionTitle>Most valued</SubSectionTitle>
+                <ViewAll
+                    text="View all"
+                    to={`${ERC721_APP_BASE_PATH}/list-collectibles?filter=${CollectibleFilterType.ShowAll}&sort=${CollectibleSortType.PriceHighToLow}`}
+                />
+            </SubSectionTitleWrapper>
+
+            {/* <CollectiblesCardListStyled
+                collectibles={collectibles}
+                filterType={CollectibleFilterType.ShowAll}
+                limit={MAX_ITEMS_TO_DISPLAY}
+                sortType={CollectibleSortType.PriceHighToLow}
+                isLoading={isLoading}
+            /> */}
+        </CenteredWrapper>
+    );
 };
-export const AllCollectiblesContainer = connect(allMapStateToProps)(CollectiblesAll);
+
+// const mapStateToProps = (state: StoreState): StateProps => ({
+//     collectibles: getUsersCollectiblesAvailableToList(state),
+//     fetchStatus: getAllCollectiblesFetchStatus(state),
+// });
+
+export const AllCollectiblesContainer = connect()(CollectiblesAll);
+// export const AllCollectiblesContainer = connect(mapStateToProps)(CollectiblesAll);

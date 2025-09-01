@@ -1,6 +1,10 @@
 import Home from "./Home"
 import NotFound from "./NotFound"
-import Erc721 from "./erc721/Erc721"
+import { AllCollectibles } from "./erc721/all_collectibles"
+import { IndividualCollectible } from "./erc721/individual_collectible"
+import { ListCollectibles } from "./erc721/list_collectibles"
+import { MyCollectibles } from "./erc721/my_collectibles"
 import { MyWallet } from "./my_wallet"
 
-export { Erc721, Home, MyWallet, NotFound }
+export { AllCollectibles, Home, IndividualCollectible, ListCollectibles, MyCollectibles, MyWallet, NotFound }
+

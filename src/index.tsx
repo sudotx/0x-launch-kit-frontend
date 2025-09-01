@@ -15,7 +15,7 @@ import { sepolia } from "wagmi/chains";
 
 import { store } from './store';
 
-import { Erc721, Home, MyWallet, NotFound } from './pages';
+import { Home, MyWallet, NotFound, AllCollectibles, IndividualCollectible, ListCollectibles, MyCollectibles } from './pages';
 
 import App from './app';
 
@@ -60,9 +60,27 @@ function Web3WrappedApp() {
 										}
 									/>
 									<Route
-										path="/erc721"
+										path="/all-collectibles"
 										element={
-											<Erc721 />
+											<AllCollectibles />
+										}
+									/>
+									<Route
+										path="/my-collectibles"
+										element={
+											<MyCollectibles />
+										}
+									/>
+									<Route
+										path="/list-collectibles"
+										element={
+											<ListCollectibles />
+										}
+									/>
+									<Route
+										path="/collectible/:id"
+										element={
+											<IndividualCollectible collectibleId="1" />
 										}
 									/>
 									<Route

@@ -8,14 +8,10 @@ interface Props {
 }
 
 const DropdownItemsContainer = styled(CardBase)`
-    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     min-width: 240px;
 `;
 
-export class DropdownContainer extends React.Component<Props> {
-    public render = () => {
-        const { children } = this.props;
-
-        return <DropdownItemsContainer>{children}</DropdownItemsContainer>;
-    };
-}
+export const DropdownContainer: React.FC<Props> = ({ children }) => {
+    return <DropdownItemsContainer>{children}</DropdownItemsContainer>;
+};

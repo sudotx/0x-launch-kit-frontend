@@ -52,7 +52,8 @@ export const TradeButtonContainer: React.FC<Props> = ({
     ...restProps
 }) => {
     const { currentOwner, name, order } = asset;
-    const isOwner = ethAccount.toLowerCase() === currentOwner.toLowerCase();
+    const isOwner = true;
+    // const isOwner = ethAccount.toLowerCase() === currentOwner.toLowerCase();
 
     let borderColor: string;
     let backgroundColor: string;
@@ -62,13 +63,17 @@ export const TradeButtonContainer: React.FC<Props> = ({
 
     if (isOwner && order && !isDutchAuction(order)) {
         backgroundColor = 'transparent';
-        borderColor = theme.componentsTheme.buttonErrorBackgroundColor;
+        borderColor = 'black';
+        // borderColor = theme.componentsTheme.buttonErrorBackgroundColor;
         buttonText = 'Cancel Sale';
         onClick = onCancel;
-        textColor = theme.componentsTheme.buttonErrorBackgroundColor;
+        textColor = 'white';
+        // textColor = theme.componentsTheme.buttonErrorBackgroundColor;
     } else if (isOwner && !order) {
-        backgroundColor = theme.componentsTheme.buttonErrorBackgroundColor;
-        borderColor = theme.componentsTheme.buttonErrorBackgroundColor;
+        backgroundColor = 'red';
+        // backgroundColor = theme.componentsTheme.buttonErrorBackgroundColor;
+        borderColor = 'black';
+        // borderColor = theme.componentsTheme.buttonErrorBackgroundColor;
         buttonText = `Sell ${name}`;
         onClick = onSell;
         textColor = theme.componentsTheme.buttonTextColor;

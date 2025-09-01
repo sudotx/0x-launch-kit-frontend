@@ -81,7 +81,7 @@ const CollectiblesListFilterStyled = styled(CollectiblesListFilter)`
 `;
 
 const Title = styled.h1`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: black;
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;
@@ -96,7 +96,7 @@ const Title = styled.h1`
 export class CollectiblesList extends React.Component<Props, {}> {
     public render = () => {
         const { title, fetchStatus } = this.props;
-        const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
+        // const collectibles = Object.keys(this.props.collectibles).map(key => this.props.collectibles[key]);
         const { sortType, filterType } = this._getSortTypeAndFilterTypeFromLocationSearch();
         const isLoading = fetchStatus !== AllCollectiblesFetchStatus.Success;
 
@@ -108,12 +108,12 @@ export class CollectiblesList extends React.Component<Props, {}> {
                     <CollectiblesListFilterStyled currentValue={filterType} onChange={this._onChangeFilterType} />
                     <SellCollectiblesButton />
                 </FiltersMenu>
-                <CollectiblesCardList
+                {/* <CollectiblesCardList
                     collectibles={collectibles}
                     filterType={filterType}
                     isLoading={isLoading}
                     sortType={sortType}
-                />
+                /> */}
             </CenteredWrapper>
         );
     };
@@ -134,31 +134,31 @@ export class CollectiblesList extends React.Component<Props, {}> {
 }
 
 // "All Collectibles" and "My Collectibles" get different selectors
-const allMapStateToProps = (state: StoreState): StateProps => {
-    return {
-        collectibles: getUsersCollectiblesAvailableToList(state),
-        fetchStatus: getAllCollectiblesFetchStatus(state),
-    };
-};
+// const allMapStateToProps = (state: StoreState): StateProps => {
+//     return {
+//         collectibles: getUsersCollectiblesAvailableToList(state),
+//         fetchStatus: getAllCollectiblesFetchStatus(state),
+//     };
+// };
 
-const myMapStateToProps = (state: StoreState): StateProps => {
-    return {
-        collectibles: getUserCollectibles(state),
-        fetchStatus: getAllCollectiblesFetchStatus(state),
-    };
-};
+// const myMapStateToProps = (state: StoreState): StateProps => {
+//     return {
+//         collectibles: getUserCollectibles(state),
+//         fetchStatus: getAllCollectiblesFetchStatus(state),
+//     };
+// };
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
-    return {
-    };
-};
+// const mapDispatchToProps = (dispatch: any): DispatchProps => {
+//     return {
+//     };
+// };
 
 export const AllCollectiblesListContainer = connect(
-    allMapStateToProps,
-    mapDispatchToProps,
+    // allMapStateToProps,
+    // mapDispatchToProps,
 )(CollectiblesList);
 
 export const MyCollectiblesListContainer = connect(
-    myMapStateToProps,
-    mapDispatchToProps,
+    // myMapStateToProps,
+    // mapDispatchToProps,
 )(CollectiblesList);
