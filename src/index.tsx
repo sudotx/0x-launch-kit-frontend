@@ -15,7 +15,7 @@ import { sepolia } from "wagmi/chains";
 
 import { store } from './store';
 
-import { Home, MyWallet, NotFound, AllCollectibles, IndividualCollectible, ListCollectibles, MyCollectibles } from './pages';
+import { Home, MyWallet, NotFound } from './pages';
 
 import App from './app';
 
@@ -57,30 +57,6 @@ function Web3WrappedApp() {
 										path="/mywallet"
 										element={
 											<MyWallet />
-										}
-									/>
-									<Route
-										path="/all-collectibles"
-										element={
-											<AllCollectibles />
-										}
-									/>
-									<Route
-										path="/my-collectibles"
-										element={
-											<MyCollectibles />
-										}
-									/>
-									<Route
-										path="/list-collectibles"
-										element={
-											<ListCollectibles />
-										}
-									/>
-									<Route
-										path="/collectible/:id"
-										element={
-											<IndividualCollectible collectibleId="1" />
 										}
 									/>
 									<Route
