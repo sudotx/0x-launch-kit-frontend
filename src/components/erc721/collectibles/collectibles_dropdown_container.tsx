@@ -2,13 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { CardBase } from '../../common/card_base';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface Props {
     children: React.ReactNode;
 }
 
 const DropdownItemsContainer = styled(CardBase)`
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: ${lightThemeColors.boxShadow};
     min-width: 240px;
 `;
 

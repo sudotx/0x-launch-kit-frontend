@@ -18,6 +18,7 @@ import { TokenIcon } from '../../common/icons/token_icon';
 import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from '../../common/table';
 import { AppDispatch } from '../../../store';
 import { mockBaseToken, mockCurrencyPair, mockMarkets } from '../../../util/mockData';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> { }
 
@@ -31,7 +32,7 @@ const MarketsDropdownHeader = styled.div`
 `;
 
 const MarketsDropdownHeaderText = styled.span`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     font-size: 18px;
     font-weight: 600;
     line-height: 26px;
@@ -39,7 +40,7 @@ const MarketsDropdownHeaderText = styled.span`
 `;
 
 const MarketsDropdownBody = styled(CardBase)`
-    box-shadow: 2px 2px 10px;
+    box-shadow: ${lightThemeColors.boxShadow};
     max-height: 100%;
     max-width: 100%;
     width: 401px;
@@ -47,7 +48,7 @@ const MarketsDropdownBody = styled(CardBase)`
 
 const MarketsFilters = styled.div`
     align-items: center;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid ${lightThemeColors.dropdownBorderColor};
     display: flex;
     justify-content: space-between;
     min-height: ${rowHeight};
@@ -55,7 +56,7 @@ const MarketsFilters = styled.div`
 `;
 
 const MarketsFiltersLabel = styled.h2`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     font-size: 16px;
     font-weight: 600;
     line-height: normal;
@@ -69,7 +70,7 @@ const TokenFiltersTabs = styled.div`
 `;
 
 const TokenFiltersTab = styled.span<{ active: boolean }>`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
@@ -77,7 +78,7 @@ const TokenFiltersTab = styled.span<{ active: boolean }>`
     user-select: none;
 
     &:after {
-        color: lightgray;
+        color: ${lightThemeColors.lightGray};
         content: '/';
         margin: 0 6px;
     }
@@ -97,10 +98,10 @@ const SearchWrapper = styled.div`
 `;
 
 const SearchField = styled.input`
-    background: white;
+    background: ${lightThemeColors.marketsSearchFieldBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid black;
-    color: black;
+    border: 1px solid ${lightThemeColors.marketsSearchFieldBorderColor};
+    color: ${lightThemeColors.marketsSearchFieldTextColor};
     font-size: 13px;
     height: ${searchFieldHeight};
     left: 0;
@@ -112,7 +113,7 @@ const SearchField = styled.input`
     z-index: 1;
 
     &:focus {
-        border-color: black;
+        border-color: ${lightThemeColors.marketsSearchFieldBorderColor};
     }
 `;
 
@@ -142,11 +143,11 @@ const tableHeaderFontWeight = `
 `;
 
 const TRStyled = styled(TR) <{ active: boolean }>`
-    background-color: "transparent";
-    cursor: 'default';
+    background-color: ${props => props.active ? lightThemeColors.rowActive : 'transparent'};
+    cursor: ${props => (props.active ? 'default' : 'pointer')};
 
     &:hover {
-        background-color: lightgray;
+        background-color: ${lightThemeColors.rowActive};
     }
 
     &:last-child > td {
@@ -186,7 +187,7 @@ const TokenIconAndLabel = styled.div`
 `;
 
 const TokenLabel = styled.div`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     font-size: 14px;
     font-weight: 700;
     line-height: 1.2;

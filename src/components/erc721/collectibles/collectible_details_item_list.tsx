@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { themeDimensions } from '../../../themes/commons';
 import { ChevronRight } from '../../common/icons/chevron_right_icon';
+import { lightThemeColors, modalThemeStyle } from '../../../themes/default_theme';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     color: string;
@@ -12,10 +13,10 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CollectibleAssetWrapper = styled.div`
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid ${lightThemeColors.cardBorderColor};
     cursor: pointer;
     display: flex;
-    padding: 12px 10px;
+    padding: 12px ${modalThemeStyle.content.padding};
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.03);
@@ -27,12 +28,12 @@ const CollectibleAssetWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div<{ color: string; image: string }>`
-    background-color: white;
+    background-color: ${props => props.color || lightThemeColors.cardBackgroundColor};
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid black;
+    border: 1px solid ${lightThemeColors.cardBorderColor};
     height: 72px;
     margin-right: 15px;
     width: 72px;
@@ -47,7 +48,7 @@ const TextContainer = styled.div`
 `;
 
 const Title = styled.h3`
-    color: black;
+    color: ${lightThemeColors.cardTitleColor};
     font-size: 16px;
     font-weight: 600;
     line-height: 1.2;

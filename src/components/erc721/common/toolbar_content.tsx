@@ -9,6 +9,7 @@ import { separatorTopbar, ToolbarContainer } from '../../common/toolbar';
 import { NotificationsDropdownContainer } from '../../notifications/notifications_dropdown';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 import { CollectiblesSearch } from '../collectibles/collectibles_search';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface DispatchProps {
     onGoToHome: () => any;
@@ -43,7 +44,7 @@ const LogoHeader = styled(Logo)`
 const LogoSVGStyled = styled.div`
     font-size: 24px;
     font-weight: bold;
-    color: ${props => props.theme.componentsTheme.logoERC721Color};
+    color: ${lightThemeColors.logoERC721Color};
 `;
 
 const WalletDropdown = styled(WalletConnectionContentContainer)`
@@ -60,14 +61,6 @@ const ToolbarContent = (props: Props) => {
         e.preventDefault();
         props.onGoToHome();
     };
-    const startContent = (
-        <LogoHeader
-            image={<LogoSVGStyled>ERC721</LogoSVGStyled>}
-            onClick={handleLogoClick}
-            text="0x Collectibles"
-            textColor={props.theme.componentsTheme.logoERC721TextColor}
-        />
-    );
 
     const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -84,7 +77,7 @@ const ToolbarContent = (props: Props) => {
     );
     const centerContent = <CollectiblesSearch theme={props.theme} />;
 
-    return <ToolbarContainer startContent={startContent} centerContent={centerContent} endContent={endContent} />;
+    return <ToolbarContainer logo={<LogoSVGStyled>ERC721</LogoSVGStyled>} />;
 };
 
 // const mapDispatchToProps = (dispatch: any): DispatchProps => {

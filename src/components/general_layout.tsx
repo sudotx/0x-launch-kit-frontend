@@ -6,7 +6,10 @@ import { themeBreakPoints, themeDimensions } from '../themes/commons';
 import { Footer } from './common/footer';
 import { StepsModalContainer } from './common/steps_modal/steps_modal';
 
+import { lightThemeColors } from '../themes/default_theme';
+
 const General = styled.div`
+    background: ${lightThemeColors.background};
     display: flex;
     flex-direction: column;
     min-height: 100%;

@@ -30,15 +30,15 @@ export const getThemeByMarketplace = (marketplace: MARKETPLACES): Theme => {
         : themeBase.componentsTheme;
     const modalTheme = themeConfig
         ? {
-              content: {
-                  ...themeBase.modalTheme.content,
-                  ...(themeConfig.modalTheme && themeConfig.modalTheme.content),
-              },
-              overlay: {
-                  ...themeBase.modalTheme.overlay,
-                  ...(themeConfig.modalTheme && themeConfig.modalTheme.overlay),
-              },
-          }
+            content: {
+                ...themeBase.modalTheme.content,
+                ...(themeConfig.modalTheme && themeConfig.modalTheme.content),
+            },
+            overlay: {
+                ...themeBase.modalTheme.overlay,
+                ...(themeConfig.modalTheme && themeConfig.modalTheme.overlay),
+            },
+        }
         : themeBase.modalTheme;
     return {
         componentsTheme,

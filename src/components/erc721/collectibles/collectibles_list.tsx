@@ -18,6 +18,7 @@ import { SellCollectiblesButton } from '../../../pages/erc721/marketplace/sell_c
 import { CollectiblesCardList } from './collectibles_card_list';
 import { CollectiblesListFilter } from './collectibles_list_filter';
 import { CollectiblesListSort } from './collectibles_list_sort';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface OwnProps {
     title: string;
@@ -81,7 +82,7 @@ const CollectiblesListFilterStyled = styled(CollectiblesListFilter)`
 `;
 
 const Title = styled.h1`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;

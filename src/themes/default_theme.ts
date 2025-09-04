@@ -1,6 +1,6 @@
 import { Theme, ThemeModalStyle, ThemeProperties } from './commons';
 
-const modalThemeStyle: ThemeModalStyle = {
+export const modalThemeStyle: ThemeModalStyle = {
     content: {
         backgroundColor: '#fff',
         borderColor: '#dedede',
@@ -26,7 +26,7 @@ const modalThemeStyle: ThemeModalStyle = {
     },
 };
 
-const lightThemeColors: ThemeProperties = {
+export const lightThemeColors: ThemeProperties = {
     background: '#f4f3f4',
     backgroundERC721: '#F9FAFC',
     borderColor: '#dedede',

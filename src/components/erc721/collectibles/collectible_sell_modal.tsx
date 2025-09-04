@@ -16,6 +16,7 @@ import { Button } from '../../common/button';
 import { CloseModalButton } from '../../common/icons/close_modal_button';
 import { OutsideUrlIcon } from '../../common/icons/outside_url_icon';
 import { AppDispatch } from '../../../store';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface OwnProps {
     theme: Theme;
@@ -32,7 +33,7 @@ const ModalContent = styled.div`
 
 const ModalTitleWrapper = styled.div`
     align-items: center;
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.borderColor};
+    border-bottom: 1px solid ${lightThemeColors.borderColor};
     display: flex;
     justify-content: space-between;
     margin: -3px -16px 15px;
@@ -40,7 +41,7 @@ const ModalTitleWrapper = styled.div`
 `;
 
 const ModalTitle = styled.h2`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: ${lightThemeColors.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -65,7 +66,7 @@ const CollectibleImage = styled.div<ImageProps>`
     background-repeat: no-repeat;
     background-size: contain;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.borderColor};
+    border: 1px solid ${lightThemeColors.borderColor};
     flex-grow: 0;
     flex-shrink: 0;
     height: 120px;
@@ -83,7 +84,7 @@ const CollectibleMainInfo = styled.div`
 `;
 
 const CollectibleMainInfoTitle = styled.h3`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     font-size: 16px;
     font-weight: 600;
     line-height: 1.2;
@@ -98,7 +99,7 @@ const CollectibleLink = styled.a`
 `;
 
 const CollectibleLinkText = styled.span`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: ${lightThemeColors.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -106,7 +107,7 @@ const CollectibleLinkText = styled.span`
 `;
 
 const CollectibleMainInfoSubtitle = styled.h4`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -114,7 +115,7 @@ const CollectibleMainInfoSubtitle = styled.h4`
 `;
 
 const CollectibleMainInfoValue = styled.p`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     font-size: 14px;
     font-weight: 400;
     line-height: 1.2;
@@ -122,7 +123,7 @@ const CollectibleMainInfoValue = styled.p`
 `;
 
 const CollectibleLabel = styled.label`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     display: block;
     font-size: 14px;
     font-weight: 500;
@@ -141,10 +142,10 @@ const FieldContainer = styled.div`
 `;
 
 const InputStyle = css`
-    background-color: ${props => props.theme.componentsTheme.textInputBackgroundColor};
+    background-color: ${lightThemeColors.textInputBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid ${props => props.theme.componentsTheme.textInputBorderColor};
-    color: ${props => props.theme.componentsTheme.textInputTextColor};
+    border: 1px solid ${lightThemeColors.textInputBorderColor};
+    color: ${lightThemeColors.textInputTextColor};
     font-feature-settings: 'tnum' 1;
     font-size: 16px;
     padding-left: 14px;
@@ -180,7 +181,7 @@ const TokenContainer = styled.div`
 `;
 
 const TokenText = styled.span`
-    color: ${props => props.theme.componentsTheme.textInputTextColor};
+    color: ${lightThemeColors.textInputTextColor};
     font-size: 14px;
     font-weight: normal;
     line-height: 21px;

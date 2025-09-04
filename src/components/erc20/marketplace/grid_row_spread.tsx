@@ -2,6 +2,7 @@ import React, { HTMLAttributes, useState, useImperativeHandle, forwardRef } from
 import styled from 'styled-components';
 
 import { CustomTD, CustomTDLast, CustomTDTitle } from '../../common/table';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 export type StickySpreadState = 'top' | 'bottom' | 'hidden';
 
@@ -24,9 +25,11 @@ export const GridRowSpreadContainer = styled(GridRow) <GridRowSpreadProps>`
 ${props => (props.stickySpreadState === 'top' ? 'top: 29px;' : '')}
 ${props => (props.stickySpreadState === 'bottom' ? 'bottom: 0;' : '')}
 
-    background-color: gray;
+    background-color: ${lightThemeColors.cardBackgroundColor};
     flex-grow: 0;
     flex-shrink: 0;
+    position: ${props => (props.stickySpreadState === 'hidden' ? 'relative' : 'absolute')};
+    width: ${props => props.stickySpreadWidth};
     z-index: 12;
 `;
 

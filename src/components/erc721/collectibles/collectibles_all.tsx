@@ -13,6 +13,7 @@ import { ViewAll } from '../../common/view_all';
 import { SellCollectiblesButton } from '../../../pages/erc721/marketplace/sell_collectibles_button';
 import { CollectiblesCardList } from './collectibles_card_list';
 import { getAllCollectiblesFetchStatus, getUsersCollectiblesAvailableToList } from '../../../store/selectors';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const MAX_ITEMS_TO_DISPLAY = 5;
 
@@ -44,7 +45,7 @@ const HeaderWrapper = styled.div`
 `;
 
 const Title = styled.h1`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     font-size: 24px;
     font-weight: 600;
     line-height: 1.2;
@@ -57,7 +58,7 @@ const Title = styled.h1`
 `;
 
 const Description = styled.p`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     font-size: 16px;
     font-weight: normal;
     line-height: 1.7;
@@ -84,7 +85,7 @@ const SubSectionTitleWrapper = styled.div`
 `;
 
 const SubSectionTitle = styled.h3`
-    color: red;
+    color: ${lightThemeColors.textColorCommon};
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;

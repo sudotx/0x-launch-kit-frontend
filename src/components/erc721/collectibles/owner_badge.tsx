@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const Badge = styled.div`
     align-items: center;
-    background: rgba(0, 0, 0, 0.8);
+    background: ${lightThemeColors.cardBackgroundColor};
     border-radius: 16px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
     display: flex;
@@ -17,7 +18,7 @@ const Badge = styled.div`
 `;
 
 const BadgeValue = styled.span`
-    color: white;
+    color: ${lightThemeColors.cardTitleOwnerColor};
     font-size: 14px;
     font-weight: 400;
     line-height: 14px;

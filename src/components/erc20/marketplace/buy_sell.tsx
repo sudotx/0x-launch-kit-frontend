@@ -26,6 +26,8 @@ import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 import { OrderDetailsContainer } from './order_details';
 import { mockBaseToken, mockQuoteToken } from '../../../util/mockData';
 import { themeDimensions } from '../../../themes/commons';
+import { lightThemeColors } from '../../../themes/default_theme';
+import { darkThemeColors } from '../../../themes/dark_theme';
 
 const BuySellWrapper = styled(CardBase)`
     margin-bottom: ${themeDimensions.verticalSeparationSm};
@@ -51,7 +53,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: black;
+    color: ${props => props.color || lightThemeColors.textColorCommon};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -69,10 +71,10 @@ const FieldContainer = styled.div`
 `;
 
 const BigInputNumberStyled = styled<any>(BigNumberInput)`
-    background-color: white;
+    background-color: ${lightThemeColors.textInputBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid black;
-    color: black;
+    border: 1px solid ${lightThemeColors.textInputBorderColor};;
+    color: ${lightThemeColors.textInputTextColor};
     font-feature-settings: 'tnum' 1;
     font-size: 16px;
     height: 100%;
@@ -93,7 +95,7 @@ const TokenContainer = styled.div`
 `;
 
 const TokenText = styled.span`
-    color: black;
+    color: ${lightThemeColors.textInputTextColor};
     font-size: 14px;
     font-weight: normal;
     line-height: 21px;
@@ -121,17 +123,22 @@ const BuySell: React.FC = () => {
     const currencyPair = { base: 'ZRX', quote: 'WETH' };
     const orderPriceSelected = new BigNumber('2000000000000000000');
 
-    const TabButton = styled.div<{ side: OrderSide }>`
+    const TabButton = styled.div<{ side: OrderSide, isSelected: boolean }>`
         align-items: center;
-        background-color: transparent;
+        background-color: ${props => props.isSelected ? 'transparent' : lightThemeColors.inactiveTabBackgroundColor};
         border-bottom-color: black;
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-right-style: solid;
         border-right-width: 1px;
-        border-right-color: black;
-        color: black
-        cursor: pointer;
+        border-right-color: ${props => (props.isSelected ? lightThemeColors.cardBorderColor : 'transparent')};
+        color: ${props =>
+            props.isSelected
+                ? props.side === OrderSide.Buy
+                    ? lightThemeColors.green
+                    : lightThemeColors.red
+                : lightThemeColors.textLight}
+        cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
         display: flex;
         font-weight: 600;
         height: 47px;
@@ -143,7 +150,7 @@ const BuySell: React.FC = () => {
         }
 
         &:last-child {
-            border-left-color: black;
+            border-left-color: ${props => (props.isSelected ? lightThemeColors.cardBorderColor : 'transparent')};
             border-left-style: solid;
             border-left-width: 1px;
             border-right: none;
@@ -216,10 +223,10 @@ const BuySell: React.FC = () => {
         <>
             <BuySellWrapper>
                 <TabsContainer>
-                    <TabButton onClick={() => setTab(OrderSide.Buy)} side={OrderSide.Buy}>
+                    <TabButton onClick={() => setTab(OrderSide.Buy)} side={OrderSide.Buy} isSelected={true}>
                         Buy
                     </TabButton>
-                    <TabButton onClick={() => setTab(OrderSide.Sell)} side={OrderSide.Sell}>
+                    <TabButton onClick={() => setTab(OrderSide.Sell)} side={OrderSide.Sell} isSelected={true}>
                         Sell
                     </TabButton>
                 </TabsContainer>

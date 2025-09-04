@@ -10,6 +10,7 @@ import { Card } from '../../../components/common/card';
 import { OutsideUrlIcon } from '../../../components/common/icons/outside_url_icon';
 
 import { DutchAuctionPriceChartCard } from './dutch_auction_price_chart_card';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const CollectibleDescriptionWrapper = styled.div``;
 
@@ -21,7 +22,7 @@ const CollectibleDescriptionTitleWrapper = styled.div`
 `;
 
 const CollectibleDescriptionTitle = styled.h3`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: ${lightThemeColors.cardTitleColor};
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;
@@ -90,7 +91,7 @@ const CollectibleOwnerImage = styled.span<{ backgroundImage: string }>`
 `;
 
 const CollectibleOwnerText = styled.p`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: ${lightThemeColors.cardTitleColor};
     font-feature-settings: 'calt' 0;
     font-size: 14px;
     line-height: 1.2;

@@ -13,10 +13,11 @@ import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/or
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { CurrencyPair, OrderFeeData, OrderSide, OrderType, UIOrder } from '../../../util/types';
 import { mockOpenBuyOrders, mockOpenSellOrders } from '../../../util/mockData';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const Row = styled.div`
     align-items: center;
-    border-top: dashed 1px black;
+    border-top: dashed 1px ${lightThemeColors.borderColor};
     display: flex;
     justify-content: space-between;
     padding: 12px 0;
@@ -29,7 +30,7 @@ const Row = styled.div`
 `;
 
 const Value = styled.div`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     flex-shrink: 0;
     font-feature-settings: 'tnum' 1;
     font-size: 14px;
@@ -50,7 +51,7 @@ const LabelContainer = styled.div`
 `;
 
 const Label = styled.label<{ color?: string }>`
-    color: black;
+    color: ${props => props.color || lightThemeColors.textColorCommon};
     font-size: 14px;
     font-weight: 500;
     line-height: normal;
@@ -60,7 +61,7 @@ const Label = styled.label<{ color?: string }>`
 const MainLabel = styled(Label)``;
 
 const FeeLabel = styled(Label)`
-    color: black;
+    color: ${lightThemeColors.textColorCommon};
     font-weight: normal;
 `;
 

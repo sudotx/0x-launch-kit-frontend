@@ -35,6 +35,7 @@ import {
     GridRowSpreadContainer,
     GridRowSpreadRef,
 } from './grid_row_spread';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface StateProps {
     orderBook: OrderBook;
@@ -83,7 +84,7 @@ const GridRowInner = styled(GridRow)`
     background-color: transparent;
     cursor: pointer;
     &:hover {
-        background-color: lightblue;
+        background-color: ${lightThemeColors.rowOrderActive};
     }
 `;
 

@@ -13,6 +13,7 @@ import { CloseModalButton } from '../../common/icons/close_modal_button';
 import { InputSearch } from '../common/input_search';
 
 import { CollectibleOnListContainer } from './collectible_details_list';
+import { lightThemeColors, modalThemeStyle } from '../../../themes/default_theme';
 
 interface OwnProps {
     theme: Theme;
@@ -25,17 +26,17 @@ const modalContentHeight = '400px';
 
 const ModalContent = styled.div`
     height: ${modalContentHeight};
-    margin-left: -${props => props.theme.modalTheme.content.padding};
-    margin-right: -${props => props.theme.modalTheme.content.padding};
-    margin-top: -${props => props.theme.modalTheme.content.padding};
+    margin-left: -${modalThemeStyle.content.padding};
+    margin-right: -${modalThemeStyle.content.padding};
+    margin-top: -${modalThemeStyle.content.padding};
     overflow: auto;
     width: 360px;
 `;
 
 const ModalTitleWrapper = styled.div`
-    border-bottom: 1px solid ${props => props.theme.componentsTheme.borderColor};
-    margin: -3px -${props => props.theme.modalTheme.content.padding} 15px;
-    padding: 0 ${props => props.theme.modalTheme.content.padding} 13px;
+    border-bottom: 1px solid ${lightThemeColors.borderColor};
+    margin: -3px -${modalThemeStyle.content.padding} 15px;
+    padding: 0 ${modalThemeStyle.content.padding} 13px;
 `;
 
 const ModalTitleTop = styled.div`
@@ -46,7 +47,7 @@ const ModalTitleTop = styled.div`
 `;
 
 const ModalTitle = styled.h2`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: ${lightThemeColors.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
@@ -55,9 +56,9 @@ const ModalTitle = styled.h2`
 `;
 
 const SearchStyled = styled(InputSearch)`
-    background-color: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
-    border-color: ${props => props.theme.componentsTheme.marketsSearchFieldBackgroundColor};
-    color: ${props => props.theme.componentsTheme.marketsSearchFieldTextColor};
+    background-color: ${lightThemeColors.marketsSearchFieldBackgroundColor};
+    border-color: ${lightThemeColors.marketsSearchFieldBackgroundColor};
+    color: ${lightThemeColors.marketsSearchFieldTextColor};
     max-width: 100%;
     width: ${modalWidth};
 

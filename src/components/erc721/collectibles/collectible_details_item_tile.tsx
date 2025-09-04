@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { themeDimensions, themeFeatures } from '../../../themes/commons';
 
 import { PriceBadge } from './price_badge';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     color: string;
@@ -15,9 +16,9 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CollectibleAssetWrapper = styled.div`
-    background: white;
+    background: ${lightThemeColors.cardBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid black;
+    border: 1px solid ${lightThemeColors.cardBorderColor};
     box-sizing: border-box;
     cursor: pointer;
     position: relative;
@@ -29,7 +30,7 @@ const CollectibleAssetWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div<{ color: string; image: string }>`
-    background-color: ${props => props.color || props.theme.componentsTheme.cardBackgroundColor};
+    background-color: ${props => props.color || lightThemeColors.cardBackgroundColor};
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
@@ -39,7 +40,7 @@ const ImageWrapper = styled.div<{ color: string; image: string }>`
 `;
 
 const Title = styled.h2`
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: ${lightThemeColors.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;

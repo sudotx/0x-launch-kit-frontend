@@ -7,6 +7,7 @@ import { truncateAddress } from '../../../util/number_utils';
 // import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> { }
 
@@ -35,7 +36,7 @@ const copyToClipboard = async (text: string) => {
 };
 
 const DropdownItems = styled(CardBase)`
-    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
+    box-shadow: ${lightThemeColors.boxShadow};
     min-width: 240px;
 `;
 

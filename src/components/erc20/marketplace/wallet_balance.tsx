@@ -14,6 +14,7 @@ import { IconType, Tooltip } from '../../common/tooltip';
 import { useSelector } from 'react-redux';
 import { getCurrencyPair, getQuoteToken, getBaseTokenBalance, getQuoteTokenBalance, getTotalEthBalance } from '../../../store/selectors';
 import { mockQuoteToken, mockBaseToken } from '../../../util/mockData';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const LabelWrapper = styled.div`
     align-items: center;
@@ -25,6 +26,7 @@ const LabelWrapper = styled.div`
 
 const Label = styled.span`
     align-items: center;
+    color: ${lightThemeColors.textColorCommon};
     display: flex;
     flex-shrink: 0;
     font-size: 16px;
@@ -32,6 +34,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.span`
+    color: ${lightThemeColors.textColorCommon};
     font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;
@@ -49,6 +52,7 @@ const WalletStatusBadge = styled.div<{ isConnected?: boolean }>`
 `;
 
 const WalletStatusTitle = styled.h3`
+    color: ${lightThemeColors.textLight};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;

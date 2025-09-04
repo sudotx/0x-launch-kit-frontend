@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 
 import { themeBreakPoints, themeDimensions } from '../../../themes/commons';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const noFocusOutline = css`
     :focus {
@@ -15,7 +16,7 @@ const SearchInput = styled.input<Props>`
     background-position: 12px 50%;
     background-repeat: no-repeat;
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid black;
+    border: 1px solid ${lightThemeColors.cardBorderColor};
     box-sizing: border-box;
     color: #666;
     font-size: 14px;

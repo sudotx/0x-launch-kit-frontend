@@ -14,10 +14,11 @@ import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const SideTD = styled(CustomTD) <{ side: OrderSide }>`
     color: ${props =>
-        props.side === OrderSide.Buy ? props.theme.componentsTheme.green : props.theme.componentsTheme.red};
+        props.side === OrderSide.Buy ? lightThemeColors.green : lightThemeColors.red};
 `;
 
 const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {

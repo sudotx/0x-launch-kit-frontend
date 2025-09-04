@@ -12,6 +12,7 @@ import { tokenAmountInUnits } from '../../../util/tokens';
 // import { WalletConnectionStatusDot } from '../../account/wallet_connections_status_dot';
 import { CardBase } from '../../common/card_base';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const truncateAddress = (address: string) => {
     return `${address.slice(0, 7)}...${address.slice(address.length - 5)}`;
@@ -36,24 +37,24 @@ const copyToClipboard = async (text: string) => {
 
 const WalletConnectionWrapper = styled(CardBase)`
     border-radius: ${themeDimensions.borderRadius};
-    box-shadow: ${props => props.theme.componentsTheme.boxShadow};
+    box-shadow: ${lightThemeColors.boxShadow};
     overflow: hidden;
     width: 350px;
 `;
 
 const DropdownHeader = styled.div`
     align-items: center;
-    background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
+    background-color: ${lightThemeColors.cardBackgroundColor};
     border-top-left-radius: ${themeDimensions.borderRadius};
     border-top-right-radius: ${themeDimensions.borderRadius};
-    color: ${props => props.theme.componentsTheme.cardTitleColor};
+    color: ${lightThemeColors.cardTitleColor};
     display: flex;
     justify-content: space-between;
     padding: 12px ${themeDimensions.horizontalPadding};
 `;
 
 const DropdownHeaderTitle = styled.div`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     font-size: 16px;
     font-weight: 600;
     line-height: 1.3;
@@ -61,7 +62,7 @@ const DropdownHeaderTitle = styled.div`
 
 const WalletAddress = styled.div`
     align-items: center;
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     display: flex;
     font-feature-settings: 'calt' 0;
     font-size: 16px;

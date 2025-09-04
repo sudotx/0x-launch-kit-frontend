@@ -11,11 +11,12 @@ import { Collectible } from '../../../util/types';
 
 import { OwnerBadge } from './owner_badge';
 import { PriceBadge } from './price_badge';
+import { lightThemeColors } from '../../../themes/default_theme';
 
 const CollectibleCardWrapper = styled(Link)`
-    background: white;
+    background: ${lightThemeColors.cardBackgroundColor};
     border-radius: ${themeDimensions.borderRadius};
-    border: 1px solid black;
+    border: 1px solid ${lightThemeColors.cardBorderColor};
     box-sizing: border-box;
     cursor: pointer;
     overflow: hidden;
@@ -30,7 +31,7 @@ const CollectibleCardWrapper = styled(Link)`
 
 const ImageWrapper = styled.div<{ color: string; image: string }>`
     background-clip: padding-box;
-    background-color: white;
+    background-color: ${props => props.color || lightThemeColors.cardImageBackgroundColor};
     background-image: url('${props => props.image}');
     background-position: 50% 50%;
     background-size: contain;
@@ -38,7 +39,7 @@ const ImageWrapper = styled.div<{ color: string; image: string }>`
 `;
 
 const Title = styled.h2`
-    color: black;
+    color: ${lightThemeColors.cardTitleColor};
     font-size: 14px;
     font-weight: 500;
     line-height: 1.2;

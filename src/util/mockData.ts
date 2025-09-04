@@ -36,7 +36,7 @@ export const mockBaseToken: Token = {
     name: '0x Protocol Token',
     primaryColor: '#333333',
     icon: 'assets/icons/zrx.svg',
-    address: '0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c',
+    address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
     decimals: 18,
     displayDecimals: 2
 };
@@ -46,7 +46,7 @@ export const mockQuoteToken: Token = {
     name: 'Wrapped Ether',
     primaryColor: '#3333ff',
     icon: 'assets/icons/weth.svg',
-    address: '0x0b1ba0af832d7c05fd64161e0db78e85978e8082',
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
     decimals: 18,
     displayDecimals: 2
 };
