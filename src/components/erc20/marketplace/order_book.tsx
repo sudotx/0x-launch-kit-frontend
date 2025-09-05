@@ -1,7 +1,6 @@
 import { BigNumber } from '@0x/utils';
 import React, { useEffect, useRef, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import styled, { withTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import {
     UI_DECIMALS_DISPLAYED_ORDER_SIZE,
@@ -9,24 +8,19 @@ import {
     UI_DECIMALS_DISPLAYED_SPREAD_PERCENT,
     ZERO,
 } from '../../../common/constants';
-import {
-    mockOrderBook,
-    mockBaseToken,
-    mockQuoteToken,
-    mockUserOrders,
-    mockSpread,
-    mockSpreadPercentage,
-} from '../../../util/mockData';
-import { setOrderPriceSelected } from '../../../store/ui/reducers';
-import { Theme, themeBreakPoints } from '../../../themes/commons';
+// import { setOrderPriceSelected } from '../../../store/ui/reducers';
+import { useErc20Store } from '../../../store';
+import { themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';
-import { OrderBook, OrderBookItem, OrderSide, StoreState, Token, UIOrder, Web3State } from '../../../util/types';
+import { OrderBookItem, OrderSide, Token, Web3State } from '../../../util/types';
 import { Card } from '../../common/card';
 import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
 import { ShowNumberWithColors } from '../../common/show_number_with_colors';
 import { CustomTD, CustomTDLast, CustomTDTitle, TH, THLast } from '../../common/table';
 
+import { useOrderBook } from '../../../hooks/useOrderBook';
+import { lightThemeColors } from '../../../themes/default_theme';
 import {
     customTDLastStyles,
     customTDStyles,
@@ -35,23 +29,6 @@ import {
     GridRowSpreadContainer,
     GridRowSpreadRef,
 } from './grid_row_spread';
-import { lightThemeColors } from '../../../themes/default_theme';
-
-interface StateProps {
-    orderBook: OrderBook;
-    baseToken: Token | null;
-    quoteToken: Token | null;
-    userOrders: UIOrder[];
-    web3State?: Web3State;
-    absoluteSpread: BigNumber;
-    percentageSpread: BigNumber;
-}
-
-interface OwnProps {
-    theme: Theme;
-}
-
-type Props = OwnProps & StateProps;
 
 const OrderbookCard = styled(Card)`
     display: flex;
@@ -155,11 +132,9 @@ interface OrderToRowProps {
 const OrderToRow: React.FC<OrderToRowProps> = props => {
     const { order, index, baseToken, priceColor, mySizeOrders = [], web3State } = props;
     const [isHover, setIsHover] = useState(false);
-    const dispatch = useDispatch();
 
-    const handleSetOrderPriceSelected = (price: BigNumber) => {
-        dispatch(setOrderPriceSelected(price.toNumber()))
-    };
+    const { setOrderPriceSelected } = useErc20Store();
+
 
     const size = tokenAmountInUnits(order.size, baseToken.decimals, UI_DECIMALS_DISPLAYED_ORDER_SIZE);
     const price = order.price.toString();
@@ -185,7 +160,7 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
             key={index}
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
-            onClick={() => handleSetOrderPriceSelected(order.price)}
+            onClick={() => setOrderPriceSelected(order.price)}
         >
             <CustomTD as="div" styles={{ tabular: true, textAlign: 'right' }}>
                 <ShowNumberWithColors ishover={isHover} num={new BigNumber(size)} />
@@ -198,20 +173,22 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
     );
 };
 
-const OrderBookTable: React.FC<Props> = props => {
+const OrderBookTable: React.FC = () => {
+    const theme = useTheme();
+    const spreadRowScrollable = useRef<HTMLDivElement>(null);
+    const spreadRowFixed = useRef<GridRowSpreadRef>(null);
+    const itemsScroll = useRef<HTMLDivElement>(null);
+    const hasScrolled = useRef(false);
+
     const {
         orderBook,
         baseToken,
         quoteToken,
         web3State,
-        theme,
         absoluteSpread,
         percentageSpread,
-    } = props;
-    const spreadRowScrollable = useRef<HTMLDivElement>(null);
-    const spreadRowFixed = useRef<GridRowSpreadRef>(null);
-    const itemsScroll = useRef<HTMLDivElement>(null);
-    const hasScrolled = useRef(false);
+        isLoading,
+    } = useOrderBook();
 
     const { sellOrders, buyOrders, mySizeOrders } = orderBook;
     const mySizeSellArray = mySizeOrders.filter(order => order.side === OrderSide.Sell);
@@ -284,7 +261,7 @@ const OrderBookTable: React.FC<Props> = props => {
 
     let content: React.ReactNode;
 
-    if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
+    if (isLoading || (web3State !== Web3State.Error && (!baseToken || !quoteToken))) {
         content = <CenteredLoading />;
     } else if ((!buyOrders.length && !sellOrders.length) || !baseToken || !quoteToken) {
         content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
@@ -364,31 +341,6 @@ const OrderBookTable: React.FC<Props> = props => {
     return <OrderbookCard title="Orderbook">{content}</OrderbookCard>;
 };
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        orderBook: mockOrderBook,
-        baseToken: mockBaseToken,
-        userOrders: mockUserOrders,
-        quoteToken: mockQuoteToken,
-        web3State: undefined,
-        absoluteSpread: new BigNumber(1000),
-        percentageSpread: new BigNumber(1000),
-    };
-};
+const OrderBookTableContainer = OrderBookTable;
 
-// const mapStateToProps = (state: StoreState): StateProps => {
-//     return {
-//         orderBook: getOrderBook(state) as OrderBook,
-//         baseToken: getBaseToken(state),
-//         userOrders: getUserOrders(state),
-//         quoteToken: getQuoteToken(state),
-//         web3State: getWeb3State(state),
-//         absoluteSpread: getSpread(state) as BigNumber,
-//         percentageSpread: getSpreadInPercentage(state) as BigNumber,
-//     };
-// };
-
-const OrderBookTableContainer = withTheme(connect(mapStateToProps)(OrderBookTable));
-const OrderBookTableWithTheme = withTheme(OrderBookTable);
-
-export { OrderBookTable, OrderBookTableContainer, OrderBookTableWithTheme };
+export { OrderBookTable, OrderBookTableContainer };

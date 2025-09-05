@@ -1,12 +1,7 @@
 import { SignedOrder } from '@0x/connect';
 import { OrderStatus } from '@0x/types';
 import { BigNumber } from '@0x/utils';
-// import { RouterState } from 'connected-react-router';
-import { ActionCreator, AnyAction } from 'redux';
-import { ThunkAction } from 'redux-thunk';
-
 import { TokenMetaData } from '../common/tokens_meta_data';
-import { ExtraArgument } from '../store/index';
 import { ThemeModalStyle, ThemeProperties } from '../themes/commons';
 
 export interface TabItem {
@@ -313,8 +308,6 @@ export interface CollectibleMetadataSource {
     fetchAllUserCollectiblesAsync(userAddress: string): Promise<Collectible[]>;
     fetchCollectiblesAsync(tokenIds: string[]): Promise<Collectible[]>;
 }
-
-export type ThunkCreator<R = Promise<any>> = ActionCreator<ThunkAction<R, StoreState, ExtraArgument, AnyAction>>;
 
 export enum ButtonVariant {
     Balance = 'balance',

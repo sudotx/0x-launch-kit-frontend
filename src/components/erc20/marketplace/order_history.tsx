@@ -1,11 +1,10 @@
 import { OrderStatus } from '@0x/types';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useAccount } from 'wagmi';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
-import { getBaseToken, getQuoteToken, getUserOrders } from '../../../store/selectors';
+import { useErc20Store } from '../../../store';
 import { tokenAmountInUnits } from '../../../util/tokens';
 import { OrderSide, Token, UIOrder } from '../../../util/types';
 import { Card } from '../../common/card';
@@ -54,14 +53,13 @@ const orderToRow = (order: UIOrder, index: number, baseToken: Token) => {
 const OrderHistory: React.FC = () => {
     const { isConnected, isConnecting, isDisconnected } = useAccount();
 
-    const baseToken = useSelector(getBaseToken);
-    const orders = useSelector(getUserOrders);
-    const quoteToken = useSelector(getQuoteToken);
+    const { baseToken, userOrders, quoteToken } = useErc20Store();
+    const orders = userOrders;
 
     const ordersToShow = orders ? orders.filter(order => order.status === OrderStatus.Fillable) : [];
 
     let content: React.ReactNode;
-    if (isDisconnected || isConnecting) {
+    if (isDisconnected || isConnecting || !isConnected) {
         content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
     } else if (isConnected) {
         if (!baseToken || !quoteToken || !orders) {
@@ -85,8 +83,6 @@ const OrderHistory: React.FC = () => {
                 </Table>
             );
         }
-    } else {
-        content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
     }
 
     return <Card title="Orders">{content}</Card>;

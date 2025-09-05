@@ -1,18 +1,14 @@
 import { BigNumber, NULL_BYTES } from '@0x/utils';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import { ZERO } from '../../../common/constants';
-import { AppDispatch } from '../../../store';
-import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
-import { getOpenBuyOrders, getOpenSellOrders } from '../../../store/selectors';
+import { useErc20Store } from '../../../store';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { CurrencyPair, OrderFeeData, OrderSide, OrderType, UIOrder } from '../../../util/types';
-import { mockOpenBuyOrders, mockOpenSellOrders } from '../../../util/mockData';
+import { CurrencyPair, OrderSide, OrderType } from '../../../util/types';
 import { lightThemeColors } from '../../../themes/default_theme';
 
 const Row = styled.div`
@@ -93,9 +89,10 @@ const OrderDetails: React.FC<OwnProps> = props => {
     const [quoteTokenAmount, setQuoteTokenAmount] = useState(ZERO);
     const [canOrderBeFilled, setCanOrderBeFilled] = useState(true);
 
-    const dispatch = useDispatch<AppDispatch>();
-    const openSellOrders: UIOrder[] = mockOpenSellOrders;
-    const openBuyOrders: UIOrder[] = mockOpenBuyOrders;
+    const { orders } = useErc20Store();
+
+    const openSellOrders = orders.filter(o => o.side === OrderSide.Sell).sort((o1, o2) => o2.price.comparedTo(o1.price));
+    const openBuyOrders = orders.filter(o => o.side === OrderSide.Buy).sort((o1, o2) => o2.price.comparedTo(o1.price));
 
     useEffect(() => {
         const updateOrderDetailsState = async () => {
@@ -111,14 +108,12 @@ const OrderDetails: React.FC<OwnProps> = props => {
                 const baseTokenAmountInUnits = Web3Wrapper.toUnitAmount(tokenAmount, baseToken.decimals);
                 const newQuoteTokenAmount = baseTokenAmountInUnits.multipliedBy(priceInQuoteBaseUnits);
 
-                const feeData: OrderFeeData = await dispatch(
-                    fetchTakerAndMakerFee({ amount: tokenAmount, price: tokenPrice, side: orderSide }),
-                ).unwrap();
-                setMakerFeeAmount(feeData.makerFee);
-                setMakerFeeAssetData(feeData.makerFeeAssetData);
-                setTakerFeeAmount(feeData.takerFee);
-                setTakerFeeAssetData(feeData.takerFeeAssetData);
+                // Fees are now implicitly handled by the relayer when an order is submitted.
+                // We can set them to zero here for display purposes in the details view.
+                setMakerFeeAmount(ZERO);
+                setTakerFeeAmount(ZERO);
                 setQuoteTokenAmount(newQuoteTokenAmount);
+
             } else {
                 const isSell = orderSide === OrderSide.Sell;
                 const [ordersToFill, amountToPayForEachOrder, canBeFilled] = buildMarketOrders(
@@ -142,7 +137,7 @@ const OrderDetails: React.FC<OwnProps> = props => {
         };
 
         updateOrderDetailsState();
-    }, [tokenPrice, orderType, tokenAmount, currencyPair, orderSide, dispatch, openBuyOrders, openSellOrders]);
+    }, [tokenPrice, orderType, tokenAmount, currencyPair, orderSide, openBuyOrders, openSellOrders]);
 
     const getFeeStringForRender = () => {
         const feeAssetData = orderType === OrderType.Limit ? makerFeeAssetData : takerFeeAssetData;

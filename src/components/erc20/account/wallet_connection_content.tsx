@@ -1,8 +1,7 @@
 import React, { HTMLAttributes } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-import { getEthAccount } from '../../../store/selectors';
+import { useErc20Store } from '../../../store/erc20';
 import { truncateAddress } from '../../../util/number_utils';
 // import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
@@ -41,7 +40,7 @@ const DropdownItems = styled(CardBase)`
 `;
 
 const WalletConnectionContent: React.FC<OwnProps> = props => {
-    const ethAccount = useSelector(getEthAccount);
+    const ethAccount = useErc20Store(state => state.ethAccount);
     const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
 
     const content = (

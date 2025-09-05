@@ -20,6 +20,7 @@ interface EthGasStationResult {
 
 const logger = getLogger('gas_price_estimation');
 
+// todo change to use LIFI
 const ETH_GAS_STATION_API_BASE_URL = 'https://ethgasstation.info';
 
 export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { cancelOrder } from '../../../store/actions';
-import { AppDispatch } from '../../../store';
+import { useErc20Store } from '../../../store';
 import { UIOrder } from '../../../util/types';
 import { CloseIcon } from '../../common/icons/close_icon';
 
 interface OwnProps {
     order: UIOrder;
+    onCancelStart?: () => void;
+    onCancelSuccess?: () => void;
+    onCancelError?: (error: string) => void;
 }
 
 const Button = styled.button`
@@ -32,23 +33,25 @@ const Button = styled.button`
     }
 `;
 
-const CancelOrderButton: React.FC<OwnProps> = ({ order }) => {
+const CancelOrderButton: React.FC<OwnProps> = ({ order, onCancelStart, onCancelSuccess, onCancelError }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const dispatch = useDispatch<AppDispatch>();
+    const { cancelOrder } = useErc20Store();
 
-    const handleCancelOrder = async () => {
+    const handleCancel = async () => {
         setIsLoading(true);
+        onCancelStart?.();
         try {
-            await dispatch(cancelOrder(order)).unwrap();
-        } catch (err) {
-            alert(`Could not cancel the specified order`);
+            await cancelOrder(order);
+            onCancelSuccess?.();
+        } catch (e: any) {
+            onCancelError?.(e.message);
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <Button title="Cancel order" type="button" disabled={isLoading} onClick={handleCancelOrder}>
+        <Button title="Cancel order" type="button" disabled={isLoading} onClick={handleCancel}>
             <CloseIcon />
         </Button>
     );

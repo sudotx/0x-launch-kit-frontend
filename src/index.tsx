@@ -5,7 +5,7 @@ import './index.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import ReactModal from 'react-modal';
-import { Provider } from 'react-redux';
+
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
@@ -13,7 +13,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 
-import { store } from './store';
+
 
 import { Home, MyWallet, NotFound } from './pages';
 
@@ -48,7 +48,7 @@ function Web3WrappedApp() {
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={queryClient}>
 				<RainbowKitProvider>
-					<Provider store={store}>
+					
 						<BrowserRouter>
 							<App>
 								<Routes>
@@ -68,7 +68,7 @@ function Web3WrappedApp() {
 								</Routes>
 							</App>
 						</BrowserRouter>
-					</Provider>
+					
 				</RainbowKitProvider>
 			</QueryClientProvider>
 		</WagmiProvider>

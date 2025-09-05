@@ -1,20 +1,17 @@
-import { BigNumber } from '@0x/utils';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { useAccount, useBalance } from 'wagmi';
 
+import { ZERO } from '../../../common/constants';
+import { useErc20Store } from '../../../store';
+import { lightThemeColors } from '../../../themes/default_theme';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { ButtonVariant } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
-import { ErrorCard } from '../../common/error_card';
 import { IconType, Tooltip } from '../../common/tooltip';
-import { useSelector } from 'react-redux';
-import { getCurrencyPair, getQuoteToken, getBaseTokenBalance, getQuoteTokenBalance, getTotalEthBalance } from '../../../store/selectors';
-import { mockQuoteToken, mockBaseToken } from '../../../util/mockData';
-import { lightThemeColors } from '../../../themes/default_theme';
 
 const LabelWrapper = styled.div`
     align-items: center;
@@ -26,7 +23,7 @@ const LabelWrapper = styled.div`
 
 const Label = styled.span`
     align-items: center;
-    color: ${lightThemeColors.textColorCommon};
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     display: flex;
     flex-shrink: 0;
     font-size: 16px;
@@ -34,7 +31,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.span`
-    color: ${lightThemeColors.textColorCommon};
+    color: ${props => props.theme.componentsTheme.textColorCommon};
     font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;
@@ -44,16 +41,18 @@ const Value = styled.span`
     white-space: nowrap;
 `;
 
-const WalletStatusBadge = styled.div<{ isConnected?: boolean }>`
+const WalletStatusBadge = styled.div<{ connected?: boolean }>`
     border-radius: 50%;
     height: 8px;
     margin-right: 6px;
     width: 8px;
+    background-color: ${props =>
+        props.connected ? lightThemeColors.green : lightThemeColors.red};
 `;
 
 const WalletStatusTitle = styled.h3`
-    color: ${lightThemeColors.textLight};
-    font-size: 14px;
+    color: ${props => props.theme.componentsTheme.textLight};
+    font-size: 12px;
     font-weight: 500;
     line-height: 1.2;
     margin: 0;
@@ -71,66 +70,15 @@ const TooltipStyled = styled(Tooltip)`
     margin-left: 10px;
 `;
 
-interface ErrorCardStyledProps {
-    cursor?: string;
-}
-
-const ErrorCardStyled = styled(ErrorCard) <ErrorCardStyledProps>`
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    z-index: 5;
-`;
-
-ErrorCardStyled.defaultProps = {
-    cursor: 'pointer',
-};
-
-const WalletErrorContainer = styled.div`
-    height: 140px;
-    position: relative;
-`;
-
-const WalletErrorText = styled.p`
-    font-size: 16px;
-    font-weight: normal;
-    line-height: 23px;
-    margin: 0;
-    padding: 20px 0;
-`;
-
-const SimplifiedTextBox = styled.div<{ top?: string; bottom?: string; left?: string; right?: string }>`
-    position: absolute;
-    z-index: 1;
-
-`;
-
 const ButtonStyled = styled(Button)`
     width: 100%;
 `;
-
-const ConnectButtonWrapper = styled.div`
-    width: 100%;
-`;
-
-const simplifiedTextBoxBig = () => (
-    <svg width="67" height="14" viewBox="0 0 67 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="67" height="14" rx="4" />
-    </svg>
-);
-
-const simplifiedTextBoxSmall = () => (
-    <svg width="56" height="14" viewBox="0 0 56 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="56" height="14" rx="4" />
-    </svg>
-);
 
 const getWalletName = () => 'Wallet';
 
 const getWallet = (isConnected: boolean) => (
     <WalletStatusContainer>
-        <WalletStatusBadge isConnected={isConnected} />
+        <WalletStatusBadge connected={isConnected} />
         <WalletStatusTitle>{getWalletName()}</WalletStatusTitle>
     </WalletStatusContainer>
 );
@@ -140,30 +88,33 @@ const getWalletTitle = (isConnected: boolean) => {
 };
 
 const WalletBalance: React.FC = () => {
+    const theme = useTheme();
     const { isConnected, address, isConnecting } = useAccount();
     const { data: ethBalance } = useBalance({
         address: address,
     });
 
-    // Use mock data as fallbacks
-    const currencyPair = useSelector(getCurrencyPair) || { base: 'ZRX', quote: 'WETH' };
-    const quoteToken = useSelector(getQuoteToken) || mockQuoteToken;
-    const baseTokenBalance = useSelector(getBaseTokenBalance) || {
-        balance: new BigNumber('1000000000000000000000'), // 1000 tokens
-        token: mockBaseToken
-    };
-    const quoteTokenBalance = useSelector(getQuoteTokenBalance) || {
-        balance: new BigNumber('500000000000000000000') // 500 tokens
-    };
-    const totalEthBalance = useSelector(getTotalEthBalance) || new BigNumber('1000000000000000000'); // 1 ETH
+    const { baseToken, currencyPair, quoteToken, tokenBalances, wethTokenBalance, ethBalance: ethBalanceFromStore } =
+        useErc20Store();
+
+    const baseTokenBalance = tokenBalances.find(tb => tb.token.address === baseToken?.address);
+    const quoteTokenBalance = tokenBalances.find(tb => tb.token.address === quoteToken?.address);
+
+    const totalEthBalance = (ethBalanceFromStore || ZERO).plus(wethTokenBalance ? wethTokenBalance.balance : ZERO);
 
     const getWalletContent = () => {
         if (isConnecting) {
             return <ButtonStyled variant={ButtonVariant.Tertiary}>Connecting...</ButtonStyled>;
         }
 
-        if (quoteToken && baseTokenBalance && quoteTokenBalance) {
-            const quoteTokenBalanceAmount = isWeth(quoteToken.symbol) ? totalEthBalance : quoteTokenBalance.balance;
+        if (!isConnected) {
+            return <ConnectButton />;
+        }
+
+        if (quoteToken && baseToken && baseTokenBalance && quoteTokenBalance) {
+            const quoteTokenBalanceAmount =
+                isWeth(quoteToken.symbol) && totalEthBalance.gt(0) ? totalEthBalance : quoteTokenBalance.balance;
+
             const quoteBalanceString = tokenAmountInUnits(
                 quoteTokenBalanceAmount,
                 quoteToken.decimals,

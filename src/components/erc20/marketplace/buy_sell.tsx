@@ -1,13 +1,8 @@
 import { BigNumber } from '@0x/utils';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import styled from 'styled-components';
 
 import { ZERO } from '../../../common/constants';
-import { AppDispatch } from '../../../store';
-import { startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
-import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
-import { getCurrencyPair, getOrderPriceSelected, getWeb3State } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { tokenSymbolToDisplayString } from '../../../util/tokens';
 import {
@@ -23,11 +18,11 @@ import { CardBase } from '../../common/card_base';
 import { CardTabSelector } from '../../common/card_tab_selector';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
-import { OrderDetailsContainer } from './order_details';
-import { mockBaseToken, mockQuoteToken } from '../../../util/mockData';
+import { useErc20Store } from '../../../store';
+import { useBuySellForm } from '../../../hooks/useBuySellForm';
 import { themeDimensions } from '../../../themes/commons';
 import { lightThemeColors } from '../../../themes/default_theme';
-import { darkThemeColors } from '../../../themes/dark_theme';
+import { OrderDetailsContainer } from './order_details';
 
 const BuySellWrapper = styled(CardBase)`
     margin-bottom: ${themeDimensions.verticalSeparationSm};
@@ -112,16 +107,20 @@ const TIMEOUT_BTN_ERROR = 2000;
 const TIMEOUT_CARD_ERROR = 4000;
 
 const BuySell: React.FC = () => {
-    const [makerAmount, setMakerAmount] = useState<BigNumber | null>(null);
-    const [orderType, setOrderType] = useState<OrderType>(OrderType.Market);
-    const [price, setPrice] = useState<BigNumber | null>(null);
-    const [tab, setTab] = useState<OrderSide>(OrderSide.Buy);
-    const [error, setError] = useState<{ btnMsg: string | null; cardMsg: string | null }>({ btnMsg: null, cardMsg: null });
-
-    const dispatch = useDispatch<AppDispatch>();
-    const web3State = useSelector(getWeb3State) || 'Done';
-    const currencyPair = { base: 'ZRX', quote: 'WETH' };
-    const orderPriceSelected = new BigNumber('2000000000000000000');
+    const { web3State, currencyPair, orderPriceSelected } = useErc20Store();
+    const {
+        makerAmount,
+        orderType,
+        price,
+        tab,
+        error,
+        isFormInvalid,
+        setMakerAmount,
+        setOrderType,
+        setPrice,
+        setTab,
+        submitOrder,
+    } = useBuySellForm({ currencyPair });
 
     const TabButton = styled.div<{ side: OrderSide, isSelected: boolean }>`
         align-items: center;
@@ -158,44 +157,6 @@ const BuySell: React.FC = () => {
         }
     `;
 
-    useEffect(() => {
-        if (orderPriceSelected && orderType === OrderType.Limit) {
-            setPrice(orderPriceSelected);
-        }
-    }, [orderPriceSelected, orderType]);
-
-    const reset = () => {
-        setMakerAmount(null);
-        setPrice(null);
-    };
-
-    const submit = async () => {
-        const orderSide = tab;
-        const amount = makerAmount || ZERO;
-        const priceValue = price || ZERO;
-
-        const orderFeeData = await dispatch(
-            fetchTakerAndMakerFee({ amount, price: priceValue, side: tab }),
-        ).unwrap();
-
-        if (orderType === OrderType.Limit) {
-            await dispatch(
-                startBuySellLimitSteps({ amount, price: priceValue, side: orderSide, orderFeeData }),
-            ).unwrap();
-        } else {
-            try {
-                await dispatch(
-                    startBuySellMarketSteps({ amount, side: orderSide, orderFeeData }),
-                ).unwrap();
-            } catch (e: any) {
-                setError({ btnMsg: 'Error', cardMsg: e.message });
-                setTimeout(() => setError(prev => ({ ...prev, btnMsg: null })), TIMEOUT_BTN_ERROR);
-                setTimeout(() => setError(prev => ({ ...prev, cardMsg: null })), TIMEOUT_CARD_ERROR);
-            }
-        }
-        reset();
-    };
-
     const buySellInnerTabs = [
         {
             active: orderType === OrderType.Market,
@@ -209,11 +170,6 @@ const BuySell: React.FC = () => {
         },
     ];
 
-    const isMakerAmountEmpty = makerAmount === null || makerAmount.isZero();
-    const isPriceEmpty = price === null || price.isZero();
-    const orderTypeLimitIsEmpty = orderType === OrderType.Limit && (isMakerAmountEmpty || isPriceEmpty);
-    const orderTypeMarketIsEmpty = orderType === OrderType.Market && isMakerAmountEmpty;
-
     const btnPrefix = tab === OrderSide.Buy ? 'Buy ' : 'Sell ';
     const btnText = error.btnMsg ? 'Error' : btnPrefix + tokenSymbolToDisplayString(currencyPair.base);
 
@@ -223,10 +179,10 @@ const BuySell: React.FC = () => {
         <>
             <BuySellWrapper>
                 <TabsContainer>
-                    <TabButton onClick={() => setTab(OrderSide.Buy)} side={OrderSide.Buy} isSelected={true}>
+                    <TabButton onClick={() => setTab(OrderSide.Buy)} side={OrderSide.Buy} isSelected={tab === OrderSide.Buy}>
                         Buy
                     </TabButton>
-                    <TabButton onClick={() => setTab(OrderSide.Sell)} side={OrderSide.Sell} isSelected={true}>
+                    <TabButton onClick={() => setTab(OrderSide.Sell)} side={OrderSide.Sell} isSelected={tab === OrderSide.Sell}>
                         Sell
                     </TabButton>
                 </TabsContainer>
@@ -270,9 +226,9 @@ const BuySell: React.FC = () => {
                         currencyPair={currencyPair}
                     />
                     <Button
-                        disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
+                        disabled={isFormInvalid}
                         icon={error.btnMsg ? ButtonIcons.Warning : undefined}
-                        onClick={submit}
+                        onClick={submitOrder}
                         variant={
                             error.btnMsg
                                 ? ButtonVariant.Error
