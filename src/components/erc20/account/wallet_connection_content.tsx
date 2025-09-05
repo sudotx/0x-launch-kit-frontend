@@ -1,13 +1,13 @@
-import React, { HTMLAttributes } from 'react';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
+import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { useAccount, useDisconnect } from 'wagmi';
 
+import { lightThemeColors } from '../../../themes/default_theme';
 import { truncateAddress } from '../../../util/number_utils';
 import { CardBase } from '../../common/card_base';
 import { Dropdown, DropdownPositions } from '../../common/dropdown';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
-import { lightThemeColors } from '../../../themes/default_theme';
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> { }
 

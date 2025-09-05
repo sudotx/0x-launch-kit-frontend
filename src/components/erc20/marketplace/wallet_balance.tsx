@@ -1,6 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { useAccount, useBalance } from 'wagmi';
 
 import { ZERO } from '../../../common/constants';

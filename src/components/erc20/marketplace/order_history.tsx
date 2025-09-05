@@ -12,8 +12,8 @@ import { EmptyContent } from '../../common/empty_content';
 import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
-import { CancelOrderButtonContainer } from './cancel_order_button';
 import { lightThemeColors } from '../../../themes/default_theme';
+import { CancelOrderButtonContainer } from './cancel_order_button';
 
 const SideTD = styled(CustomTD) <{ side: OrderSide }>`
     color: ${props =>

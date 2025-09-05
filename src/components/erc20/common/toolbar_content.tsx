@@ -2,13 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css, withTheme } from 'styled-components';
 
-import { Config } from '../../../common/config';
 import { Logo } from '../../../components/common/logo';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { MarketsDropdownContainer } from './markets_dropdown';
 import { lightThemeColors } from '../../../themes/default_theme';
+import { MarketsDropdownContainer } from './markets_dropdown';
 
 export const separatorTopbar = css`
     &:after {
@@ -111,7 +110,7 @@ const ToolbarContent: React.FC<Props> = props => {
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
             </ToolbarCenter>
             <ToolbarEnd>
-                <MyWalletLink href="/mywallet" onClick={(e) => { e.preventDefault(); navigate('/my-wallet'); }}>My Wallet</MyWalletLink>
+                <MyWalletLink onClick={(e) => { e.preventDefault(); navigate('/mywallet'); }}>My Wallet</MyWalletLink>
                 <ConnectButton />
             </ToolbarEnd>
         </ToolbarWrapper>

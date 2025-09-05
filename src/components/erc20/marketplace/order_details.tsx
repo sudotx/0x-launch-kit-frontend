@@ -5,11 +5,11 @@ import styled from 'styled-components';
 
 import { ZERO } from '../../../common/constants';
 import { useErc20Store } from '../../../store';
+import { lightThemeColors } from '../../../themes/default_theme';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { buildMarketOrders, sumTakerAssetFillableOrders } from '../../../util/orders';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
 import { CurrencyPair, OrderSide, OrderType } from '../../../util/types';
-import { lightThemeColors } from '../../../themes/default_theme';
 
 const Row = styled.div`
     align-items: center;

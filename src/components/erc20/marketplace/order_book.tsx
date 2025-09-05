@@ -1,6 +1,6 @@
 import { BigNumber } from '@0x/utils';
 import React, { useEffect, useRef, useState } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import {
     UI_DECIMALS_DISPLAYED_ORDER_SIZE,
@@ -8,7 +8,6 @@ import {
     UI_DECIMALS_DISPLAYED_SPREAD_PERCENT,
     ZERO,
 } from '../../../common/constants';
-// import { setOrderPriceSelected } from '../../../store/ui/reducers';
 import { useErc20Store } from '../../../store';
 import { themeBreakPoints } from '../../../themes/commons';
 import { tokenAmountInUnits } from '../../../util/tokens';

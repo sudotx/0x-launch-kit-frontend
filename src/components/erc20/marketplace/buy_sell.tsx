@@ -1,4 +1,3 @@
-import { BigNumber } from '@0x/utils';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -9,8 +8,7 @@ import {
     ButtonIcons,
     ButtonVariant,
     OrderSide,
-    OrderType,
-    Web3State
+    OrderType
 } from '../../../util/types';
 import { BigNumberInput } from '../../common/big_number_input';
 import { Button } from '../../common/button';
@@ -18,8 +16,8 @@ import { CardBase } from '../../common/card_base';
 import { CardTabSelector } from '../../common/card_tab_selector';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 
-import { useErc20Store } from '../../../store';
 import { useBuySellForm } from '../../../hooks/useBuySellForm';
+import { useErc20Store } from '../../../store';
 import { themeDimensions } from '../../../themes/commons';
 import { lightThemeColors } from '../../../themes/default_theme';
 import { OrderDetailsContainer } from './order_details';

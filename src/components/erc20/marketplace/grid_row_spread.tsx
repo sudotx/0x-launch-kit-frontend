@@ -1,8 +1,8 @@
-import React, { HTMLAttributes, useState, useImperativeHandle, forwardRef } from 'react';
+import { forwardRef, HTMLAttributes, useImperativeHandle, useState } from 'react';
 import styled from 'styled-components';
 
-import { CustomTD, CustomTDLast, CustomTDTitle } from '../../common/table';
 import { lightThemeColors } from '../../../themes/default_theme';
+import { CustomTD, CustomTDLast, CustomTDTitle } from '../../common/table';
 
 export type StickySpreadState = 'top' | 'bottom' | 'hidden';
 

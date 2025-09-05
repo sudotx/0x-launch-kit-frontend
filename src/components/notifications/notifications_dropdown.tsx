@@ -1,27 +1,15 @@
 import React, { HTMLAttributes } from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { setHasUnreadNotifications } from '../../store/ui/reducers';
-import { getEstimatedTxTimeMs, getHasUnreadNotifications, getNotifications } from '../../store/selectors';
+import { useErc20Store } from '../../store';
 import { themeDimensions } from '../../themes/commons';
-import { Notification, StoreState } from '../../util/types';
 import { CardBase } from '../common/card_base';
 import { Dropdown, DropdownPositions } from '../common/dropdown';
 import { BellIcon } from '../common/icons/bell_icon';
 
 import { NotificationItem } from './notification_item';
 
-interface StateProps {
-    estimatedTxTimeMs: number;
-    notifications: Notification[];
-    hasUnreadNotifications: boolean;
-}
-interface DispatchProps {
-    onMarkNotificationsAsRead: () => any;
-}
-
-type Props = HTMLAttributes<HTMLDivElement> & StateProps & DispatchProps;
+type Props = HTMLAttributes<HTMLDivElement>;
 
 const NotificationsDropdownWrapper = styled(Dropdown)`
     z-index: 100;
@@ -72,8 +60,15 @@ const NoNotifications = styled.div`
 `;
 
 const NotificationsDropdown: React.FC<Props> = props => {
-    const { estimatedTxTimeMs, notifications, hasUnreadNotifications, onMarkNotificationsAsRead, ...restProps } =
-        props;
+    const {
+        gasInfo: { estimatedTimeMs: estimatedTxTimeMs },
+        notifications,
+        hasUnreadNotifications,
+        setHasUnreadNotifications,
+    } = useErc20Store();
+
+    const onMarkNotificationsAsRead = () => setHasUnreadNotifications(false);
+    const { ...restProps } = props;
 
     const notificationsList = notifications.map((item, index) => (
         <NotificationItem key={index} item={item} estimatedTxTimeMs={estimatedTxTimeMs} />
@@ -106,19 +101,6 @@ const NotificationsDropdown: React.FC<Props> = props => {
     );
 };
 
-const mapStateToProps = (state: StoreState): StateProps => {
-    return {
-        estimatedTxTimeMs: getEstimatedTxTimeMs(state),
-        notifications: getNotifications(state),
-        hasUnreadNotifications: getHasUnreadNotifications(state),
-    };
-};
-const mapDispatchToProps = {
-    onMarkNotificationsAsRead: () => setHasUnreadNotifications(false),
-};
-const NotificationsDropdownContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(NotificationsDropdown);
+const NotificationsDropdownContainer = React.memo(NotificationsDropdown);
 
 export { NotificationsDropdown, NotificationsDropdownContainer };
