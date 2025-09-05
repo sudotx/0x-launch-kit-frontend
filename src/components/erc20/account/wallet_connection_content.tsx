@@ -1,28 +1,19 @@
 import React, { HTMLAttributes } from 'react';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import styled from 'styled-components';
+import { useAccount, useDisconnect } from 'wagmi';
 
-import { useErc20Store } from '../../../store/erc20';
 import { truncateAddress } from '../../../util/number_utils';
-// import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
+import { Dropdown, DropdownPositions } from '../../common/dropdown';
 import { DropdownTextItem } from '../../common/dropdown_text_item';
 import { lightThemeColors } from '../../../themes/default_theme';
 
 interface OwnProps extends HTMLAttributes<HTMLSpanElement> { }
 
-const connectToWallet = () => {
-    alert('connect to another wallet');
-};
-
-const goToURL = () => {
-    alert('go to url');
-};
-
 const copyToClipboard = async (text: string) => {
     try {
         await navigator.clipboard.writeText(text);
-        // Optional: Show success feedback
-        // alert('Address copied to clipboard!');
     } catch (err) {
         // Fallback for older browsers
         const textArea = document.createElement('textarea');
@@ -39,31 +30,41 @@ const DropdownItems = styled(CardBase)`
     min-width: 240px;
 `;
 
+const HeaderText = styled.span`
+    cursor: pointer;
+`;
+
 const WalletConnectionContent: React.FC<OwnProps> = props => {
-    const ethAccount = useErc20Store(state => state.ethAccount);
-    const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
+    const { address, isConnected } = useAccount();
+    const { disconnect } = useDisconnect();
+    const { openConnectModal } = useConnectModal();
+    const { openChainModal } = useChainModal();
+
+    if (!isConnected || !address) {
+        return null;
+    }
+
+    const ethAccountText = truncateAddress(address);
 
     const content = (
         <DropdownItems>
             <DropdownTextItem
-                onClick={() => ethAccount && copyToClipboard(ethAccount)}
-                text="Copy Address to Clipboard"
+                onClick={() => copyToClipboard(address)}
+                text="Copy Address"
             />
-            <DropdownTextItem onClick={connectToWallet} text="Connect a different Wallet" />
-            <DropdownTextItem onClick={goToURL} text="Manage Account" />
+            {openConnectModal && <DropdownTextItem onClick={openConnectModal} text="Connect a different Wallet" />}
+            {openChainModal && <DropdownTextItem onClick={openChainModal} text="Switch Network" />}
+            <DropdownTextItem onClick={() => disconnect()} text="Disconnect" />
         </DropdownItems>
     );
 
     return (
-        // <WalletConnectionStatusContainer
-        //     walletConnectionContent={content}
-        //     headerText={ethAccountText}
-        //     ethAccount={ethAccount}
-        //     {...props}
-        // />
-        <div>
-            hello
-        </div>
+        <Dropdown
+            body={content}
+            header={<HeaderText>{ethAccountText}</HeaderText>}
+            horizontalPosition={DropdownPositions.Right}
+            {...props}
+        />
     );
 };
 

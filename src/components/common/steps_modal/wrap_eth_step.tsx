@@ -1,4 +1,3 @@
-import { BigNumber } from '@0x/utils';
 import React, { useState } from 'react';
 
 import {

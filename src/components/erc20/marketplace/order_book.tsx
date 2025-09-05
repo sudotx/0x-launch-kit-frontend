@@ -174,7 +174,6 @@ const OrderToRow: React.FC<OrderToRowProps> = props => {
 };
 
 const OrderBookTable: React.FC = () => {
-    const theme = useTheme();
     const spreadRowScrollable = useRef<HTMLDivElement>(null);
     const spreadRowFixed = useRef<GridRowSpreadRef>(null);
     const itemsScroll = useRef<HTMLDivElement>(null);

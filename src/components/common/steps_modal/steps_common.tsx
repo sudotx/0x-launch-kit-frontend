@@ -20,14 +20,14 @@ interface WithChildren {
     children: React.ReactNode;
 }
 
-const StepStatusConfirmOnMetamask = (props: React.Props<WithChildren>) => (
+const StepStatusConfirmOnMetamask = (props: any) => (
     <>
         <MetamaskIcon />
         {props.children}
     </>
 );
 
-const StepStatusLoading = (props: React.Props<WithChildren>) => (
+const StepStatusLoading = (props: any) => (
     <>
         <IconContainer>
             <Spinner size={SpinnerSize.Medium} />
@@ -36,7 +36,7 @@ const StepStatusLoading = (props: React.Props<WithChildren>) => (
     </>
 );
 
-const StepStatusDone = (props: React.Props<WithChildren>) => (
+const StepStatusDone = (props: any) => (
     <>
         <IconContainer>
             <NotificationCheckmarkIcon />
@@ -45,7 +45,7 @@ const StepStatusDone = (props: React.Props<WithChildren>) => (
     </>
 );
 
-const StepStatusError = (props: React.Props<WithChildren>) => (
+const StepStatusError = (props: any) => (
     <>
         <IconContainer>
             <NotificationCancelIcon />
@@ -144,5 +144,5 @@ export {
     StepStatusError,
     StepStatusLoading,
     StepsTimeline,
-    Title,
+    Title
 };

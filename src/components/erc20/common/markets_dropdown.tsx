@@ -1,24 +1,20 @@
-import React, { HTMLAttributes, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { HTMLAttributes, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { UI_DECIMALS_DISPLAYED_PRICE_ETH } from '../../../common/constants';
 import { marketFilters } from '../../../common/markets';
-import { changeMarket } from '../../../store/actions';
-import { getBaseToken, getCurrencyPair, getMarkets } from '../../../store/selectors';
+import { useErc20Store } from '../../../store';
 import { themeDimensions } from '../../../themes/commons';
+import { lightThemeColors } from '../../../themes/default_theme';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { filterMarketsByString, filterMarketsByTokenSymbol } from '../../../util/markets';
-import { CurrencyPair, Filter, Market, Token } from '../../../util/types';
+import { CurrencyPair, Filter, Market } from '../../../util/types';
 import { CardBase } from '../../common/card_base';
-import { Dropdown } from '../../common/dropdown';
+import { Dropdown, DropdownRef } from '../../common/dropdown';
 import { ChevronDownIcon } from '../../common/icons/chevron_down_icon';
 import { MagnifierIcon } from '../../common/icons/magnifier_icon';
 import { TokenIcon } from '../../common/icons/token_icon';
 import { CustomTDFirst, CustomTDLast, Table, TBody, THead, THFirst, THLast, TR } from '../../common/table';
-import { AppDispatch } from '../../../store';
-import { mockBaseToken, mockCurrencyPair, mockMarkets } from '../../../util/mockData';
-import { lightThemeColors } from '../../../themes/default_theme';
 
 interface PropsDivElement extends HTMLAttributes<HTMLDivElement> { }
 
@@ -204,21 +200,13 @@ const MarketsDropdown: React.FC<PropsDivElement> = props => {
     const [selectedFilter, setSelectedFilter] = useState<Filter>(marketFilters[0]);
     const [search, setSearch] = useState('');
     const [isUserOnDropdown, setIsUserOnDropdown] = useState(false);
-    const dropdownRef = useRef<any>(null);
+    const dropdownRef = useRef<DropdownRef>(null);
 
-    const dispatch = useDispatch<AppDispatch>();
-    const baseToken = mockBaseToken;
-    const currencyPair = mockCurrencyPair;
-    const markets = mockMarkets;
-
-    const handleChangeMarket = (pair: CurrencyPair) => {
-        dispatch(changeMarket(pair)).unwrap();
-    };
+    const { baseToken, currencyPair, markets, setCurrencyPair } = useErc20Store();
 
     const setUserOnDropdown = () => {
         setIsUserOnDropdown(true);
     };
-
     const removeUserOnDropdown = () => {
         setIsUserOnDropdown(false);
     };
@@ -232,7 +220,7 @@ const MarketsDropdown: React.FC<PropsDivElement> = props => {
     };
 
     const setSelectedMarket = (pair: CurrencyPair) => {
-        handleChangeMarket(pair);
+        setCurrencyPair(pair);
         if (dropdownRef.current) {
             dropdownRef.current.closeDropdown();
         }
@@ -271,7 +259,7 @@ const MarketsDropdown: React.FC<PropsDivElement> = props => {
     };
 
     const getMarketsList = () => {
-        if (!baseToken || !markets) {
+        if (!baseToken || !markets || !currencyPair) {
             return null;
         }
 
@@ -327,7 +315,7 @@ const MarketsDropdown: React.FC<PropsDivElement> = props => {
                         icon={baseToken.icon}
                     />
                 ) : null}
-                {currencyPair.base.toUpperCase()}/{currencyPair.quote.toUpperCase()}
+                {currencyPair ? `${currencyPair.base.toUpperCase()}/${currencyPair.quote.toUpperCase()}` : ''}
             </MarketsDropdownHeaderText>
             <ChevronDownIcon />
         </MarketsDropdownHeader>

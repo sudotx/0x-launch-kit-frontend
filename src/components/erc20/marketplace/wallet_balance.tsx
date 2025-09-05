@@ -51,7 +51,7 @@ const WalletStatusBadge = styled.div<{ connected?: boolean }>`
 `;
 
 const WalletStatusTitle = styled.h3`
-    color: ${props => props.theme.componentsTheme.textLight};
+    color: ${lightThemeColors.textLight};
     font-size: 12px;
     font-weight: 500;
     line-height: 1.2;
@@ -88,7 +88,6 @@ const getWalletTitle = (isConnected: boolean) => {
 };
 
 const WalletBalance: React.FC = () => {
-    const theme = useTheme();
     const { isConnected, address, isConnecting } = useAccount();
     const { data: ethBalance } = useBalance({
         address: address,

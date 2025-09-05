@@ -1,31 +1,38 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import styled, { css, withTheme } from 'styled-components';
 
 import { Config } from '../../../common/config';
 import { Logo } from '../../../components/common/logo';
-import { separatorTopbar, ToolbarContainer } from '../../../components/common/toolbar';
-import { NotificationsDropdownContainer } from '../../../components/notifications/notifications_dropdown';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
-import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
 
-import { MarketsDropdownContainer } from './markets_dropdown';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { MarketsDropdownContainer } from './markets_dropdown';
+import { lightThemeColors } from '../../../themes/default_theme';
 
-interface DispatchProps {
-    onGoToHome: () => any;
-    onGoToWallet: () => any;
-}
+export const separatorTopbar = css`
+    &:after {
+        background-color: ${lightThemeColors.borderColor};
+        content: '';
+        height: 26px;
+        margin-left: 17px;
+        margin-right: 17px;
+        width: 1px;
+    }
+    &:last-child:after {
+        display: none;
+    }
+`;
 
 interface OwnProps {
     theme: Theme;
 }
 
-type Props = DispatchProps & OwnProps;
+type Props = OwnProps;
 
 const MyWalletLink = styled.a`
     align-items: center;
-    color: ${props => props.theme.componentsTheme.myWalletLinkColor};
+    color: ${lightThemeColors.textLight};
     display: flex;
     font-size: 16px;
     font-weight: 500;
@@ -49,49 +56,68 @@ const MarketsDropdownHeader = styled<any>(MarketsDropdownContainer)`
     ${separatorTopbar}
 `;
 
-const WalletDropdown = styled(WalletConnectionContentContainer)`
-    display: none;
+const ToolbarWrapper = styled.div`
+    display: flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+    justify-content: space-between;
+    align-items: center;
+    position: static;
+    top: 0;
+    margin: 10px;
+`;
 
-    @media (min-width: ${themeBreakPoints.sm}) {
-        align-items: center;
-        display: flex;
+const ToolbarStart = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
 
-        ${separatorTopbar}
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
+    }
+`;
+
+const ToolbarCenter = styled.div`
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
+    }
+`;
+
+const ToolbarEnd = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+
+    @media (min-width: ${themeBreakPoints.xxl}) {
+        min-width: 33.33%;
     }
 `;
 
 const ToolbarContent: React.FC<Props> = props => {
-    const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
-        e.preventDefault();
-        props.onGoToHome();
-    };
-    const generalConfig = Config.getConfig().general;
-
-    const startContent = (
-        <>
-            <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
-        </>
+    const navigate = useNavigate();
+    const logo = (
+        <LogoHeader onClick={() => navigate('/')} text={"Exchange"} image={<img src={"favicons/favicon-32.png"} alt={"Hex"} />} />
     );
 
-    const handleMyWalletClick: React.EventHandler<React.MouseEvent> = e => {
-        e.preventDefault();
-        props.onGoToWallet();
-    };
-    const endContent = (
-        <>
-            <ConnectButton />
-        </>
+    return (
+        <ToolbarWrapper>
+            <ToolbarStart>{logo}</ToolbarStart>
+            <ToolbarCenter>
+                <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
+            </ToolbarCenter>
+            <ToolbarEnd>
+                <MyWalletLink href="/mywallet" onClick={(e) => { e.preventDefault(); navigate('/my-wallet'); }}>My Wallet</MyWalletLink>
+                <ConnectButton />
+            </ToolbarEnd>
+        </ToolbarWrapper>
     );
-
-    return <ToolbarContainer logo={<div>Exchange</div>} />;
 };
 
-
-
-const ToolbarContentContainer = withTheme(
-    connect(
-        null,
-    )(ToolbarContent),
-);
+const ToolbarContentContainer = withTheme(ToolbarContent);
 
 export { ToolbarContent, ToolbarContentContainer };
