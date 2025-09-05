@@ -4,16 +4,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { useAccount, useBalance } from 'wagmi';
 
-import { ZERO } from '../common/constants';
-import { useErc20Store } from '../store';
-import { getKnownTokens } from '../util/known_tokens';
-import { tokenAmountInUnits } from '../util/tokens';
-import { StepKind, StepWrapEth } from '../util/types';
-import { BigNumberInput } from './common/big_number_input';
-import { Button } from './common/button';
-import { Card } from './common/card';
-import { ArrowUpDownIcon } from './common/icons/arrow_up_down_icon';
-import { lightThemeColors } from '../themes/default_theme';
+import { ZERO } from '../../common/constants';
+import { useErc20Store } from '../../store';
+import { getKnownTokens } from '../../util/known_tokens';
+import { tokenAmountInUnits } from '../../util/tokens';
+import { StepKind, StepWrapEth } from '../../util/types';
+import { BigNumberInput } from '../common/big_number_input';
+import { Button } from '../common/button';
+import { Card } from '../common/card';
+import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
+import { lightThemeColors } from '../../themes/default_theme';
 
 
 

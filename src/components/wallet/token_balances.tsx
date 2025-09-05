@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import { useAccount, useBalance } from 'wagmi';
 
 
-import { useErc20Store } from '../store';
-import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../util/tokens';
-import { TokenBalance } from '../util/types';
-import { Card } from './common/card';
-import { EmptyContent } from './common/empty_content';
-import { TokenIcon } from './common/icons/token_icon';
-import { LoadingWrapper } from './common/loading';
-import { CustomTD, Table, THead, TH, TR } from './common/table';
+import { useErc20Store } from '../../store';
+import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../util/tokens';
+import { TokenBalance } from '../../util/types';
+import { Card } from '../common/card';
+import { EmptyContent } from '../common/empty_content';
+import { TokenIcon } from '../common/icons/token_icon';
+import { LoadingWrapper } from '../common/loading';
+import { CustomTD, Table, THead, TH, TR } from '../common/table';
 
 const TokenIconStyled = styled(TokenIcon)``;
 
