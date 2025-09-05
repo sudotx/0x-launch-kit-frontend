@@ -43,28 +43,22 @@ export const getMockStoreData = () => {
     const currencyPair = pairs[0];
 
     return {
-        blockchain: {
-            ethAccount: '0x1234567890123456789012345678901234567890',
-            web3State: Web3State.Done,
-            tokenBalances: mockTokenBalances,
-            ethBalance: new BigNumber(10),
-            wethTokenBalance: mockTokenBalances.find(tb => tb.token.symbol === 'weth') || null,
+        ethAccount: '0x1234567890123456789012345678901234567890',
+        web3State: Web3State.Done,
+        tokenBalances: mockTokenBalances,
+        ethBalance: new BigNumber(10),
+        wethTokenBalance: mockTokenBalances.find(tb => tb.token.symbol === 'weth') || null,
+        currencyPair: {
+            base: currencyPair.base,
+            quote: currencyPair.quote,
         },
-        market: {
-            currencyPair: {
-                base: currencyPair.base,
-                quote: currencyPair.quote,
-            },
-            baseToken,
-            quoteToken,
-            markets: pairs.map(p => ({
-                currencyPair: p,
-                price: new BigNumber(Math.random() * 100),
-            })),
-        },
-        relayer: {
-            orders: mockOrders,
-            userOrders: mockUserOrders,
-        },
+        baseToken,
+        quoteToken,
+        markets: pairs.map(p => ({
+            currencyPair: p,
+            price: new BigNumber(Math.random() * 100),
+        })),
+        orders: mockOrders,
+        userOrders: mockUserOrders,
     };
 };

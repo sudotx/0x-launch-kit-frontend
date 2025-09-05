@@ -145,6 +145,7 @@ interface Erc20Actions {
     submitLimitOrder: (signedOrder: SignedOrder, amount: BigNumber, side: OrderSide) => Promise<void>;
     submitMarketOrder: (amount: BigNumber, side: OrderSide) => Promise<{ txHash: string; amountInReturn: BigNumber } | undefined>;
     cancelOrder: (order: UIOrder) => Promise<string | undefined>;
+    initializeMarket: () => void;
 }
 
 // Create the Zustand store
@@ -485,5 +486,14 @@ export const useErc20Store = create<Erc20State & Erc20Actions>((set, get) => ({
 
         await getOrderbookAndUserOrders();
         return tx;
+    },
+    initializeMarket: () => {
+        const { currencyPair } = get();
+        if (currencyPair) {
+            const knownTokens = getKnownTokens();
+            const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+            const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+            set({ baseToken, quoteToken });
+        }
     },
 }));

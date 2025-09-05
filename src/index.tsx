@@ -39,7 +39,7 @@ export const config = getDefaultConfig({
 	projectId: process.env.PROJECT_ID || "8X1df9Wbcqj6A7LWG71Ra5yLYj-1eL7y",
 	chains: [baseSepolia],
 	transports: {
-		[sepolia.id]: http(),
+		[baseSepolia.id]: http(),
 	}
 });
 

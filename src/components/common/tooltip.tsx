@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { InfoIcon } from './icons/info_icon';
 import { InfoIconFull } from './icons/info_icon_full';
+import { lightThemeColors } from '../../themes/default_theme';
 
 export enum IconType {
     Line,
@@ -23,26 +24,26 @@ const TooltipPopup = styled.div`
     position: relative;
 
     .reactTooltip {
-        background-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
-        color: ${props => props.theme.componentsTheme.tooltipTextColor};
+        background-color: ${lightThemeColors.tooltipBackgroundColor};
+        color: ${lightThemeColors.tooltipTextColor};
         max-width: 250px;
         opacity: 1;
         text-align: left;
 
         &.place-left:after {
-            border-left-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+            border-left-color: ${lightThemeColors.tooltipBackgroundColor};
         }
 
         &.place-right:after {
-            border-right-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+            border-right-color: ${lightThemeColors.tooltipBackgroundColor};
         }
 
         &.place-top:after {
-            border-top-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+            border-top-color: ${lightThemeColors.tooltipBackgroundColor};
         }
 
         &.place-bottom:after {
-            border-bottom-color: ${props => props.theme.componentsTheme.tooltipBackgroundColor};
+            border-bottom-color: ${lightThemeColors.tooltipBackgroundColor};
         }
 
         .multi-line {

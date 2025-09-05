@@ -94,13 +94,17 @@ const WalletBalance: React.FC = () => {
         address: address,
     });
 
-    const { baseToken, currencyPair, quoteToken, tokenBalances, wethTokenBalance, ethBalance: ethBalanceFromStore } =
+    const { baseToken, currencyPair, quoteToken, tokenBalances, wethTokenBalance } =
         useErc20Store();
 
     const baseTokenBalance = tokenBalances.find(tb => tb.token.address === baseToken?.address);
     const quoteTokenBalance = tokenBalances.find(tb => tb.token.address === quoteToken?.address);
 
-    const totalEthBalance = (ethBalanceFromStore || ZERO).plus(wethTokenBalance ? wethTokenBalance.balance : ZERO);
+    const totalEthBalance = new BigNumber(ethBalance?.value?.toString() || 0).plus(
+        wethTokenBalance ? wethTokenBalance.balance : ZERO,
+    );
+
+    console.log("total eth balance", Number(quoteTokenBalance?.balance))
 
     const getWalletContent = () => {
         if (isConnecting) {
@@ -146,23 +150,21 @@ const WalletBalance: React.FC = () => {
             );
         }
 
-        // Mock data for development when no real data is available
-        if (process.env.NODE_ENV === 'development') {
-            return (
-                <>
-                    <LabelWrapper>
-                        <Label>ZRX</Label>
-                        <Value>1,234.56</Value>
-                    </LabelWrapper>
-                    <LabelWrapper>
-                        <Label>WETH</Label>
-                        <Value>10.00</Value>
-                    </LabelWrapper>
-                </>
-            );
-        }
+        // return (
+        //     <>
+        //         <LabelWrapper>
+        //             <Label>ZRX</Label>
+        //             <Value>10.00</Value>
+        //         </LabelWrapper>
+        //         <LabelWrapper>
+        //             <Label>WETH + ETH</Label>
+        //             <Value>{Number(totalEthBalance).toPrecision(2)}</Value>
+        //         </LabelWrapper>
+        //     </>
+        // );
 
-        return <EmptyContent text="No balances to show" />;
+
+        return <div>No balances to show</div>;
     };
 
     return (
