@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
 import { BigNumber } from '@0x/utils';
-import { OrderSide, OrderType, Web3State } from '../util/types';
+import { useCallback, useEffect, useState } from 'react';
 import { useErc20Store } from '../store';
-import { ZERO } from '../common/constants';
+import { OrderSide, OrderType, Web3State } from '../util/types';
 
 interface UseBuySellFormProps {
     currencyPair: { base: string; quote: string };

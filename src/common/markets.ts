@@ -8,4 +8,4 @@ const allFilter = {
     value: null,
 };
 const suppliedMarketFilters = Config.getConfig().marketFilters;
-export const marketFilters: Filter[] = suppliedMarketFilters ? [allFilter, ...suppliedMarketFilters] : [];
+export const marketFilters: Filter[] = [allFilter, ...(suppliedMarketFilters || [])];

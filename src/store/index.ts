@@ -155,7 +155,12 @@ export const useErc20Store = create<Erc20State & Erc20Actions>((set, get) => ({
     setEthAccount: (ethAccount) => set({ ethAccount }),
     setWeb3State: (web3State) => set({ web3State }),
     setMarketTokens: (baseToken, quoteToken) => set({ baseToken, quoteToken }),
-    setCurrencyPair: (currencyPair) => set({ currencyPair }),
+    setCurrencyPair: (currencyPair) => {
+        const knownTokens = getKnownTokens();
+        const baseToken = knownTokens.getTokenBySymbol(currencyPair.base);
+        const quoteToken = knownTokens.getTokenBySymbol(currencyPair.quote);
+        set({ currencyPair, baseToken, quoteToken });
+    },
     setMarkets: (markets) => set({ markets }),
     setEthInUsd: (ethInUsd) => set({ ethInUsd }),
     setOrders: (orders) => set({ orders }),

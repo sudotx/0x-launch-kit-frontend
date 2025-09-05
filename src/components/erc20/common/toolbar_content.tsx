@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { use } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { css, withTheme } from 'styled-components';
 
 import { Logo } from '../../../components/common/logo';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit';
 import { lightThemeColors } from '../../../themes/default_theme';
 import { MarketsDropdownContainer } from './markets_dropdown';
+import { Button } from '../../common/button';
 
 export const separatorTopbar = css`
     &:after {
@@ -97,8 +98,13 @@ const ToolbarEnd = styled.div`
     }
 `;
 
+const ButtonStyled = styled(Button)`
+    width: 100%;
+`;
+
 const ToolbarContent: React.FC<Props> = props => {
     const navigate = useNavigate();
+    const { connectModalOpen, openConnectModal } = useConnectModal()
     const logo = (
         <LogoHeader onClick={() => navigate('/')} text={"Exchange"} image={<img src={"favicons/favicon-32.png"} alt={"Hex"} />} />
     );
@@ -110,7 +116,7 @@ const ToolbarContent: React.FC<Props> = props => {
                 <MarketsDropdownHeader shouldCloseDropdownBodyOnClick={false} />
             </ToolbarCenter>
             <ToolbarEnd>
-                <MyWalletLink onClick={(e) => { e.preventDefault(); navigate('/mywallet'); }}>My Wallet</MyWalletLink>
+                <MyWalletLink onClick={(e) => { e.preventDefault(); navigate('/wallet'); }}>My Wallet</MyWalletLink>
                 <ConnectButton />
             </ToolbarEnd>
         </ToolbarWrapper>

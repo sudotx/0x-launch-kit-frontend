@@ -1,7 +1,7 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import styled from 'styled-components';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, } from 'wagmi';
+import { BigNumber } from '@0x/utils';
 
 import { ZERO } from '../../../common/constants';
 import { useErc20Store } from '../../../store';
@@ -11,6 +11,7 @@ import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/to
 import { ButtonVariant } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { EmptyContent } from '../../common/empty_content';
 import { IconType, Tooltip } from '../../common/tooltip';
 
 const LabelWrapper = styled.div`
@@ -23,7 +24,7 @@ const LabelWrapper = styled.div`
 
 const Label = styled.span`
     align-items: center;
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     display: flex;
     flex-shrink: 0;
     font-size: 16px;
@@ -31,7 +32,7 @@ const Label = styled.span`
 `;
 
 const Value = styled.span`
-    color: ${props => props.theme.componentsTheme.textColorCommon};
+    color: ${lightThemeColors.textColorCommon};
     font-feature-settings: 'tnum' 1;
     flex-shrink: 0;
     font-size: 16px;
@@ -103,11 +104,11 @@ const WalletBalance: React.FC = () => {
 
     const getWalletContent = () => {
         if (isConnecting) {
-            return <ButtonStyled variant={ButtonVariant.Tertiary}>Connecting...</ButtonStyled>;
+            return <div >Connecting...</div>;
         }
 
         if (!isConnected) {
-            return <ConnectButton />;
+            return <div >Please connect your wallet</div>;
         }
 
         if (quoteToken && baseToken && baseTokenBalance && quoteTokenBalance) {
@@ -145,7 +146,23 @@ const WalletBalance: React.FC = () => {
             );
         }
 
-        return null;
+        // Mock data for development when no real data is available
+        if (process.env.NODE_ENV === 'development') {
+            return (
+                <>
+                    <LabelWrapper>
+                        <Label>ZRX</Label>
+                        <Value>1,234.56</Value>
+                    </LabelWrapper>
+                    <LabelWrapper>
+                        <Label>WETH</Label>
+                        <Value>10.00</Value>
+                    </LabelWrapper>
+                </>
+            );
+        }
+
+        return <EmptyContent text="No balances to show" />;
     };
 
     return (

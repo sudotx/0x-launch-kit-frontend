@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { WarningSmallIcon } from '../../components/common/icons/warning_small_icon';
 import { themeDimensions } from '../../themes/commons';
 import { ButtonIcons, ButtonVariant } from '../../util/types';
+import { lightThemeColors } from '../../themes/default_theme';
 
 interface Props extends HTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
@@ -13,7 +14,7 @@ interface Props extends HTMLAttributes<HTMLButtonElement> {
 }
 
 const StyledButton = styled.button<{ variant?: ButtonVariant }>`
-    background-color: green;
+    background-color: ${lightThemeColors.buttonSellBackgroundColor};
     align-items: center;
     border: none;
     cursor: pointer;

@@ -2,7 +2,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import 'sanitize.css';
 import './index.css';
 
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import ReactModal from 'react-modal';
 
@@ -11,13 +11,15 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, WagmiProvider } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { baseSepolia, sepolia } from "wagmi/chains";
 
 
 
 import { Home, MyWallet, NotFound } from './pages';
 
 import App from './app';
+import { useErc20Store } from "./store";
+import { getMockStoreData } from "./util/mock-store";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -35,7 +37,7 @@ const queryClient = new QueryClient({
 export const config = getDefaultConfig({
 	appName: "Exchange",
 	projectId: process.env.PROJECT_ID || "8X1df9Wbcqj6A7LWG71Ra5yLYj-1eL7y",
-	chains: [sepolia],
+	chains: [baseSepolia],
 	transports: {
 		[sepolia.id]: http(),
 	}
@@ -44,31 +46,38 @@ export const config = getDefaultConfig({
 ReactModal.setAppElement('#root');
 
 function Web3WrappedApp() {
+	useEffect(() => {
+		if (process.env.NODE_ENV === 'development') {
+			const mockData = getMockStoreData();
+			useErc20Store.setState(state => ({
+				...state,
+				...mockData,
+			}));
+		}
+	}, []);
 	return (
 		<WagmiProvider config={config}>
 			<QueryClientProvider client={queryClient}>
 				<RainbowKitProvider>
-					
-						<BrowserRouter>
-							<App>
-								<Routes>
-									<Route path="/" element={<Home />} />
-									<Route
-										path="/mywallet"
-										element={
-											<MyWallet />
-										}
-									/>
-									<Route
-										path="*"
-										element={
-											<NotFound />
-										}
-									/>
-								</Routes>
-							</App>
-						</BrowserRouter>
-					
+					<BrowserRouter>
+						<App>
+							<Routes>
+								<Route path="/" element={<Home />} />
+								<Route
+									path="/wallet"
+									element={
+										<MyWallet />
+									}
+								/>
+								<Route
+									path="*"
+									element={
+										<NotFound />
+									}
+								/>
+							</Routes>
+						</App>
+					</BrowserRouter>
 				</RainbowKitProvider>
 			</QueryClientProvider>
 		</WagmiProvider>

@@ -1,6 +1,6 @@
 // hooks/useOrderBook.ts
-import { useEffect, useMemo, useState } from 'react';
 import { BigNumber } from '@0x/utils';
+import { useEffect, useMemo, useState } from 'react';
 import { useErc20Store } from '../store';
 import { OrderBookItem, OrderSide, Token, UIOrder, Web3State } from '../util/types';
 
