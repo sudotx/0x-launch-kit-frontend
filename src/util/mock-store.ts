@@ -1,4 +1,5 @@
 
+import { assetDataUtils } from '@0x/order-utils';
 import { BigNumber } from 'bignumber.js';
 
 import * as config from '../config.json';
@@ -13,6 +14,12 @@ export const getMockStoreData = () => {
         address: token.addresses['50'] || '0x0', // Using Ganache address or a default
     }));
 
+    const [baseToken, quoteToken] = mockTokens;
+    const currencyPair = pairs[0];
+
+    const baseTokenAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
+    const quoteTokenAssetData = assetDataUtils.encodeERC20AssetData(quoteToken.address);
+
     // Mock Token Balances
     const mockTokenBalances: TokenBalance[] = mockTokens.map(token => ({
         balance: new BigNumber(Math.random() * 1000),
@@ -21,26 +28,35 @@ export const getMockStoreData = () => {
     }));
 
     // Mock Orders
-    const mockOrders: UIOrder[] = new Array(10).fill(null).map(() => ({
-        rawOrder: {} as any, // This can be expanded if needed
-        side: Math.random() > 0.5 ? OrderSide.Buy : OrderSide.Sell,
-        size: new BigNumber(Math.random() * 10),
-        filled: new BigNumber(Math.random() * 5),
-        price: new BigNumber(Math.random() * 100),
-        status: null,
-    }));
+    const mockOrders: UIOrder[] = new Array(10).fill(null).map(() => {
+        const side = Math.random() > 0.5 ? OrderSide.Buy : OrderSide.Sell;
+        return {
+            rawOrder: {
+                makerAssetData: side === OrderSide.Buy ? quoteTokenAssetData : baseTokenAssetData,
+                takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
+            } as any, // This can be expanded if needed
+            side,
+            size: new BigNumber(Math.random() * 10),
+            filled: new BigNumber(Math.random() * 5),
+            price: new BigNumber(Math.random() * 100),
+            status: null,
+        };
+    });
 
-    const mockUserOrders: UIOrder[] = new Array(3).fill(null).map(() => ({
-        rawOrder: {} as any,
-        side: Math.random() > 0.5 ? OrderSide.Buy : OrderSide.Sell,
-        size: new BigNumber(Math.random() * 10),
-        filled: new BigNumber(Math.random() * 5),
-        price: new BigNumber(Math.random() * 100),
-        status: null,
-    }));
-
-    const [baseToken, quoteToken] = mockTokens;
-    const currencyPair = pairs[0];
+    const mockUserOrders: UIOrder[] = new Array(3).fill(null).map(() => {
+        const side = Math.random() > 0.5 ? OrderSide.Buy : OrderSide.Sell;
+        return {
+            rawOrder: {
+                makerAssetData: side === OrderSide.Buy ? quoteTokenAssetData : baseTokenAssetData,
+                takerAssetData: side === OrderSide.Buy ? baseTokenAssetData : quoteTokenAssetData,
+            } as any,
+            side,
+            size: new BigNumber(Math.random() * 10),
+            filled: new BigNumber(Math.random() * 5),
+            price: new BigNumber(Math.random() * 100),
+            status: null,
+        };
+    });
 
     return {
         ethAccount: '0x1234567890123456789012345678901234567890',
