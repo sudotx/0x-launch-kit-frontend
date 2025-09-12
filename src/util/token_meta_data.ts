@@ -12,7 +12,7 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (
         throw new Error('WETH Token MetaData not found');
     }
     return {
-        address: tokenMetaData.addresses[networkId],
+        address: tokenMetaData.addresses[networkId] || tokenMetaData.addresses[1],
         symbol: tokenMetaData.symbol,
         decimals: tokenMetaData.decimals,
         name: tokenMetaData.name,
@@ -22,13 +22,14 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (
     };
 };
 
-export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaData[], networkId: number): Token[] => {
+export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaData[]): Token[] => {
     return tokensMetaData
-        .filter(tokenMetaData => tokenMetaData.addresses[networkId])
         .map(
             (tokenMetaData): Token => {
+                // Find the first available address for the token, regardless of network
+                const address = Object.values(tokenMetaData.addresses)[0];
                 return {
-                    address: tokenMetaData.addresses[networkId],
+                    address,
                     symbol: tokenMetaData.symbol,
                     decimals: tokenMetaData.decimals,
                     name: tokenMetaData.name,

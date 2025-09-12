@@ -115,11 +115,16 @@ const OrderDetails: React.FC<OwnProps> = props => {
                 setQuoteTokenAmount(newQuoteTokenAmount);
 
             } else {
+                const { base, quote } = currencyPair;
+                const baseToken = getKnownTokens().getTokenBySymbol(base);
+                const quoteToken = getKnownTokens().getTokenBySymbol(quote);
                 const isSell = orderSide === OrderSide.Sell;
                 const [ordersToFill, amountToPayForEachOrder, canBeFilled] = buildMarketOrders(
                     {
                         amount: tokenAmount,
                         orders: isSell ? openBuyOrders : openSellOrders,
+                        baseToken,
+                        quoteToken,
                     },
                     orderSide,
                 );

@@ -16,7 +16,7 @@ export class KnownTokens {
     private readonly _wethToken: Token;
 
     constructor(knownTokensMetadata: TokenMetaData[], networkId: number) {
-        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata, networkId).filter(
+        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(
             token => !isWeth(token.symbol),
         );
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata, networkId);

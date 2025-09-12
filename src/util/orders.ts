@@ -9,7 +9,7 @@ import { getKnownTokens } from './known_tokens';
 import * as orderHelper from './orders';
 import { getExpirationTimeOrdersFromConfig } from './time_utils';
 import { tokenAmountInUnitsToBigNumber, unitsInTokenAmount } from './tokens';
-import { OrderSide, UIOrder } from './types';
+import { OrderSide, Token, UIOrder } from './types';
 
 interface BuildSellCollectibleOrderParams {
     collectibleAddress: string;
@@ -34,6 +34,8 @@ interface BuildLimitOrderParams {
 interface BuildMarketOrderParams {
     amount: BigNumber;
     orders: UIOrder[];
+    baseToken: Token;
+    quoteToken: Token;
 }
 
 export const buildSellCollectibleOrder = async (params: BuildSellCollectibleOrderParams, side: OrderSide) => {
@@ -113,7 +115,7 @@ export const buildMarketOrders = (
     params: BuildMarketOrderParams,
     side: OrderSide,
 ): [SignedOrder[], BigNumber[], boolean] => {
-    const { amount, orders } = params;
+    const { amount, orders, baseToken, quoteToken } = params;
 
     // sort orders from best to worse
     const sortedOrders = orders.sort((a, b) => {
@@ -129,7 +131,26 @@ export const buildMarketOrders = (
     let filledAmount = ZERO;
     for (let i = 0; i < sortedOrders.length && filledAmount.isLessThan(amount); i++) {
         const order = sortedOrders[i];
-        ordersToFill.push(order.rawOrder);
+
+        const sizeInBaseUnits = unitsInTokenAmount(order.size.toString(), baseToken.decimals);
+        const costInQuoteUnits = unitsInTokenAmount(
+            order.size.multipliedBy(order.price).toString(),
+            quoteToken.decimals,
+        ).integerValue(BigNumber.ROUND_FLOOR);
+
+        const newRawOrder = { ...order.rawOrder };
+
+        if (order.side === OrderSide.Sell) {
+            // The maker is selling the base token (e.g., ZRX) and wants the quote token (e.g., WETH)
+            newRawOrder.makerAssetAmount = sizeInBaseUnits;
+            newRawOrder.takerAssetAmount = costInQuoteUnits;
+        } else {
+            // The maker is buying the base token (e.g., ZRX) and is offering the quote token (e.g., WETH)
+            newRawOrder.makerAssetAmount = costInQuoteUnits;
+            newRawOrder.takerAssetAmount = sizeInBaseUnits;
+        }
+
+        ordersToFill.push(newRawOrder as SignedOrder);
 
         let available = order.size;
         if (order.filled) {
@@ -160,7 +181,7 @@ export const buildMarketOrders = (
 
 export const sumTakerAssetFillableOrders = (
     side: OrderSide,
-    ordersToFill: Order[],
+    ordersToFill: SignedOrder[],
     amounts: BigNumber[],
 ): BigNumber => {
     if (ordersToFill.length !== amounts.length) {
@@ -170,8 +191,10 @@ export const sumTakerAssetFillableOrders = (
         return ZERO;
     }
     return ordersToFill.reduce((sum, order, index) => {
+        console.log("order", order)
+        const orderPrice = order.makerAssetAmount.div(order.takerAssetAmount);
         // Check buildMarketOrders for more details
-        const price = side === OrderSide.Buy ? 1 : order.makerAssetAmount.div(order.takerAssetAmount);
+        const price = side === OrderSide.Buy ? 1 : orderPrice;
         return sum.plus(amounts[index].multipliedBy(price));
     }, ZERO);
 };

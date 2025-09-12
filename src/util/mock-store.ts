@@ -2,16 +2,16 @@
 import { assetDataUtils } from '@0x/order-utils';
 import { BigNumber } from 'bignumber.js';
 
-import * as config from '../config.json';
+import { mockConfigFile } from './mockData';
 import { OrderSide, Token, TokenBalance, UIOrder, Web3State } from './types';
 
 export const getMockStoreData = () => {
-    const { tokens, pairs } = config;
+    const { tokens, pairs } = mockConfigFile;
 
     // Mock Tokens
     const mockTokens: Token[] = tokens.map((token: any) => ({
         ...token,
-        address: token.addresses['50'] || '0x0', // Using Ganache address or a default
+        address: token.addresses['1'] || '0x0', // Using Mainnet address or a default
     }));
 
     const [baseToken, quoteToken] = mockTokens;

@@ -1,6 +1,6 @@
 import { Validator } from 'jsonschema';
 
-import configFile from '../config.json';
+import { mockConfigFile as configFile } from '../util/mockData';
 import { ConfigFile } from '../util/types';
 
 import { configSchema, schemas } from './configSchema';

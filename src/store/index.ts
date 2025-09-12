@@ -404,8 +404,12 @@ export const useErc20Store = create<Erc20State & Erc20Actions>((set, get) => ({
         const { orders, gasInfo, ethAccount, baseToken, quoteToken, ethBalance, getOrderbookAndUserOrders, updateTokenBalances, addNotifications } = get();
         const openSellOrders = orders.filter(o => o.side === OrderSide.Sell).sort((o1, o2) => o2.price.comparedTo(o1.price));
         const openBuyOrders = orders.filter(o => o.side === OrderSide.Buy).sort((o1, o2) => o2.price.comparedTo(o1.price));
+        if (!baseToken || !quoteToken) {
+            toast.error('Base or quote token not set');
+            return;
+        }
 
-        const [ordersToFill, filledAmounts, canBeFilled] = buildMarketOrders({ amount, orders: side === OrderSide.Buy ? openSellOrders : openBuyOrders }, side);
+        const [ordersToFill, filledAmounts, canBeFilled] = buildMarketOrders({ amount, orders: side === OrderSide.Buy ? openSellOrders : openBuyOrders, baseToken, quoteToken }, side);
 
         if (!canBeFilled) {
             // window.alert(INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR);
