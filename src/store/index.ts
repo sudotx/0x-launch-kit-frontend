@@ -48,6 +48,7 @@ import {
     UIState,
     Web3State
 } from '../util/types';
+import toast from 'react-hot-toast';
 
 // Define the initial state by combining the initial states of the old slices
 const initialBlockchainState: BlockchainState = {
@@ -407,7 +408,8 @@ export const useErc20Store = create<Erc20State & Erc20Actions>((set, get) => ({
         const [ordersToFill, filledAmounts, canBeFilled] = buildMarketOrders({ amount, orders: side === OrderSide.Buy ? openSellOrders : openBuyOrders }, side);
 
         if (!canBeFilled) {
-            window.alert(INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR);
+            // window.alert(INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR);
+            toast.error(INSUFFICIENT_ORDERS_TO_FILL_AMOUNT_ERR)
             throw new InsufficientOrdersAmountException();
         }
 

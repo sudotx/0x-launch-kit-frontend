@@ -3,6 +3,7 @@ import { BigNumber } from '@0x/utils';
 import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE, GWEI_IN_WEI } from '../common/constants';
 import { getLogger } from '../util/logger';
 import { GasInfo } from '../util/types';
+import toast from 'react-hot-toast';
 
 const logger = getLogger('GasPriceEstimation');
 
@@ -12,14 +13,14 @@ export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {
     try {
         const response = await fetch(ETHERCHAIN_API_URL);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            toast.error('Failed to fetch gas estimation info')
         }
         const gasInfo = await response.json();
 
         // Assuming the API returns gas price in Gwei for the "fast" level
         const gasPriceInGwei = new BigNumber(gasInfo.fast);
         if (gasPriceInGwei.isNaN() || gasPriceInGwei.isLessThanOrEqualTo(0)) {
-            throw new Error('Invalid gas price received from API');
+            toast.error('Invalid gas price received from API')
         }
 
         // Etherchain doesn't provide a time estimate, so we'll use a default.

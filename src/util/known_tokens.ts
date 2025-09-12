@@ -2,10 +2,12 @@ import { ExchangeFillEventArgs, LogWithDecodedArgs } from '@0x/contract-wrappers
 import { assetDataUtils } from '@0x/order-utils';
 
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
+import { getNetworkId } from '../services/web3_wrapper';
 import { getLogger } from '../util/logger';
 
 import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
 import { Token } from './types';
+import toast from 'react-hot-toast';
 
 const logger = getLogger('Tokens::known_tokens .ts');
 
@@ -13,9 +15,11 @@ export class KnownTokens {
     private readonly _tokens: Token[] = [];
     private readonly _wethToken: Token;
 
-    constructor(knownTokensMetadata: TokenMetaData[]) {
-        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
-        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
+    constructor(knownTokensMetadata: TokenMetaData[], networkId: number) {
+        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata, networkId).filter(
+            token => !isWeth(token.symbol),
+        );
+        this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata, networkId);
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
@@ -27,6 +31,7 @@ export class KnownTokens {
             }
             const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
             logger.log(errorMessage);
+            toast.error(errorMessage)
             throw new Error(errorMessage);
         }
         return token;
@@ -34,6 +39,7 @@ export class KnownTokens {
 
     public getTokenByAddress = (address: string): Token => {
         const addressInLowerCase = address.toLowerCase();
+        console.log("known tokens", this._tokens)
         let token = this._tokens.find(t => t.address.toLowerCase() === addressInLowerCase);
         if (!token) {
             // If it's not on the tokens list, we check if it's an wETH token
@@ -41,6 +47,7 @@ export class KnownTokens {
             token = this._wethToken.address === address ? this._wethToken : undefined;
         }
         if (!token) {
+            toast.error(`Token with address ${address} not found in known tokens`)
             throw new Error(`Token with address ${address} not found in known tokens`);
         }
         return token;
@@ -79,7 +86,7 @@ export class KnownTokens {
 
         const makerAssetDecoded = assetDataUtils.decodeAssetDataOrThrow(makerAssetData);
         const takerAssetDecoded = assetDataUtils.decodeAssetDataOrThrow(takerAssetData);
-        
+
         if (!assetDataUtils.isERC20TokenAssetData(makerAssetDecoded) || !assetDataUtils.isERC20TokenAssetData(takerAssetDecoded)) {
             return false;
         }
@@ -106,7 +113,8 @@ export class KnownTokens {
 let knownTokens: KnownTokens;
 export const getKnownTokens = (knownTokensMetadata: TokenMetaData[] = KNOWN_TOKENS_META_DATA): KnownTokens => {
     if (!knownTokens) {
-        knownTokens = new KnownTokens(knownTokensMetadata);
+        const networkId = getNetworkId();
+        knownTokens = new KnownTokens(knownTokensMetadata, networkId);
     }
     return knownTokens;
 };

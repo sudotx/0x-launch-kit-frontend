@@ -1,17 +1,14 @@
+import { BigNumber } from '@0x/utils';
 import React from 'react';
 import styled from 'styled-components';
 import { useAccount, useBalance, } from 'wagmi';
-import { BigNumber } from '@0x/utils';
 
 import { ZERO } from '../../../common/constants';
 import { useErc20Store } from '../../../store';
 import { lightThemeColors } from '../../../themes/default_theme';
 import { isWeth } from '../../../util/known_tokens';
 import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
-import { ButtonVariant } from '../../../util/types';
-import { Button } from '../../common/button';
 import { Card } from '../../common/card';
-import { EmptyContent } from '../../common/empty_content';
 import { IconType, Tooltip } from '../../common/tooltip';
 
 const LabelWrapper = styled.div`
@@ -69,10 +66,6 @@ const WalletStatusContainer = styled.div`
 
 const TooltipStyled = styled(Tooltip)`
     margin-left: 10px;
-`;
-
-const ButtonStyled = styled(Button)`
-    width: 100%;
 `;
 
 const getWalletName = () => 'Wallet';
@@ -149,20 +142,6 @@ const WalletBalance: React.FC = () => {
                 </>
             );
         }
-
-        // return (
-        //     <>
-        //         <LabelWrapper>
-        //             <Label>ZRX</Label>
-        //             <Value>10.00</Value>
-        //         </LabelWrapper>
-        //         <LabelWrapper>
-        //             <Label>WETH + ETH</Label>
-        //             <Value>{Number(totalEthBalance).toPrecision(2)}</Value>
-        //         </LabelWrapper>
-        //     </>
-        // );
-
 
         return <div>No balances to show</div>;
     };

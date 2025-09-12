@@ -1,8 +1,10 @@
-import { ethers } from "ethers";
-import { sleep } from "../util/sleep";
+import { ethers } from 'ethers';
+
+import { sleep } from '../util/sleep';
 
 let provider: ethers.providers.Web3Provider | null = null;
 let signer: ethers.Signer | null = null;
+let networkId: number = 1;
 
 export const isMetamaskInstalled = (): boolean => {
     const { ethereum } = window as any;
@@ -22,22 +24,25 @@ export const initializeProvider = async (): Promise<ethers.providers.Web3Provide
             provider = new ethers.providers.Web3Provider(ethereum);
 
             // Request account access
-            await provider.send("eth_requestAccounts", []);
+            await provider.send('eth_requestAccounts', []);
 
             // Get signer
             signer = provider.getSigner();
 
+            const network = await provider.getNetwork();
+            networkId = network.chainId;
+
             // Register listeners
-            ethereum.on("accountsChanged", () => {
+            ethereum.on('accountsChanged', () => {
                 location.reload();
             });
-            ethereum.on("chainChanged", () => {
+            ethereum.on('chainChanged', () => {
                 location.reload();
             });
 
             return provider;
         } catch (error) {
-            console.error("User denied account access or error:", error);
+            console.error('User denied account access or error:', error);
             return null;
         }
     } else {
@@ -58,4 +63,8 @@ export const getSigner = async (): Promise<ethers.Signer> => {
         await sleep(100);
     }
     return signer!;
+};
+
+export const getNetworkId = (): number => {
+    return networkId;
 };

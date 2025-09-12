@@ -11,7 +11,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, WagmiProvider } from "wagmi";
-import { baseSepolia, sepolia } from "wagmi/chains";
+import { baseSepolia } from "wagmi/chains";
+import { Toaster } from "react-hot-toast"
 
 
 
@@ -77,6 +78,7 @@ function Web3WrappedApp() {
 								/>
 							</Routes>
 						</App>
+						<Toaster />
 					</BrowserRouter>
 				</RainbowKitProvider>
 			</QueryClientProvider>
